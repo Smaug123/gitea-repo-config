@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Gitea", "Gitea\Gitea.fsproj", "{5F99DAF4-A9F0-4A76-A205-AF586C07FE40}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Gitea.Test", "Gitea.Test\Gitea.Test.fsproj", "{1E3E6442-11C5-4366-A1E8-A38E069934F7}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Gitea.App", "Gitea.App\Gitea.App.fsproj", "{77DA39F7-AF01-448A-B71C-3D495EE2F6F4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5F99DAF4-A9F0-4A76-A205-AF586C07FE40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F99DAF4-A9F0-4A76-A205-AF586C07FE40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F99DAF4-A9F0-4A76-A205-AF586C07FE40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F99DAF4-A9F0-4A76-A205-AF586C07FE40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E3E6442-11C5-4366-A1E8-A38E069934F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E3E6442-11C5-4366-A1E8-A38E069934F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E3E6442-11C5-4366-A1E8-A38E069934F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E3E6442-11C5-4366-A1E8-A38E069934F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77DA39F7-AF01-448A-B71C-3D495EE2F6F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77DA39F7-AF01-448A-B71C-3D495EE2F6F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77DA39F7-AF01-448A-B71C-3D495EE2F6F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77DA39F7-AF01-448A-B71C-3D495EE2F6F4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

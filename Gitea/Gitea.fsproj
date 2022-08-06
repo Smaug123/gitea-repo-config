@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="Map.fs" />
+    <Compile Include="GiteaClient.fs" />
+    <Compile Include="Domain.fs" />
+    <Compile Include="SerialisedConfigSchema.fs" />
+    <Compile Include="ConfigSchema.fs" />
+    <Compile Include="Array.fs" />
+    <Compile Include="Gitea.fs" />
+    <Content Include="GiteaConfig.schema.json" />
+    <EmbeddedResource Include="version.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
+    <PackageReference Include="SwaggerProvider" Version="1.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+  </ItemGroup>
+</Project>

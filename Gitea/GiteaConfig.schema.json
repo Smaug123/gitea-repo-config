@@ -1,0 +1,109 @@
+{
+  "definitions": {
+    "Nullable<SerialisedNativeRepo>": {
+      "description": "If this repo is to be created natively on Gitea, the information about the repo.",
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "defaultBranch": {
+          "description": "The default branch name for this repository, e.g. 'main'",
+          "type": "string"
+        },
+        "private": {
+          "description": "Whether this repository is a Gitea private repo",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "defaultBranch"
+      ]
+    },
+    "SerialisedRepo": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "description": "The text that will accompany this repository in the Gitea UI",
+          "type": "string"
+        },
+        "gitHub": {
+          "description": "If this repo is to sync from GitHub, the URI (e.g. 'https://github.com/Smaug123/nix-maui')",
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "native": {
+          "$ref": "#/definitions/Nullable<SerialisedNativeRepo>"
+        }
+      },
+      "required": [
+        "description"
+      ]
+    },
+    "SerialisedUserInfo": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "isAdmin": {
+          "type": "boolean"
+        },
+        "email": {
+          "type": "string"
+        },
+        "website": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "visibility": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "email"
+      ]
+    }
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "users": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/SerialisedUserInfo"
+      }
+    },
+    "repos": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "additionalProperties": {
+          "$ref": "#/definitions/SerialisedRepo"
+        }
+      }
+    }
+  },
+  "required": [
+    "users",
+    "repos"
+  ]
+}
