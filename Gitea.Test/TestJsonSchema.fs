@@ -15,35 +15,13 @@ module TestSchema =
     let schemaGen = JSchemaGenerator ()
     schemaGen.ContractResolver <- CamelCasePropertyNamesContractResolver ()
 
-    let rec findFileAbove (fileName : string) (di : DirectoryInfo) =
-        if isNull di then
-            failwith "hit the root without finding anything"
-
-        let candidate = Path.Combine (di.FullName, fileName) |> FileInfo
-
-        if candidate.Exists then
-            candidate
-        else
-            findFileAbove fileName di.Parent
-
-    let rec findExampleFile (di : DirectoryInfo) =
-        if isNull di then
-            failwith "hit the root without finding anything"
-
-        let candidate = Path.Combine (di.FullName, "GiteaConfig.json") |> FileInfo
-
-        if candidate.Exists then
-            candidate
-        else
-            findExampleFile di.Parent
-
     [<Test>]
     let ``Schema is consistent`` () =
         let schemaFile =
             Assembly.GetExecutingAssembly().Location
             |> FileInfo
             |> fun fi -> fi.Directory
-            |> findFileAbove "Gitea/GiteaConfig.schema.json"
+            |> Utils.findFileAbove "Gitea/GiteaConfig.schema.json"
 
         let existing = JSchema.Parse (File.ReadAllText schemaFile.FullName)
         let derived = schemaGen.Generate typeof<SerialisedGiteaConfig>
@@ -53,11 +31,11 @@ module TestSchema =
     [<Test>]
     let ``Example conforms to schema`` () =
         let executing = Assembly.GetExecutingAssembly().Location |> FileInfo
-        let schemaFile = findFileAbove "GiteaConfig.json" executing.Directory
+        let schemaFile = Utils.findFileAbove "GiteaConfig.json" executing.Directory
 
         let existing = JSchema.Parse (File.ReadAllText schemaFile.FullName)
 
-        let jsonFile = findExampleFile executing.Directory
+        let jsonFile = Utils.findFileAbove "GiteaConfig.json" executing.Directory
         let json = File.ReadAllText jsonFile.FullName
 
         use reader = new JsonTextReader (new StringReader (json))
@@ -80,7 +58,7 @@ module TestSchema =
             Assembly.GetExecutingAssembly().Location
             |> FileInfo
             |> fun fi -> fi.Directory
-            |> findFileAbove "Gitea/GiteaConfig.schema.json"
+            |> Utils.findFileAbove "Gitea/GiteaConfig.schema.json"
 
         let schema = schemaGen.Generate typeof<SerialisedGiteaConfig>
 
