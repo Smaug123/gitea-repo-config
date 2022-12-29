@@ -16,6 +16,7 @@
     <Compile Include="Array.fs" />
     <Compile Include="Gitea.fs" />
     <Content Include="GiteaConfig.schema.json" />
+    <Content Include="swagger.v1.json" />
     <EmbeddedResource Include="version.json" />
   </ItemGroup>
 

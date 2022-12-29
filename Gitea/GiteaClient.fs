@@ -6,6 +6,6 @@ open SwaggerProvider
 module GiteaClient =
 
     [<Literal>]
-    let Host = "https://gitea.patrickstevens.co.uk/swagger.v1.json"
+    let Host = "file://" + __SOURCE_DIRECTORY__ + "/swagger.v1.json"
 
     type Gitea = SwaggerClientProvider<Host>

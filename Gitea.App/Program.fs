@@ -129,10 +129,10 @@ module Program =
 
     [<EntryPoint>]
     let main argv =
-        let configFile, giteaApiToken, githubApiToken =
+        let configFile, giteaHost, giteaApiToken, githubApiToken =
             match argv with
-            | [| f ; giteaToken |] -> FileInfo f, giteaToken, None
-            | [| f ; giteaToken ; githubToken |] -> FileInfo f, giteaToken, Some githubToken
+            | [| f ; giteaHost ; giteaToken |] -> FileInfo f, Uri giteaHost, giteaToken, None
+            | [| f ; giteaHost ; giteaToken ; githubToken |] -> FileInfo f, Uri giteaHost, giteaToken, Some githubToken
             | _ -> failwithf $"malformed args: %+A{argv}"
 
         let config = GiteaConfig.get configFile
@@ -154,7 +154,7 @@ module Program =
         let logger = loggerProvider.CreateLogger "Gitea.App"
 
         use client = new HttpClient ()
-        client.BaseAddress <- Uri Host
+        client.BaseAddress <- giteaHost
         client.DefaultRequestHeaders.Add ("Authorization", $"token {giteaApiToken}")
 
         let client = Gitea.Client client

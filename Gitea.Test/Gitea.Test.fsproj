@@ -6,7 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Utils.fs" />
     <Compile Include="TestJsonSchema.fs" />
+    <Compile Include="TestSwaggerJson.fs" />
     <Content Include="GiteaConfig.json" />
   </ItemGroup>
 
