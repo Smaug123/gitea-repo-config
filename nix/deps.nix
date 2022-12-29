@@ -2,6 +2,11 @@
 # Please don't edit it manually, your changes might get overwritten!
 {fetchNuGet}: [
   (fetchNuGet {
+    pname = "Argu";
+    version = "6.1.1";
+    sha256 = "1v996g0760qhiys2ahdpnvkldaxr2jn5f1falf789glnk4a6f3xl";
+  })
+  (fetchNuGet {
     pname = "coverlet.collector";
     version = "3.1.2";
     sha256 = "0gsk2q93qw7pqxwd4pdyq5364wz0lvldcqqnf4amz13jaq86idmz";
@@ -557,6 +562,11 @@
     sha256 = "0wi10md9aq33jrkh2c24wr2n9hrpyamsdhsxdcnf43b7y86kkii8";
   })
   (fetchNuGet {
+    pname = "System.Configuration.ConfigurationManager";
+    version = "4.4.0";
+    sha256 = "1hjgmz47v5229cbzd2pwz2h0dkq78lb2wp9grx8qr72pb5i0dk7v";
+  })
+  (fetchNuGet {
     pname = "System.Diagnostics.Debug";
     version = "4.0.11";
     sha256 = "0gmjghrqmlgzxivd2xl50ncbglb7ljzb66rlx8ws6dv8jm0d5siz";
@@ -815,6 +825,11 @@
     pname = "System.Security.Cryptography.Primitives";
     version = "4.3.0";
     sha256 = "0pyzncsv48zwly3lw4f2dayqswcfvdwq2nz0dgwmi7fj3pn64wby";
+  })
+  (fetchNuGet {
+    pname = "System.Security.Cryptography.ProtectedData";
+    version = "4.4.0";
+    sha256 = "1q8ljvqhasyynp94a1d7jknk946m20lkwy2c3wa8zw2pc517fbj6";
   })
   (fetchNuGet {
     pname = "System.Security.Cryptography.X509Certificates";

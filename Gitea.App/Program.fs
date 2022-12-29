@@ -6,6 +6,30 @@ open System.Net.Http
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.Logging.Console
 open Microsoft.Extensions.Options
+open Argu
+
+type ArgsFragments =
+    | [<ExactlyOnce ; EqualsAssignmentOrSpaced>] Config_File of string
+    | [<ExactlyOnce ; EqualsAssignmentOrSpaced>] Gitea_Host of string
+    | [<ExactlyOnce ; EqualsAssignmentOrSpaced>] Gitea_Admin_Api_Token of string
+    | [<Unique ; EqualsAssignmentOrSpaced>] GitHub_Api_Token of string
+
+    interface IArgParserTemplate with
+        member s.Usage =
+            match s with
+            | Config_File _ ->
+                "a config file, JSON, conforming to GiteaConfig.schema.json, specifying the desired Gitea configuration"
+            | Gitea_Host _ -> "the Gitea host, e.g. https://gitea.mydomain.com"
+            | Gitea_Admin_Api_Token _ -> "a Gitea admin user's API token"
+            | GitHub_Api_Token _ -> "a GitHub API token with read access to every desired sync-from-GitHub repo"
+
+type Args =
+    {
+        ConfigFile : FileInfo
+        GiteaHost : Uri
+        GiteaAdminApiToken : string
+        GitHubApiToken : string option
+    }
 
 module Program =
 
@@ -129,13 +153,18 @@ module Program =
 
     [<EntryPoint>]
     let main argv =
-        let configFile, giteaHost, giteaApiToken, githubApiToken =
-            match argv with
-            | [| f ; giteaHost ; giteaToken |] -> FileInfo f, Uri giteaHost, giteaToken, None
-            | [| f ; giteaHost ; giteaToken ; githubToken |] -> FileInfo f, Uri giteaHost, giteaToken, Some githubToken
-            | _ -> failwithf $"malformed args: %+A{argv}"
+        let parser = ArgumentParser.Create<ArgsFragments> ()
+        let parsed = parser.Parse argv
 
-        let config = GiteaConfig.get configFile
+        let args =
+            {
+                ConfigFile = parsed.GetResult ArgsFragments.Config_File |> FileInfo
+                GiteaHost = parsed.GetResult ArgsFragments.Gitea_Host |> Uri
+                GiteaAdminApiToken = parsed.GetResult ArgsFragments.Gitea_Admin_Api_Token
+                GitHubApiToken = parsed.TryGetResult ArgsFragments.GitHub_Api_Token
+            }
+
+        let config = GiteaConfig.get args.ConfigFile
 
         let options =
             let options = ConsoleLoggerOptions ()
@@ -154,8 +183,8 @@ module Program =
         let logger = loggerProvider.CreateLogger "Gitea.App"
 
         use client = new HttpClient ()
-        client.BaseAddress <- giteaHost
-        client.DefaultRequestHeaders.Add ("Authorization", $"token {giteaApiToken}")
+        client.BaseAddress <- args.GiteaHost
+        client.DefaultRequestHeaders.Add ("Authorization", $"token {args.GiteaAdminApiToken}")
 
         let client = Gitea.Client client
 
@@ -172,7 +201,7 @@ module Program =
 
             match repoErrors with
             | Ok () -> ()
-            | Error errors -> do! Gitea.reconcileRepoErrors logger client githubApiToken errors
+            | Error errors -> do! Gitea.reconcileRepoErrors logger client args.GitHubApiToken errors
 
             match userErrors, repoErrors with
             | Ok (), Ok () -> return 0
