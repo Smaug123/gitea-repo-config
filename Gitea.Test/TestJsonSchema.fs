@@ -19,8 +19,7 @@ module TestSchema =
         if isNull di then
             failwith "hit the root without finding anything"
 
-        let candidate =
-            Path.Combine (di.FullName, fileName) |> FileInfo
+        let candidate = Path.Combine (di.FullName, fileName) |> FileInfo
 
         if candidate.Exists then
             candidate
@@ -31,8 +30,7 @@ module TestSchema =
         if isNull di then
             failwith "hit the root without finding anything"
 
-        let candidate =
-            Path.Combine (di.FullName, "GiteaConfig.json") |> FileInfo
+        let candidate = Path.Combine (di.FullName, "GiteaConfig.json") |> FileInfo
 
         if candidate.Exists then
             candidate
@@ -54,9 +52,7 @@ module TestSchema =
 
     [<Test>]
     let ``Example conforms to schema`` () =
-        let executing =
-            Assembly.GetExecutingAssembly().Location
-            |> FileInfo
+        let executing = Assembly.GetExecutingAssembly().Location |> FileInfo
         let schemaFile = findFileAbove "GiteaConfig.json" executing.Directory
 
         let existing = JSchema.Parse (File.ReadAllText schemaFile.FullName)
