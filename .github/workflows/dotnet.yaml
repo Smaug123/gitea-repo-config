@@ -10,6 +10,8 @@ env:
   DOTNET_NOLOGO: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  NUGET_XMLDOC_MODE: ''
+  DOTNET_MULTILEVEL_LOOKUP: 0
 
 jobs:
   build:
@@ -23,6 +25,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0 # so that NerdBank.GitVersioning has access to history
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:

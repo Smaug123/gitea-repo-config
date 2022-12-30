@@ -37,9 +37,9 @@
     sha256 = "15gqy2m14fdlvy1g59207h5kisznm355kbw010gy19vh47z8gpz3";
   })
   (fetchNuGet {
-    pname = "Microsoft.Bcl.AsyncInterfaces";
-    version = "7.0.0";
-    sha256 = "1waiggh3g1cclc81gmjrqbh128kwfjky3z79ma4bd2ms9pa3gvfm";
+    pname = "Microsoft.Build.Tasks.Git";
+    version = "1.0.0";
+    sha256 = "0avwja8vk56f2kr2pmrqx3h60bnwbs7ds062lhvhcxv87m5yfqnj";
   })
   (fetchNuGet {
     pname = "Microsoft.CodeCoverage";
@@ -142,6 +142,16 @@
     sha256 = "193xwf33fbm0ni3idxzbr5fdq3i2dlfgihsac9jj7whj0gd902nh";
   })
   (fetchNuGet {
+    pname = "Microsoft.SourceLink.Common";
+    version = "1.0.0";
+    sha256 = "1zxkpx01zdv17c39iiy8fx25ran89n14qwddh1f140v1s4dn8z9c";
+  })
+  (fetchNuGet {
+    pname = "Microsoft.SourceLink.GitHub";
+    version = "1.0.0";
+    sha256 = "029ixyaqn48cjza87m5qf0g1ynyhlm6irgbx1n09src9g666yhpd";
+  })
+  (fetchNuGet {
     pname = "Microsoft.TestPlatform.ObjectModel";
     version = "17.3.2";
     sha256 = "0bs38r5kdw1xpbjbi5l82xbhfnfbzr5xhg5520lk05pg914d1ln1";
@@ -157,14 +167,19 @@
     sha256 = "0j0c1wj4ndj21zsgivsc24whiya605603kxrbiw6wkfdync464wq";
   })
   (fetchNuGet {
+    pname = "Nerdbank.GitVersioning";
+    version = "3.5.119";
+    sha256 = "0g7a812lfa5y140pinpy5q3nl3xcarydflpxzzcyxxk4hjjlawy0";
+  })
+  (fetchNuGet {
     pname = "NETStandard.Library";
     version = "2.0.0";
     sha256 = "1bc4ba8ahgk15m8k4nd7x406nhi0kwqzbgjk2dmw52ss553xz7iy";
   })
   (fetchNuGet {
-    pname = "NETStandard.Library";
-    version = "2.0.3";
-    sha256 = "1fn9fxppfcg4jgypp2pmrpr6awl3qz1xmnri0cygpkwvyx27df1y";
+    pname = "NETStandard.Library.Ref";
+    version = "2.1.0";
+    sha256 = "12n76gymxq715lkrw841vi5r84kx746cxxssp22pd08as75jzsj6";
   })
   (fetchNuGet {
     pname = "Newtonsoft.Json";
@@ -500,11 +515,6 @@
     pname = "System.Collections.Concurrent";
     version = "4.3.0";
     sha256 = "0wi10md9aq33jrkh2c24wr2n9hrpyamsdhsxdcnf43b7y86kkii8";
-  })
-  (fetchNuGet {
-    pname = "System.ComponentModel.Annotations";
-    version = "5.0.0";
-    sha256 = "021h7x98lblq9avm1bgpa4i31c2kgsa7zn4sqhxf39g087ar756j";
   })
   (fetchNuGet {
     pname = "System.Configuration.ConfigurationManager";
