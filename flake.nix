@@ -72,6 +72,12 @@
           dotnet-runtime = dotnet-runtime;
         };
       };
+      apps = {
+        default = {
+          type = "app";
+          program = "${self.packages.${system}.default}/bin/Gitea.Declarative";
+        };
+      };
       devShell = pkgs.mkShell {
         buildInputs = with pkgs; [
           (with dotnetCorePackages;
