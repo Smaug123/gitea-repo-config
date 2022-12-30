@@ -24,6 +24,7 @@
     <Compile Include="SerialisedConfigSchema.fs" />
     <Compile Include="ConfigSchema.fs" />
     <Compile Include="Array.fs" />
+    <Compile Include="UserInput.fs" />
     <Compile Include="Gitea.fs" />
     <Content Include="GiteaConfig.schema.json" />
     <Content Include="swagger.v1.json" />
