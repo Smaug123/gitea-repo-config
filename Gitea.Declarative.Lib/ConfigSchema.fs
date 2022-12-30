@@ -111,8 +111,21 @@ type GiteaConfig =
 
     static member internal OfSerialised (s : SerialisedGiteaConfig) =
         {
-            GiteaConfig.Users = s.Users |> Map.map (fun _ -> UserInfo.OfSerialised)
-            Repos = s.Repos |> Map.map (fun _ -> Map.map (fun _ -> Repo.OfSerialised))
+            GiteaConfig.Users =
+                s.Users
+                |> Seq.map (fun (KeyValue (user, info)) -> user, UserInfo.OfSerialised info)
+                |> Map.ofSeq
+            Repos =
+                s.Repos
+                |> Seq.map (fun (KeyValue (user, repos)) ->
+                    let repos =
+                        repos
+                        |> Seq.map (fun (KeyValue (repoName, repo)) -> repoName, Repo.OfSerialised repo)
+                        |> Map.ofSeq
+
+                    user, repos
+                )
+                |> Map.ofSeq
         }
 
 [<RequireQualifiedAccess>]

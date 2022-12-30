@@ -1,6 +1,7 @@
 namespace Gitea.Declarative
 
 open System
+open System.Collections.Generic
 open System.ComponentModel
 open Newtonsoft.Json
 
@@ -51,7 +52,7 @@ type internal SerialisedUserInfo =
 type internal SerialisedGiteaConfig =
     {
         [<JsonProperty(Required = Required.Always)>]
-        Users : Map<User, SerialisedUserInfo>
+        Users : Dictionary<User, SerialisedUserInfo>
         [<JsonProperty(Required = Required.Always)>]
-        Repos : Map<User, Map<RepoName, SerialisedRepo>>
+        Repos : Dictionary<User, Dictionary<RepoName, SerialisedRepo>>
     }
