@@ -5,7 +5,7 @@ This is a small project to allow you to specify a [Gitea](https://github.com/go-
 # How to build and run
 
 With Nix: `nix run github:Smaug123/dotnet-gitea-declarative -- --help`.
-The config file you provide as an argument should conform to [the schema](./Gitea.Declarative.Lib/GiteaConfig.schema.json).
+The config file you provide as an argument should conform to [the schema](./Gitea.Declarative.Lib/GiteaConfig.schema.json); there is [an example](./Gitea.Declarative.Test/GiteaConfig.json) in the tests.
 
 ## Building from source
 

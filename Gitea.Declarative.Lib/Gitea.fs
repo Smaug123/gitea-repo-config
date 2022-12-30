@@ -178,7 +178,6 @@ module Gitea =
                                 with e ->
                                     raise (AggregateException ($"Error migrating {user}:{r}", e))
                             | None, None ->
-                                // TODO: express this in JsonSchema
                                 failwith $"You must supply exactly one of Native or GitHub for {user}:{r}."
                             | Some _, Some _ ->
                                 failwith $"Repo {user}:{r} has both Native and GitHub set; you must set exactly one."
