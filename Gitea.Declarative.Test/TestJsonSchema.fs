@@ -21,7 +21,7 @@ module TestSchema =
             Assembly.GetExecutingAssembly().Location
             |> FileInfo
             |> fun fi -> fi.Directory
-            |> Utils.findFileAbove "Gitea/GiteaConfig.schema.json"
+            |> Utils.findFileAbove "Gitea.Declarative.Lib/GiteaConfig.schema.json"
 
         let existing = JSchema.Parse (File.ReadAllText schemaFile.FullName)
         let derived = schemaGen.Generate typeof<SerialisedGiteaConfig>
@@ -58,7 +58,7 @@ module TestSchema =
             Assembly.GetExecutingAssembly().Location
             |> FileInfo
             |> fun fi -> fi.Directory
-            |> Utils.findFileAbove "Gitea/GiteaConfig.schema.json"
+            |> Utils.findFileAbove "Gitea.Declarative.Lib/GiteaConfig.schema.json"
 
         let schema = schemaGen.Generate typeof<SerialisedGiteaConfig>
 
