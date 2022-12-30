@@ -1,10 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Gitea", "Gitea\Gitea.fsproj", "{5F99DAF4-A9F0-4A76-A205-AF586C07FE40}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Gitea.Declarative.Lib", "Gitea.Declarative.Lib\Gitea.Declarative.Lib.fsproj", "{5F99DAF4-A9F0-4A76-A205-AF586C07FE40}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Gitea.Test", "Gitea.Test\Gitea.Test.fsproj", "{1E3E6442-11C5-4366-A1E8-A38E069934F7}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Gitea.Declarative.Test", "Gitea.Declarative.Test\Gitea.Declarative.Test.fsproj", "{1E3E6442-11C5-4366-A1E8-A38E069934F7}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Gitea.App", "Gitea.App\Gitea.App.fsproj", "{77DA39F7-AF01-448A-B71C-3D495EE2F6F4}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Gitea.Declarative", "Gitea.Declarative\Gitea.Declarative.fsproj", "{77DA39F7-AF01-448A-B71C-3D495EE2F6F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,4 +1,4 @@
-namespace Gitea.Test
+namespace Gitea.Declarative.Test
 
 open System.IO
 open System.Net.Http
