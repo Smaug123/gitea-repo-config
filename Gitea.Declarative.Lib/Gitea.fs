@@ -198,3 +198,102 @@ module Gitea =
         )
         |> Async.Parallel
         |> fun a -> async.Bind (a, Array.iter id >> async.Return)
+
+    let reconcileUserErrors
+        (log : ILogger)
+        (getUserInput : string -> string)
+        (client : Gitea.Client)
+        (m : Map<User, AlignmentError<UserInfo>>)
+        =
+        let userInputLock = obj ()
+
+        m
+        |> Map.toSeq
+        |> Seq.map (fun (User user, err) ->
+            match err with
+            | AlignmentError.DoesNotExist desired ->
+                async {
+                    let rand = Random ()
+
+                    let pwd =
+                        Array.init 15 (fun _ -> rand.Next (65, 65 + 25) |> byte)
+                        |> System.Text.Encoding.ASCII.GetString
+
+                    let options = Gitea.CreateUserOption ()
+                    options.Email <- desired.Email
+                    options.Username <- user
+                    options.FullName <- user
+
+                    options.Visibility <-
+                        match desired.Visibility with
+                        | None -> "public"
+                        | Some v -> v
+
+                    options.LoginName <- user
+                    options.MustChangePassword <- Some true
+                    options.Password <- pwd
+                    let! _ = client.AdminCreateUser options |> Async.AwaitTask
+
+                    lock
+                        userInputLock
+                        (fun () ->
+                            log.LogCritical (
+                                "Created user {User} with password {Password}, which you must now change",
+                                user,
+                                pwd
+                            )
+                        )
+
+                    return ()
+                }
+            | AlignmentError.UnexpectedlyPresent ->
+                async {
+                    lock
+                        userInputLock
+                        (fun () ->
+                            let answer =
+                                UserInput.getDefaultNo getUserInput $"User %s{user} unexpectedly present. Remove?"
+
+                            if answer then
+                                client.AdminDeleteUser(user).Result
+                            else
+                                log.LogCritical ("Refusing to delete user {User}, who is unexpectedly present.", user)
+                        )
+                }
+            | AlignmentError.ConfigurationDiffers (desired, actual) ->
+                let updates = UserInfo.Resolve desired actual
+
+                async {
+                    lock
+                        userInputLock
+                        (fun () ->
+                            let body = Gitea.EditUserOption ()
+
+                            for update in updates do
+                                match update with
+                                | UserInfoUpdate.Admin (desired, _) -> body.Admin <- desired
+                                | UserInfoUpdate.Email (desired, _) -> body.Email <- desired
+                                | UserInfoUpdate.Visibility (desired, _) -> body.Visibility <- desired
+                                | UserInfoUpdate.Website (desired, actual) ->
+                                    // Per https://github.com/go-gitea/gitea/issues/17126,
+                                    // the website parameter can't currently be edited.
+                                    // This is a bug that is unlikely to be fixed.
+                                    let actual =
+                                        match actual with
+                                        | None -> "<no website>"
+                                        | Some uri -> uri.ToString ()
+
+                                    log.LogCritical (
+                                        "User {User} has conflicting website, desired {DesiredWebsite}, existing {ActualWebsite}, which a bug in Gitea means can't be reconciled via the API.",
+                                        user,
+                                        desired,
+                                        actual
+                                    )
+
+                            body.LoginName <- user
+                            client.AdminEditUser(user, body).Result |> ignore
+                        )
+                }
+        )
+        |> Async.Parallel
+        |> fun a -> async.Bind (a, Array.iter id >> async.Return)
