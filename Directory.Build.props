@@ -1,0 +1,21 @@
+<Project>
+  <PropertyGroup>
+    <NetCoreTargetingPackRoot>[UNDEFINED]</NetCoreTargetingPackRoot>
+  </PropertyGroup>
+  <!-- Disable the normal search path mechanism -->
+  <PropertyGroup>
+    <TargetFrameworkRootPath Condition="'$(BuildingInsideVisualStudio)'!='true'">[UNDEFINED]</TargetFrameworkRootPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" />
+  </ItemGroup>
+  <PropertyGroup>
+    <DisableImplicitLibraryPacksFolder>true</DisableImplicitLibraryPacksFolder>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DebugType Condition=" '$(DebugType)' == '' ">embedded</DebugType>
+  </PropertyGroup>
+</Project>
