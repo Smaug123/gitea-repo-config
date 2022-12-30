@@ -14,8 +14,8 @@
   }:
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
-      projectFile = "./Gitea.App/Gitea.App.fsproj";
-      testProjectFile = "./Gitea.Test/Gitea.Test.fsproj";
+      projectFile = "./Gitea.Declarative/Gitea.Declarative.fsproj";
+      testProjectFile = "./Gitea.Declarative.Test/Gitea.Declarative.Test.fsproj";
       pname = "dotnet-gitea-declarative";
       dotnet-sdk = pkgs.dotnet-sdk_7;
       dotnet-runtime = pkgs.dotnetCorePackages.runtime_7_0;
@@ -62,6 +62,7 @@
           }));
         default = pkgs.buildDotnetModule {
           pname = pname;
+          name = "gitea-declarative";
           version = version;
           src = ./.;
           projectFile = projectFile;

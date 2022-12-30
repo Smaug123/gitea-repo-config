@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Gitea\Gitea.fsproj" />
+    <ProjectReference Include="..\Gitea.Declarative.Lib\Gitea.Declarative.Lib.fsproj" />
   </ItemGroup>
 
 </Project>

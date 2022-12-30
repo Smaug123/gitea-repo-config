@@ -8,3 +8,4 @@ riderModule.iml
 *.DotSettings
 .DS_Store
 result
+.profile*

@@ -1,4 +1,4 @@
-namespace Gitea
+namespace Gitea.Declarative
 
 [<RequireQualifiedAccess>]
 module internal Map =

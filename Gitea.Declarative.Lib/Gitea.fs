@@ -1,4 +1,4 @@
-namespace Gitea
+namespace Gitea.Declarative
 
 open System
 open Microsoft.Extensions.Logging
