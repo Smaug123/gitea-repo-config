@@ -12,6 +12,6 @@ updates:
       interval: "weekly"
 
   - package-ecosystem: "nuget"
-    directory: "/Gitea"
+    directory: "/"
     schedule:
       interval: "weekly"
