@@ -8,8 +8,8 @@
   })
   (fetchNuGet {
     pname = "coverlet.collector";
-    version = "3.1.2";
-    sha256 = "0gsk2q93qw7pqxwd4pdyq5364wz0lvldcqqnf4amz13jaq86idmz";
+    version = "3.2.0";
+    sha256 = "1qxpv8v10p5wn162lzdm193gdl6c5f81zadj8h889dprlnj3g8yr";
   })
   (fetchNuGet {
     pname = "FSharp.Core";
@@ -228,8 +228,8 @@
   })
   (fetchNuGet {
     pname = "NUnit3TestAdapter";
-    version = "4.2.1";
-    sha256 = "0gildh4xcb6gkxcrrgh5a1j7lq0a7l670jpbs71akl5b5bgy5gc3";
+    version = "4.3.1";
+    sha256 = "1j80cfrg0fflgw7wxi76mxj1wllwzcg4ck957knmjpghw5cw7lvv";
   })
   (fetchNuGet {
     pname = "runtime.any.System.Collections";
