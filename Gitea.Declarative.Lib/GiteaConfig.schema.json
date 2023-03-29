@@ -62,12 +62,15 @@
           "description": "The text that will accompany this repository in the Gitea UI"
         },
         "gitHub": {
-          "type": [
-            "null",
-            "string"
-          ],
-          "description": "If this repo is to sync from GitHub, the URI (e.g. 'https://github.com/Smaug123/nix-maui')",
-          "format": "uri"
+          "description": "If this repo is to sync from GitHub, information about the repo.",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/SerialisedGitHubRepo"
+            }
+          ]
         },
         "native": {
           "description": "If this repo is to be created natively on Gitea, the information about the repo.",
@@ -96,6 +99,25 @@
         }
       ]
     },
+    "SerialisedGitHubRepo": {
+      "type": "object",
+      "description": "Information about a repo that is being mirrored from GitHub.",
+      "additionalProperties": false,
+      "required": [
+        "uri"
+      ],
+      "properties": {
+        "uri": {
+          "type": "string",
+          "description": "e.g. https://github.com/Smaug123/nix-maui",
+          "format": "uri"
+        },
+        "mirrorInterval": {
+          "type": "string",
+          "description": "A Golang string, e.g. \"8h30m0s\""
+        }
+      }
+    },
     "SerialisedNativeRepo": {
       "type": "object",
       "description": "Information about a repo that is to be created on Gitea without syncing from GitHub.",
@@ -111,6 +133,54 @@
         "private": {
           "type": "boolean",
           "description": "Whether this repository is a Gitea private repo"
+        },
+        "ignoreWhitespaceConflicts": {
+          "type": "boolean",
+          "description": "either `true` to ignore whitespace for conflicts, or `false` to not ignore whitespace."
+        },
+        "hasPullRequests": {
+          "type": "boolean",
+          "description": "either `true` to allow pull requests, or `false` to prevent pull request."
+        },
+        "hasProjects": {
+          "type": "boolean",
+          "description": "either `true` to enable project unit, or `false` to disable them."
+        },
+        "hasIssues": {
+          "type": "boolean",
+          "description": "either `true` to enable issues for this repository or `false` to disable them."
+        },
+        "hasWiki": {
+          "type": "boolean",
+          "description": "either `true` to enable the wiki for this repository or `false` to disable it."
+        },
+        "defaultMergeStyle": {
+          "type": "string",
+          "description": "set to a merge style to be used by this repository: \"merge\", \"rebase\", \"rebase-merge\", or \"squash\"."
+        },
+        "deleteBranchAfterMerge": {
+          "type": "boolean",
+          "description": "set to `true` to delete pr branch after merge by default."
+        },
+        "allowSquashMerge": {
+          "type": "boolean",
+          "description": "either `true` to allow squash-merging pull requests, or `false` to prevent squash-merging."
+        },
+        "allowRebaseUpdate": {
+          "type": "boolean",
+          "description": "either `true` to allow updating pull request branch by rebase, or `false` to prevent it."
+        },
+        "allowRebase": {
+          "type": "boolean",
+          "description": "either `true` to allow rebase-merging pull requests, or `false` to prevent rebase-merging."
+        },
+        "allowRebaseExplicit": {
+          "type": "boolean",
+          "description": "either `true` to allow rebase with explicit merge commits (--no-ff), or `false` to prevent rebase with explicit merge commits."
+        },
+        "allowMergeCommits": {
+          "type": "boolean",
+          "description": "either `true` to allow merging pull requests with a merge commit, or `false` to prevent merging pull requests with merge commits."
         }
       }
     }
