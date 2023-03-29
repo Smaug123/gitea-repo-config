@@ -156,13 +156,13 @@ module Gitea =
                                     client.AdminCreateRepo (user, options) |> Async.AwaitTask
                                 with e ->
                                     raise (AggregateException ($"Error creating {user}:{r}", e))
-                            | Some uri, None ->
+                            | Some github, None ->
                                 let options = Gitea.MigrateRepoOptions ()
                                 options.Description <- desired.Description
                                 options.Mirror <- Some true
                                 options.RepoName <- r
                                 options.RepoOwner <- user
-                                options.CloneAddr <- uri.ToString ()
+                                options.CloneAddr <- string<Uri> github.Uri
                                 options.Issues <- Some true
                                 options.Labels <- Some true
                                 options.Lfs <- Some true
