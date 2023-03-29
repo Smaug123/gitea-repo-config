@@ -13,6 +13,7 @@ type ArgsFragments =
     | [<ExactlyOnce ; EqualsAssignmentOrSpaced>] Gitea_Host of string
     | [<ExactlyOnce ; EqualsAssignmentOrSpaced>] Gitea_Admin_Api_Token of string
     | [<Unique ; EqualsAssignmentOrSpaced>] GitHub_Api_Token of string
+    | Dry_Run
 
     interface IArgParserTemplate with
         member s.Usage =
@@ -22,6 +23,7 @@ type ArgsFragments =
             | Gitea_Host _ -> "the Gitea host, e.g. https://gitea.mydomain.com"
             | Gitea_Admin_Api_Token _ -> "a Gitea admin user's API token"
             | GitHub_Api_Token _ -> "a GitHub API token with read access to every desired sync-from-GitHub repo"
+            | Dry_Run _ -> "don't actually perform the reconciliation"
 
 type Args =
     {
@@ -29,6 +31,7 @@ type Args =
         GiteaHost : Uri
         GiteaAdminApiToken : string
         GitHubApiToken : string option
+        DryRun : bool
     }
 
 module Program =
@@ -55,6 +58,7 @@ module Program =
                 GiteaHost = parsed.GetResult ArgsFragments.Gitea_Host |> Uri
                 GiteaAdminApiToken = parsed.GetResult ArgsFragments.Gitea_Admin_Api_Token
                 GitHubApiToken = parsed.TryGetResult ArgsFragments.GitHub_Api_Token
+                DryRun = parsed.TryGetResult ArgsFragments.Dry_Run |> Option.isSome
             }
 
         let config = GiteaConfig.get args.ConfigFile
@@ -85,16 +89,20 @@ module Program =
             logger.LogInformation "Checking users..."
             let! userErrors = Gitea.checkUsers config client
 
-            match userErrors with
-            | Ok () -> ()
-            | Error errors -> do! Gitea.reconcileUserErrors logger getUserInput client errors
+            match userErrors, args.DryRun with
+            | Ok (), _ -> ()
+            | Error errors, false -> do! Gitea.reconcileUserErrors logger getUserInput client errors
+            | Error errors, true ->
+                logger.LogError ("Differences encountered in user configuration, but not reconciling them due to --dry-run. Errors may occur while checking repo configuration. {UserErrors}", errors)
 
             logger.LogInformation "Checking repos..."
             let! repoErrors = Gitea.checkRepos config client
 
-            match repoErrors with
-            | Ok () -> ()
-            | Error errors -> do! Gitea.reconcileRepoErrors logger client args.GitHubApiToken errors
+            match repoErrors, args.DryRun with
+            | Ok (), _ -> ()
+            | Error errors, false -> do! Gitea.reconcileRepoErrors logger client args.GitHubApiToken errors
+            | Error errors, true ->
+                logger.LogError ("Differences encountered in repo configuration, but not reconciling them due to --dry-run. {RepoErrors}", errors)
 
             match userErrors, repoErrors with
             | Ok (), Ok () -> return 0

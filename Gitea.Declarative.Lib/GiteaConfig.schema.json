@@ -109,8 +109,7 @@
       "properties": {
         "uri": {
           "type": "string",
-          "description": "e.g. https://github.com/Smaug123/nix-maui",
-          "format": "uri"
+          "description": "e.g. https://github.com/Smaug123/nix-maui"
         },
         "mirrorInterval": {
           "type": "string",

@@ -62,7 +62,7 @@ type internal SerialisedGitHubRepo =
     {
        [<Description "e.g. https://github.com/Smaug123/nix-maui">]
        [<JsonProperty(Required = Required.Always)>]
-       Uri : Uri
+       Uri : string
        [<Description "A Golang string, e.g. \"8h30m0s\"">]
        [<JsonProperty(Required = Required.DisallowNull)>]
        MirrorInterval : string

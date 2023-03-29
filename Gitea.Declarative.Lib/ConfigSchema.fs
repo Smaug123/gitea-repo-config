@@ -60,8 +60,10 @@ type GitHubRepo =
     }
     static member internal OfSerialised (s : SerialisedGitHubRepo) : GitHubRepo =
         {
-            Uri = s.Uri
-            MirrorInterval = s.MirrorInterval
+            Uri = Uri s.Uri
+            MirrorInterval =
+                // Rather odd behaviour of the API here!
+                if s.MirrorInterval = null then "8h0m0s" else s.MirrorInterval
         }
 
 type Repo =
