@@ -16,11 +16,15 @@
     "nonadmin-user": {
       "synced-from-github-repo-1": {
         "description": "A repo that is imported from GitHub",
-        "gitHub": "https://github.com/MyName/repo-name"
+        "gitHub": {
+          "uri": "https://github.com/MyName/repo-name"
+        }
       },
       "synced-from-github-repo-2": {
         "description": "Another repo that is imported from GitHub",
-        "gitHub": "https://github.com/MyName/repo-name-2"
+        "gitHub": {
+          "uri": "https://github.com/MyName/repo-name-2"
+        }
       },
       "new-repo": {
         "description": "A repo that's created directly on this Gitea",

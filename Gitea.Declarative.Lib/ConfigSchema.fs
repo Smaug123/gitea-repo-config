@@ -4,22 +4,77 @@ open System
 open System.IO
 open Newtonsoft.Json
 
+type MergeStyle =
+    | Merge
+    | Rebase
+    | RebaseMerge
+    | Squash
+
+    static member Parse (s : string) : MergeStyle =
+        if s = "merge" then MergeStyle.Merge
+        elif s = "squash" then MergeStyle.Squash
+        elif s = "rebase" then MergeStyle.Rebase
+        elif s = "rebase-merge" then MergeStyle.RebaseMerge
+        else failwithf "Unrecognised merge style '%s'" s
+
 type NativeRepo =
     {
         DefaultBranch : string
         Private : bool option
+        IgnoreWhitespaceConflicts : bool option
+        HasPullRequests : bool option
+        HasProjects : bool option
+        HasIssues : bool option
+        HasWiki : bool option
+        DefaultMergeStyle : MergeStyle option
+        DeleteBranchAfterMerge : bool option
+        AllowSquashMerge : bool option
+        AllowRebaseUpdate : bool option
+        AllowRebase : bool option
+        AllowRebaseExplicit : bool option
+        AllowMergeCommits : bool option
     }
 
     static member internal OfSerialised (s : SerialisedNativeRepo) =
         {
             NativeRepo.DefaultBranch = s.DefaultBranch
             Private = s.Private |> Option.ofNullable
+            IgnoreWhitespaceConflicts = s.IgnoreWhitespaceConflicts |> Option.ofNullable
+            HasPullRequests = s.HasPullRequests |> Option.ofNullable
+            HasProjects = s.HasProjects |> Option.ofNullable
+            HasIssues = s.HasIssues |> Option.ofNullable
+            HasWiki = s.HasWiki |> Option.ofNullable
+            DefaultMergeStyle = s.DefaultMergeStyle |> Option.ofObj |> Option.map MergeStyle.Parse
+            DeleteBranchAfterMerge = s.DeleteBranchAfterMerge |> Option.ofNullable
+            AllowSquashMerge = s.AllowSquashMerge |> Option.ofNullable
+            AllowRebaseUpdate = s.AllowRebaseUpdate |> Option.ofNullable
+            AllowRebase = s.AllowRebase |> Option.ofNullable
+            AllowRebaseExplicit = s.AllowRebaseExplicit |> Option.ofNullable
+            AllowMergeCommits = s.AllowMergeCommits |> Option.ofNullable
+        }
+
+type GitHubRepo =
+    {
+        Uri : Uri
+        /// This is a Golang string.
+        MirrorInterval : string
+    }
+
+    static member internal OfSerialised (s : SerialisedGitHubRepo) : GitHubRepo =
+        {
+            Uri = Uri s.Uri
+            MirrorInterval =
+                // Rather odd behaviour of the API here!
+                if s.MirrorInterval = null then
+                    "8h0m0s"
+                else
+                    s.MirrorInterval
         }
 
 type Repo =
     {
         Description : string
-        GitHub : Uri option
+        GitHub : GitHubRepo option
         Native : NativeRepo option
     }
 
@@ -30,12 +85,28 @@ type Repo =
                 if String.IsNullOrEmpty u.OriginalUrl then
                     None
                 else
-                    Some (Uri u.OriginalUrl)
+                    {
+                        Uri = Uri u.OriginalUrl
+                        MirrorInterval = u.MirrorInterval
+                    }
+                    |> Some
             Native =
                 if String.IsNullOrEmpty u.OriginalUrl then
                     {
                         Private = u.Private
                         DefaultBranch = u.DefaultBranch
+                        IgnoreWhitespaceConflicts = u.IgnoreWhitespaceConflicts
+                        HasPullRequests = u.HasProjects
+                        HasProjects = u.HasProjects
+                        HasIssues = u.HasIssues
+                        HasWiki = u.HasWiki
+                        DefaultMergeStyle = u.DefaultMergeStyle |> Option.ofObj |> Option.map MergeStyle.Parse
+                        DeleteBranchAfterMerge = u.DefaultDeleteBranchAfterMerge
+                        AllowSquashMerge = u.AllowSquashMerge
+                        AllowRebaseUpdate = u.AllowRebaseUpdate
+                        AllowRebase = u.AllowRebase
+                        AllowRebaseExplicit = u.AllowRebaseExplicit
+                        AllowMergeCommits = u.AllowMergeCommits
                     }
                     |> Some
                 else
@@ -45,7 +116,7 @@ type Repo =
     static member internal OfSerialised (s : SerialisedRepo) =
         {
             Repo.Description = s.Description
-            GitHub = Option.ofObj s.GitHub
+            GitHub = Option.ofNullable s.GitHub |> Option.map GitHubRepo.OfSerialised
             Native = s.Native |> Option.ofNullable |> Option.map NativeRepo.OfSerialised
         }
 
