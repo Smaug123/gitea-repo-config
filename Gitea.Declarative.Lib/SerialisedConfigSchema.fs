@@ -9,6 +9,7 @@ type SerialisedMergeStyle = string
 
 [<RequireQualifiedAccess>]
 [<Struct>]
+[<CLIMutable>]
 [<Description "Information about a repo that is to be created on Gitea without syncing from GitHub.">]
 type internal SerialisedNativeRepo =
     {
@@ -57,6 +58,7 @@ type internal SerialisedNativeRepo =
     }
 
 [<Struct>]
+[<CLIMutable>]
 [<Description "Information about a repo that is being mirrored from GitHub.">]
 type internal SerialisedGitHubRepo =
     {
