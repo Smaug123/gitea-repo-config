@@ -1,6 +1,7 @@
 namespace Gitea.Declarative
 
 open System
+open System.Runtime.InteropServices.ComTypes
 open Microsoft.Extensions.Logging
 
 type AlignmentError<'a> =
@@ -182,17 +183,117 @@ module Gitea =
                             | Some _, Some _ ->
                                 failwith $"Repo {user}:{r} has both Native and GitHub set; you must set exactly one."
 
-                        logger.LogInformation ("Created repo {User}: {Repo}", user.ToString (), r.ToString ())
+                        logger.LogInformation ("Created repo {User}: {Repo}", user, r)
                         return ()
                     }
-                | err ->
+                | AlignmentError.UnexpectedlyPresent ->
                     async {
-                        logger.LogInformation (
-                            "Unable to reconcile: {User}, {Repo}: {Error}",
-                            user.ToString (),
-                            r.ToString (),
-                            err
+                        logger.LogError (
+                            "For safety, refusing to delete unexpectedly present repo: {User}, {Repo}",
+                            user,
+                            r
                         )
+                    }
+                | AlignmentError.ConfigurationDiffers (desired, actual) ->
+                    match desired.GitHub, actual.GitHub with
+                    | None, Some _
+                    | Some _, None ->
+                        async {
+                            logger.LogError ("Unable to reconcile the desire to move a repo from Gitea to GitHub or vice versa: {User}, {Repo}.", user, r)
+                        }
+                    | Some desiredGitHub, Some actualGitHub ->
+                        async {
+                            let mutable hasChanged = false
+                            let options = Gitea.EditRepoOption ()
+                            if desiredGitHub.Uri <> actualGitHub.Uri then
+                                logger.LogError ("Refusing to migrate repo {User}:{Repo} to a different GitHub URL. Desired: {DesiredUrl}. Actual: {ActualUrl}.", user, r, desiredGitHub.Uri, actualGitHub.Uri)
+                            if desiredGitHub.MirrorInterval <> actualGitHub.MirrorInterval then
+                                options.MirrorInterval <- desiredGitHub.MirrorInterval
+                                hasChanged <- true
+                            if desired.Description <> actual.Description then
+                                options.Description <- desired.Description
+                                hasChanged <- true
+
+                            if hasChanged then
+                                let! result = client.RepoEdit (user, r, options) |> Async.AwaitTask
+                                return ()
+                        }
+                    | None, None ->
+
+                    async {
+                        let mutable hasChanged = false
+                        let options = Gitea.EditRepoOption ()
+
+                        if desired.Description <> actual.Description then
+                            options.Description <- desired.Description
+                            hasChanged <- true
+
+                        let desired = Option.get desired.Native
+                        let actual = Option.get actual.Native
+
+                        if desired.Private <> actual.Private then
+                            options.Private <- desired.Private
+                            hasChanged <- true
+
+                        if desired.AllowRebase <> actual.AllowRebase then
+                            options.AllowRebase <- desired.AllowRebase
+                            hasChanged <- true
+
+                        if desired.DefaultBranch <> actual.DefaultBranch then
+                            options.DefaultBranch <- desired.DefaultBranch
+                            hasChanged <- true
+
+                        if desired.HasIssues <> actual.HasIssues then
+                            options.HasIssues <- desired.HasIssues
+                            hasChanged <- true
+
+                        if desired.HasProjects <> actual.HasProjects then
+                            options.HasProjects <- desired.HasProjects
+                            hasChanged <- true
+
+                        if desired.HasWiki <> actual.HasWiki then
+                            options.HasWiki <- desired.HasWiki
+                            hasChanged <- true
+
+                        if desired.HasPullRequests <> actual.HasPullRequests then
+                            options.HasPullRequests <- desired.HasPullRequests
+                            hasChanged <- true
+
+                        if desired.AllowMergeCommits <> actual.AllowMergeCommits then
+                            options.AllowMergeCommits <- desired.AllowMergeCommits
+                            hasChanged <- true
+
+                        if desired.AllowRebaseExplicit <> actual.AllowRebaseExplicit then
+                            options.AllowRebaseExplicit <- desired.AllowRebaseExplicit
+                            hasChanged <- true
+
+                        if desired.AllowRebase <> actual.AllowRebase then
+                            options.AllowRebase <- desired.AllowRebase
+                            hasChanged <- true
+
+                        if desired.AllowRebaseUpdate <> actual.AllowRebaseUpdate then
+                            options.AllowRebaseUpdate <- desired.AllowRebaseUpdate
+                            hasChanged <- true
+
+                        if desired.AllowSquashMerge <> actual.AllowSquashMerge then
+                            options.AllowSquashMerge <- desired.AllowSquashMerge
+                            hasChanged <- true
+
+                        if desired.DefaultMergeStyle <> actual.DefaultMergeStyle then
+                            options.DefaultMergeStyle <- desired.DefaultMergeStyle |> Option.map MergeStyle.toString |> Option.toObj
+                            hasChanged <- true
+
+                        if desired.IgnoreWhitespaceConflicts <> actual.IgnoreWhitespaceConflicts then
+                            options.IgnoreWhitespaceConflicts <- desired.IgnoreWhitespaceConflicts
+                            hasChanged <- true
+
+                        if desired.DeleteBranchAfterMerge <> actual.DeleteBranchAfterMerge then
+                            options.DefaultDeleteBranchAfterMerge <- desired.DeleteBranchAfterMerge
+                            hasChanged <- true
+
+                        if hasChanged then
+                            let! result = client.RepoEdit (user, r, options) |> Async.AwaitTask
+                            return ()
                     }
             )
         )
