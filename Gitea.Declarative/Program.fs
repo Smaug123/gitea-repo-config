@@ -93,7 +93,10 @@ module Program =
             | Ok (), _ -> ()
             | Error errors, false -> do! Gitea.reconcileUserErrors logger getUserInput client errors
             | Error errors, true ->
-                logger.LogError ("Differences encountered in user configuration, but not reconciling them due to --dry-run. Errors may occur while checking repo configuration. {UserErrors}", errors)
+                logger.LogError (
+                    "Differences encountered in user configuration, but not reconciling them due to --dry-run. Errors may occur while checking repo configuration. {UserErrors}",
+                    errors
+                )
 
             logger.LogInformation "Checking repos..."
             let! repoErrors = Gitea.checkRepos config client
@@ -102,7 +105,10 @@ module Program =
             | Ok (), _ -> ()
             | Error errors, false -> do! Gitea.reconcileRepoErrors logger client args.GitHubApiToken errors
             | Error errors, true ->
-                logger.LogError ("Differences encountered in repo configuration, but not reconciling them due to --dry-run. {RepoErrors}", errors)
+                logger.LogError (
+                    "Differences encountered in repo configuration, but not reconciling them due to --dry-run. {RepoErrors}",
+                    errors
+                )
 
             match userErrors, repoErrors with
             | Ok (), Ok () -> return 0

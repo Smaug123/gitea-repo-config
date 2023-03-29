@@ -9,6 +9,7 @@ type MergeStyle =
     | Rebase
     | RebaseMerge
     | Squash
+
     static member Parse (s : string) : MergeStyle =
         if s = "merge" then MergeStyle.Merge
         elif s = "squash" then MergeStyle.Squash
@@ -58,12 +59,16 @@ type GitHubRepo =
         /// This is a Golang string.
         MirrorInterval : string
     }
+
     static member internal OfSerialised (s : SerialisedGitHubRepo) : GitHubRepo =
         {
             Uri = Uri s.Uri
             MirrorInterval =
                 // Rather odd behaviour of the API here!
-                if s.MirrorInterval = null then "8h0m0s" else s.MirrorInterval
+                if s.MirrorInterval = null then
+                    "8h0m0s"
+                else
+                    s.MirrorInterval
         }
 
 type Repo =
@@ -95,10 +100,7 @@ type Repo =
                         HasProjects = u.HasProjects
                         HasIssues = u.HasIssues
                         HasWiki = u.HasWiki
-                        DefaultMergeStyle =
-                            u.DefaultMergeStyle
-                            |> Option.ofObj
-                            |> Option.map MergeStyle.Parse
+                        DefaultMergeStyle = u.DefaultMergeStyle |> Option.ofObj |> Option.map MergeStyle.Parse
                         DeleteBranchAfterMerge = u.DefaultDeleteBranchAfterMerge
                         AllowSquashMerge = u.AllowSquashMerge
                         AllowRebaseUpdate = u.AllowRebaseUpdate
