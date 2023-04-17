@@ -43,8 +43,8 @@
   })
   (fetchNuGet {
     pname = "Microsoft.CodeCoverage";
-    version = "17.4.1";
-    sha256 = "0bf68gq6mc6kzri4zi8ydc0xrazqwqg38bhbpjpj90zmqc28kari";
+    version = "17.5.0";
+    sha256 = "0briw00gb5bz9k9kx00p6ghq47w501db7gb6ig5zzmz9hb8lw4a4";
   })
   (fetchNuGet {
     pname = "Microsoft.CSharp";
@@ -118,8 +118,8 @@
   })
   (fetchNuGet {
     pname = "Microsoft.NET.Test.Sdk";
-    version = "17.4.1";
-    sha256 = "02p1j9fncd4fb2hyp51kw49d0dz30vvazhzk24c9f5ccc00ijpra";
+    version = "17.5.0";
+    sha256 = "00gz2i8kx4mlq1ywj3imvf7wc6qzh0bsnynhw06z0mgyha1a21jy";
   })
   (fetchNuGet {
     pname = "Microsoft.NETCore.Platforms";
@@ -158,13 +158,13 @@
   })
   (fetchNuGet {
     pname = "Microsoft.TestPlatform.ObjectModel";
-    version = "17.4.1";
-    sha256 = "0s68wf9yphm4hni9p6kwfk0mjld85f4hkrs93qbk5lzf6vv3kba1";
+    version = "17.5.0";
+    sha256 = "0qkjyf3ky6xpjg5is2sdsawm99ka7fzgid2bvpglwmmawqgm8gls";
   })
   (fetchNuGet {
     pname = "Microsoft.TestPlatform.TestHost";
-    version = "17.4.1";
-    sha256 = "1n9ilq8n5rhyxcri06njkxb0h2818dbmzddwd2rrvav91647m2s4";
+    version = "17.5.0";
+    sha256 = "17g0k3r5n8grba8kg4nghjyhnq9w8v0w6c2nkyyygvfh8k8x9wh3";
   })
   (fetchNuGet {
     pname = "Microsoft.Win32.Primitives";
@@ -198,8 +198,8 @@
   })
   (fetchNuGet {
     pname = "Newtonsoft.Json";
-    version = "13.0.2";
-    sha256 = "1p9splg1min274dpz7xdfgzrwkyfd3xlkygwpr1xgjvvyjvs6b0i";
+    version = "13.0.3";
+    sha256 = "0xrwysmrn4midrjal8g2hr1bbg38iyisl0svamb11arqws4w2bw7";
   })
   (fetchNuGet {
     pname = "Newtonsoft.Json";
@@ -223,13 +223,13 @@
   })
   (fetchNuGet {
     pname = "NUnit.Analyzers";
-    version = "3.5.0";
-    sha256 = "1dssqrzbqpx6xf517i4vya4m75pa0d52aach16n2im8vjp12i1j2";
+    version = "3.6.1";
+    sha256 = "16dw5375k2wyhiw9x387y7pjgq6zms30y036qb8z7idx4lxw9yi9";
   })
   (fetchNuGet {
     pname = "NUnit3TestAdapter";
-    version = "4.3.1";
-    sha256 = "1j80cfrg0fflgw7wxi76mxj1wllwzcg4ck957knmjpghw5cw7lvv";
+    version = "4.4.2";
+    sha256 = "1n2jlc16vjdd81cb1by4qbp75sq73zsjz5w3zc61ssmbdci1q2ri";
   })
   (fetchNuGet {
     pname = "runtime.any.System.Collections";
