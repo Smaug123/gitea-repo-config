@@ -18,7 +18,7 @@ module TestSwaggerJson =
             Assembly.GetExecutingAssembly().Location
             |> FileInfo
             |> fun fi -> fi.Directory
-            |> Utils.findFileAbove "Gitea/swagger.v1.json"
+            |> Utils.findFileAbove "Gitea.Declarative.Lib/swagger.v1.json"
 
         task {
             use client = new HttpClient ()

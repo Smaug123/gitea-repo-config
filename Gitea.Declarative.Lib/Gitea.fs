@@ -76,14 +76,25 @@ module Gitea =
                 config.Repos
                 |> Map.toSeq
                 |> Seq.map (fun (User user as u, desiredRepos) ->
+                    let desiredRepos = desiredRepos |> Map.map (fun _ v -> v.OverrideDefaults ())
+
                     async {
                         let! repos =
                             Array.getPaginated (fun page count ->
                                 client.UserListRepos (user, Some page, Some count) |> Async.AwaitTask
                             )
 
-                        let actualRepos =
-                            repos |> Seq.map (fun repo -> RepoName repo.Name, Repo.Render repo) |> Map.ofSeq
+                        let! actualRepos =
+                            repos
+                            |> Seq.map (fun repo ->
+                                async {
+                                    let! rendered = Repo.Render client repo
+                                    return RepoName repo.Name, rendered
+                                }
+                            )
+                            |> Async.Parallel
+
+                        let actualRepos = Map.ofArray actualRepos
 
                         let errors1 =
                             actualRepos
@@ -143,56 +154,326 @@ module Gitea =
                 match err with
                 | AlignmentError.DoesNotExist desired ->
                     async {
-                        let! _ =
-                            match desired.GitHub, desired.Native with
-                            | None, Some native ->
-                                let options = Gitea.CreateRepoOption ()
-                                options.Description <- desired.Description
-                                options.Name <- r
-                                options.Private <- native.Private
-                                options.DefaultBranch <- native.DefaultBranch
+                        logger.LogDebug ("Creating {User}:{Repo}", user, r)
 
-                                try
-                                    client.AdminCreateRepo (user, options) |> Async.AwaitTask
-                                with e ->
-                                    raise (AggregateException ($"Error creating {user}:{r}", e))
-                            | Some uri, None ->
-                                let options = Gitea.MigrateRepoOptions ()
-                                options.Description <- desired.Description
-                                options.Mirror <- Some true
-                                options.RepoName <- r
-                                options.RepoOwner <- user
-                                options.CloneAddr <- uri.ToString ()
-                                options.Issues <- Some true
-                                options.Labels <- Some true
-                                options.Lfs <- Some true
-                                options.Milestones <- Some true
-                                options.Releases <- Some true
-                                options.Wiki <- Some true
-                                options.PullRequests <- Some true
-                                // TODO - migrate private status
-                                githubApiToken |> Option.iter (fun t -> options.AuthToken <- t)
+                        match desired.GitHub, desired.Native with
+                        | None, Some native ->
+                            let options = Gitea.CreateRepoOption ()
+                            options.Description <- desired.Description
+                            options.Name <- r
+                            options.Private <- native.Private
+                            options.DefaultBranch <- native.DefaultBranch
 
-                                try
-                                    client.RepoMigrate options |> Async.AwaitTask
-                                with e ->
-                                    raise (AggregateException ($"Error migrating {user}:{r}", e))
-                            | None, None ->
-                                failwith $"You must supply exactly one of Native or GitHub for {user}:{r}."
-                            | Some _, Some _ ->
-                                failwith $"Repo {user}:{r} has both Native and GitHub set; you must set exactly one."
+                            let! result = client.AdminCreateRepo (user, options) |> Async.AwaitTask |> Async.Catch
 
-                        logger.LogInformation ("Created repo {User}: {Repo}", user.ToString (), r.ToString ())
+                            match result with
+                            | Choice2Of2 e -> raise (AggregateException ($"Error creating {user}:{r}", e))
+                            | Choice1Of2 _ -> ()
+
+                            match native.Mirror, githubApiToken with
+                            | None, _ -> ()
+                            | Some mirror, None -> failwith "Cannot push to GitHub mirror with an API key"
+                            | Some mirror, Some token ->
+                                logger.LogInformation ("Setting up push mirror for {User}:{Repo}", user, r)
+                                let options = Gitea.CreatePushMirrorOption ()
+                                options.SyncOnCommit <- Some true
+                                options.RemoteAddress <- (mirror.GitHubAddress : Uri).ToString ()
+                                options.RemoteUsername <- token
+                                options.RemotePassword <- token
+                                options.Interval <- "8h0m0s"
+
+                                let! mirrors = getAllPushMirrors client user r
+
+                                match mirrors |> Array.tryFind (fun m -> m.RemoteAddress = options.RemoteAddress) with
+                                | None ->
+                                    let! _ = client.RepoAddPushMirror (user, r, options) |> Async.AwaitTask
+                                    ()
+                                | Some existing ->
+                                    if existing.SyncOnCommit <> Some true then
+                                        failwith $"sync on commit should have been true for {user}:{r}"
+
+                                ()
+                        | Some github, None ->
+                            let options = Gitea.MigrateRepoOptions ()
+                            options.Description <- desired.Description
+                            options.Mirror <- Some true
+                            options.RepoName <- r
+                            options.RepoOwner <- user
+                            options.CloneAddr <- string<Uri> github.Uri
+                            options.Issues <- Some true
+                            options.Labels <- Some true
+                            options.Lfs <- Some true
+                            options.Milestones <- Some true
+                            options.Releases <- Some true
+                            options.Wiki <- Some true
+                            options.PullRequests <- Some true
+                            // TODO - migrate private status
+                            githubApiToken |> Option.iter (fun t -> options.AuthToken <- t)
+
+                            let! result = client.RepoMigrate options |> Async.AwaitTask |> Async.Catch
+
+                            match result with
+                            | Choice2Of2 e -> raise (AggregateException ($"Error migrating {user}:{r}", e))
+                            | Choice1Of2 _ -> ()
+                        | None, None -> failwith $"You must supply exactly one of Native or GitHub for {user}:{r}."
+                        | Some _, Some _ ->
+                            failwith $"Repo {user}:{r} has both Native and GitHub set; you must set exactly one."
+
+                        logger.LogInformation ("Created repo {User}: {Repo}", user, r)
                         return ()
                     }
-                | err ->
+                | AlignmentError.UnexpectedlyPresent ->
                     async {
-                        logger.LogInformation (
-                            "Unable to reconcile: {User}, {Repo}: {Error}",
-                            user.ToString (),
-                            r.ToString (),
-                            err
+                        logger.LogError (
+                            "For safety, refusing to delete unexpectedly present repo: {User}, {Repo}",
+                            user,
+                            r
                         )
+                    }
+                | AlignmentError.ConfigurationDiffers (desired, actual) ->
+                    match desired.GitHub, actual.GitHub with
+                    | None, Some _
+                    | Some _, None ->
+                        async {
+                            logger.LogError (
+                                "Unable to reconcile the desire to move a repo from Gitea to GitHub or vice versa: {User}, {Repo}.",
+                                user,
+                                r
+                            )
+                        }
+                    | Some desiredGitHub, Some actualGitHub ->
+                        async {
+                            let mutable hasChanged = false
+                            let options = Gitea.EditRepoOption ()
+
+                            if desiredGitHub.Uri <> actualGitHub.Uri then
+                                logger.LogError (
+                                    "Refusing to migrate repo {User}:{Repo} to a different GitHub URL. Desired: {DesiredUrl}. Actual: {ActualUrl}.",
+                                    user,
+                                    r,
+                                    desiredGitHub.Uri,
+                                    actualGitHub.Uri
+                                )
+
+                            if desiredGitHub.MirrorInterval <> actualGitHub.MirrorInterval then
+                                logger.LogDebug ("On {User}:{Repo}, setting {Property}", user, r, "MirrorInterval")
+                                options.MirrorInterval <- desiredGitHub.MirrorInterval
+                                hasChanged <- true
+
+                            if desired.Description <> actual.Description then
+                                logger.LogDebug ("On {User}:{Repo}, setting {Property}", user, r, "Description")
+                                options.Description <- desired.Description
+                                hasChanged <- true
+
+                            if hasChanged then
+                                let! result = client.RepoEdit (user, r, options) |> Async.AwaitTask
+                                return ()
+                        }
+                    | None, None ->
+
+                    async {
+                        let mutable hasChanged = false
+                        let options = Gitea.EditRepoOption ()
+
+                        if desired.Description <> actual.Description then
+                            options.Description <- desired.Description
+                            logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, r, "Description")
+                            hasChanged <- true
+
+                        let desired =
+                            match desired.Native with
+                            | None ->
+                                failwith
+                                    $"Expected a native section of desired for {user}:{r} since there was no GitHub, but got None"
+                            | Some n -> n
+
+                        let actual =
+                            match actual.Native with
+                            | None ->
+                                failwith
+                                    $"Expected a native section of actual for {user}:{r} since there was no GitHub, but got None"
+                            | Some n -> n
+
+                        if desired.Private <> actual.Private then
+                            options.Private <- desired.Private
+                            logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, r, "Private")
+                            hasChanged <- true
+
+                        if desired.AllowRebase <> actual.AllowRebase then
+                            options.AllowRebase <- desired.AllowRebase
+                            logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, r, "AllowRebase")
+                            hasChanged <- true
+
+                        if desired.DefaultBranch <> actual.DefaultBranch then
+                            options.DefaultBranch <- desired.DefaultBranch
+
+                            logger.LogDebug (
+                                "On {User}:{Repo}, will set {Property} property",
+                                user,
+                                r,
+                                "DefaultBranch"
+                            )
+
+                            hasChanged <- true
+
+                        if desired.HasIssues <> actual.HasIssues then
+                            options.HasIssues <- desired.HasIssues
+                            logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, r, "HasIssues")
+                            hasChanged <- true
+
+                        if desired.HasProjects <> actual.HasProjects then
+                            options.HasProjects <- desired.HasProjects
+                            logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, r, "HasProjects")
+                            hasChanged <- true
+
+                        if desired.HasWiki <> actual.HasWiki then
+                            options.HasWiki <- desired.HasWiki
+                            logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, r, "HasWiki")
+                            hasChanged <- true
+
+                        if desired.HasPullRequests <> actual.HasPullRequests then
+                            options.HasPullRequests <- desired.HasPullRequests
+
+                            logger.LogDebug (
+                                "On {User}:{Repo}, will set {Property} property",
+                                user,
+                                r,
+                                "HasPullRequests"
+                            )
+
+                            hasChanged <- true
+
+                        if desired.AllowMergeCommits <> actual.AllowMergeCommits then
+                            options.AllowMergeCommits <- desired.AllowMergeCommits
+
+                            logger.LogDebug (
+                                "On {User}:{Repo}, will set {Property} property",
+                                user,
+                                r,
+                                "AllowMergeCommits"
+                            )
+
+                            hasChanged <- true
+
+                        if desired.AllowRebaseExplicit <> actual.AllowRebaseExplicit then
+                            options.AllowRebaseExplicit <- desired.AllowRebaseExplicit
+
+                            logger.LogDebug (
+                                "On {User}:{Repo}, will set {Property} property",
+                                user,
+                                r,
+                                "AllowRebaseExplicit"
+                            )
+
+                            hasChanged <- true
+
+                        if desired.AllowRebase <> actual.AllowRebase then
+                            options.AllowRebase <- desired.AllowRebase
+                            logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, r, "AllowRebase")
+                            hasChanged <- true
+
+                        if desired.AllowRebaseUpdate <> actual.AllowRebaseUpdate then
+                            options.AllowRebaseUpdate <- desired.AllowRebaseUpdate
+
+                            logger.LogDebug (
+                                "On {User}:{Repo}, will set {Property} property",
+                                user,
+                                r,
+                                "AllowRebaseUpdate"
+                            )
+
+                            hasChanged <- true
+
+                        if desired.AllowSquashMerge <> actual.AllowSquashMerge then
+                            options.AllowSquashMerge <- desired.AllowSquashMerge
+
+                            logger.LogDebug (
+                                "On {User}:{Repo}, will set {Property} property",
+                                user,
+                                r,
+                                "AllowSquashMerge"
+                            )
+
+                            hasChanged <- true
+
+                        if desired.DefaultMergeStyle <> actual.DefaultMergeStyle then
+                            options.DefaultMergeStyle <-
+                                desired.DefaultMergeStyle |> Option.map MergeStyle.toString |> Option.toObj
+
+                            logger.LogDebug (
+                                "On {User}:{Repo}, will set {Property} property",
+                                user,
+                                r,
+                                "DefaultMergeStyle"
+                            )
+
+                            hasChanged <- true
+
+                        if desired.IgnoreWhitespaceConflicts <> actual.IgnoreWhitespaceConflicts then
+                            options.IgnoreWhitespaceConflicts <- desired.IgnoreWhitespaceConflicts
+
+                            logger.LogDebug (
+                                "On {User}:{Repo}, will set {Property} property",
+                                user,
+                                r,
+                                "IgnoreWhitespaceConflicts"
+                            )
+
+                            hasChanged <- true
+
+                        if desired.DeleteBranchAfterMerge <> actual.DeleteBranchAfterMerge then
+                            options.DefaultDeleteBranchAfterMerge <- desired.DeleteBranchAfterMerge
+
+                            logger.LogDebug (
+                                "On {User}:{Repo}, will set {Property} property",
+                                user,
+                                r,
+                                "DeleteBranchAfterMerge"
+                            )
+
+                            hasChanged <- true
+
+                        do!
+                            if hasChanged then
+                                logger.LogInformation ("Editing repo {User}:{Repo}", user, r)
+                                client.RepoEdit (user, r, options) |> Async.AwaitTask |> Async.Ignore
+                            else
+                                async.Return ()
+
+                        do!
+                            match desired.Mirror, actual.Mirror with
+                            | None, None -> async.Return ()
+                            | None, Some m ->
+                                async {
+                                    logger.LogError ("Refusing to delete push mirror for {User}:{Repo}", user, r)
+                                }
+                            | Some desired, None ->
+                                match githubApiToken with
+                                | None ->
+                                    async {
+                                        logger.LogCritical (
+                                            "Cannot add push mirror for {User}:{Repo} due to lack of GitHub API token",
+                                            user,
+                                            r
+                                        )
+                                    }
+                                | Some token ->
+                                    async {
+                                        logger.LogInformation ("Setting up push mirror on {User}:{Repo}", user, r)
+                                        let options = Gitea.CreatePushMirrorOption ()
+                                        options.SyncOnCommit <- Some true
+                                        options.RemoteAddress <- (desired.GitHubAddress : Uri).ToString ()
+                                        options.RemoteUsername <- token
+                                        options.RemotePassword <- token
+                                        options.Interval <- "8h0m0s"
+                                        let! _ = client.RepoAddPushMirror (user, r, options) |> Async.AwaitTask
+                                        return ()
+                                    }
+                            | Some desired, Some actual ->
+                                if desired <> actual then
+                                    async { logger.LogCritical ("Push mirror on {User}:{Repo} differs.", user, r) }
+                                else
+                                    async.Return ()
                     }
             )
         )
@@ -213,6 +494,7 @@ module Gitea =
             match err with
             | AlignmentError.DoesNotExist desired ->
                 async {
+                    log.LogDebug ("Creating {User}", user)
                     let rand = Random ()
 
                     let pwd =
@@ -271,9 +553,15 @@ module Gitea =
 
                             for update in updates do
                                 match update with
-                                | UserInfoUpdate.Admin (desired, _) -> body.Admin <- desired
-                                | UserInfoUpdate.Email (desired, _) -> body.Email <- desired
-                                | UserInfoUpdate.Visibility (desired, _) -> body.Visibility <- desired
+                                | UserInfoUpdate.Admin (desired, _) ->
+                                    log.LogDebug ("Editing {User}, property {Property}", user, "Admin")
+                                    body.Admin <- desired
+                                | UserInfoUpdate.Email (desired, _) ->
+                                    log.LogDebug ("Editing {User}, property {Property}", user, "Email")
+                                    body.Email <- desired
+                                | UserInfoUpdate.Visibility (desired, _) ->
+                                    log.LogDebug ("Editing {User}, property {Property}", user, "Visibility")
+                                    body.Visibility <- desired
                                 | UserInfoUpdate.Website (desired, actual) ->
                                     // Per https://github.com/go-gitea/gitea/issues/17126,
                                     // the website parameter can't currently be edited.
