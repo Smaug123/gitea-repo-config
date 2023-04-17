@@ -24,6 +24,16 @@ type MergeStyle =
         | Rebase -> "rebase"
         | Squash -> "squash"
 
+type PushMirror =
+    {
+        GitHubAddress : Uri
+    }
+
+    static member OfSerialised (s : SerialisedPushMirror) : PushMirror =
+        {
+            GitHubAddress = Uri s.GitHubAddress
+        }
+
 type NativeRepo =
     {
         DefaultBranch : string
@@ -40,7 +50,50 @@ type NativeRepo =
         AllowRebase : bool option
         AllowRebaseExplicit : bool option
         AllowMergeCommits : bool option
+        Mirror : PushMirror option
     }
+
+    static member Default : NativeRepo =
+        {
+            DefaultBranch = "main"
+            Private = Some false
+            IgnoreWhitespaceConflicts = Some true
+            HasPullRequests = Some true
+            HasProjects = Some false
+            HasIssues = Some true
+            HasWiki = Some false
+            DefaultMergeStyle = Some MergeStyle.Rebase
+            DeleteBranchAfterMerge = Some true
+            AllowSquashMerge = Some true
+            AllowRebaseUpdate = Some false
+            AllowRebase = Some false
+            AllowRebaseExplicit = Some false
+            AllowMergeCommits = Some false
+            Mirror = None
+        }
+
+    member this.OverrideDefaults () =
+        {
+            DefaultBranch = this.DefaultBranch
+            Private = this.Private |> Option.orElse NativeRepo.Default.Private
+            IgnoreWhitespaceConflicts =
+                this.IgnoreWhitespaceConflicts
+                |> Option.orElse NativeRepo.Default.IgnoreWhitespaceConflicts
+            HasPullRequests = this.HasPullRequests |> Option.orElse NativeRepo.Default.HasPullRequests
+            HasProjects = this.HasProjects |> Option.orElse NativeRepo.Default.HasProjects
+            HasIssues = this.HasIssues |> Option.orElse NativeRepo.Default.HasIssues
+            HasWiki = this.HasWiki |> Option.orElse NativeRepo.Default.HasWiki
+            DefaultMergeStyle = this.DefaultMergeStyle |> Option.orElse NativeRepo.Default.DefaultMergeStyle
+            DeleteBranchAfterMerge =
+                this.DeleteBranchAfterMerge
+                |> Option.orElse NativeRepo.Default.DeleteBranchAfterMerge
+            AllowSquashMerge = this.AllowSquashMerge |> Option.orElse NativeRepo.Default.AllowSquashMerge
+            AllowRebaseUpdate = this.AllowRebaseUpdate |> Option.orElse NativeRepo.Default.AllowRebaseUpdate
+            AllowRebase = this.AllowRebase |> Option.orElse NativeRepo.Default.AllowRebase
+            AllowRebaseExplicit = this.AllowRebaseExplicit |> Option.orElse NativeRepo.Default.AllowRebaseExplicit
+            AllowMergeCommits = this.AllowMergeCommits |> Option.orElse NativeRepo.Default.AllowMergeCommits
+            Mirror = this.Mirror
+        }
 
     static member internal OfSerialised (s : SerialisedNativeRepo) =
         {
@@ -58,6 +111,7 @@ type NativeRepo =
             AllowRebase = s.AllowRebase |> Option.ofNullable
             AllowRebaseExplicit = s.AllowRebaseExplicit |> Option.ofNullable
             AllowMergeCommits = s.AllowMergeCommits |> Option.ofNullable
+            Mirror = s.Mirror |> Option.ofNullable |> Option.map PushMirror.OfSerialised
         }
 
 type GitHubRepo =
@@ -85,40 +139,65 @@ type Repo =
         Native : NativeRepo option
     }
 
-    static member Render (u : Gitea.Repository) : Repo =
-        {
-            Description = u.Description
-            GitHub =
-                if String.IsNullOrEmpty u.OriginalUrl then
-                    None
-                else
+    member this.OverrideDefaults () =
+        { this with
+            Native = this.Native |> Option.map (fun s -> s.OverrideDefaults ())
+        }
+
+    static member Render (client : Gitea.Client) (u : Gitea.Repository) : Repo Async =
+        if not (String.IsNullOrEmpty u.OriginalUrl) then
+            {
+                Description = u.Description
+                GitHub =
                     {
                         Uri = Uri u.OriginalUrl
                         MirrorInterval = u.MirrorInterval
                     }
                     |> Some
-            Native =
-                if String.IsNullOrEmpty u.OriginalUrl then
+                Native = None
+            }
+            |> async.Return
+        else
+            async {
+                let! mirror = getAllPushMirrors client u.Owner.LoginName u.FullName
+
+                let mirror =
+                    if mirror.Length = 0 then None
+                    elif mirror.Length = 1 then Some mirror.[0]
+                    else failwith "Multiple mirrors not supported yet"
+
+                return
+
                     {
-                        Private = u.Private
-                        DefaultBranch = u.DefaultBranch
-                        IgnoreWhitespaceConflicts = u.IgnoreWhitespaceConflicts
-                        HasPullRequests = u.HasProjects
-                        HasProjects = u.HasProjects
-                        HasIssues = u.HasIssues
-                        HasWiki = u.HasWiki
-                        DefaultMergeStyle = u.DefaultMergeStyle |> Option.ofObj |> Option.map MergeStyle.Parse
-                        DeleteBranchAfterMerge = u.DefaultDeleteBranchAfterMerge
-                        AllowSquashMerge = u.AllowSquashMerge
-                        AllowRebaseUpdate = u.AllowRebaseUpdate
-                        AllowRebase = u.AllowRebase
-                        AllowRebaseExplicit = u.AllowRebaseExplicit
-                        AllowMergeCommits = u.AllowMergeCommits
+                        Description = u.Description
+                        GitHub = None
+                        Native =
+                            {
+                                Private = u.Private
+                                DefaultBranch = u.DefaultBranch
+                                IgnoreWhitespaceConflicts = u.IgnoreWhitespaceConflicts
+                                HasPullRequests = u.HasPullRequests
+                                HasProjects = u.HasProjects
+                                HasIssues = u.HasIssues
+                                HasWiki = u.HasWiki
+                                DefaultMergeStyle = u.DefaultMergeStyle |> Option.ofObj |> Option.map MergeStyle.Parse
+                                DeleteBranchAfterMerge = u.DefaultDeleteBranchAfterMerge
+                                AllowSquashMerge = u.AllowSquashMerge
+                                AllowRebaseUpdate = u.AllowRebaseUpdate
+                                AllowRebase = u.AllowRebase
+                                AllowRebaseExplicit = u.AllowRebaseExplicit
+                                AllowMergeCommits = u.AllowMergeCommits
+                                Mirror =
+                                    mirror
+                                    |> Option.map (fun m ->
+                                        {
+                                            GitHubAddress = Uri m.RemoteAddress
+                                        }
+                                    )
+                            }
+                            |> Some
                     }
-                    |> Some
-                else
-                    None
-        }
+            }
 
     static member internal OfSerialised (s : SerialisedRepo) =
         {

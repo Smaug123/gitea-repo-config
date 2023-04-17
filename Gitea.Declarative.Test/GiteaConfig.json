@@ -32,6 +32,16 @@
           "defaultBranch": "main",
           "private": false
         }
+      },
+      "new-repo-mirrored": {
+        "description": "A repo that's created directly on this Gitea and mirrored to GitHub",
+        "native": {
+          "defaultBranch": "main",
+          "private": false,
+          "mirror": {
+            "gitHubAddress": "https://github.com/MyName/repo-name-3"
+          }
+        }
       }
     }
   }

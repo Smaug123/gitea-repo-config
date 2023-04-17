@@ -11,6 +11,15 @@ type SerialisedMergeStyle = string
 [<Struct>]
 [<CLIMutable>]
 [<Description "Information about a repo that is to be created on Gitea without syncing from GitHub.">]
+type SerialisedPushMirror =
+    {
+        GitHubAddress : string
+    }
+
+[<RequireQualifiedAccess>]
+[<Struct>]
+[<CLIMutable>]
+[<Description "Information about a repo that is to be created on Gitea without syncing from GitHub.">]
 type internal SerialisedNativeRepo =
     {
         [<Description "The default branch name for this repository, e.g. 'main'">]
@@ -55,6 +64,9 @@ type internal SerialisedNativeRepo =
         [<JsonProperty(Required = Required.DisallowNull)>]
         [<Description "either `true` to allow merging pull requests with a merge commit, or `false` to prevent merging pull requests with merge commits.">]
         AllowMergeCommits : Nullable<bool>
+        [<JsonProperty(Required = Required.DisallowNull)>]
+        [<Description "Configure a GitHub push mirror to sync this repo to">]
+        Mirror : Nullable<SerialisedPushMirror>
     }
 
 [<Struct>]
