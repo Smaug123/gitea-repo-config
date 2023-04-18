@@ -224,6 +224,9 @@
       "properties": {
         "branchName": {
           "type": "string"
+        },
+        "blockOnOutdatedBranch": {
+          "type": "boolean"
         }
       }
     }
