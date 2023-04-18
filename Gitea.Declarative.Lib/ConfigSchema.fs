@@ -34,6 +34,18 @@ type PushMirror =
             GitHubAddress = Uri s.GitHubAddress
         }
 
+type ProtectedBranch =
+    {
+        BranchName : string
+        BlockOnOutdatedBranch : bool option
+    }
+
+    static member OfSerialised (s : SerialisedProtectedBranch) : ProtectedBranch =
+        {
+            BranchName = s.BranchName
+            BlockOnOutdatedBranch = Option.ofNullable s.BlockOnOutdatedBranch
+        }
+
 type NativeRepo =
     {
         DefaultBranch : string
@@ -51,6 +63,7 @@ type NativeRepo =
         AllowRebaseExplicit : bool option
         AllowMergeCommits : bool option
         Mirror : PushMirror option
+        ProtectedBranches : ProtectedBranch Set
     }
 
     static member Default : NativeRepo =
@@ -70,6 +83,7 @@ type NativeRepo =
             AllowRebaseExplicit = Some false
             AllowMergeCommits = Some false
             Mirror = None
+            ProtectedBranches = Set.empty
         }
 
     member this.OverrideDefaults () =
@@ -93,6 +107,7 @@ type NativeRepo =
             AllowRebaseExplicit = this.AllowRebaseExplicit |> Option.orElse NativeRepo.Default.AllowRebaseExplicit
             AllowMergeCommits = this.AllowMergeCommits |> Option.orElse NativeRepo.Default.AllowMergeCommits
             Mirror = this.Mirror
+            ProtectedBranches = this.ProtectedBranches // TODO should this replace null with empty?
         }
 
     static member internal OfSerialised (s : SerialisedNativeRepo) =
@@ -112,6 +127,10 @@ type NativeRepo =
             AllowRebaseExplicit = s.AllowRebaseExplicit |> Option.ofNullable
             AllowMergeCommits = s.AllowMergeCommits |> Option.ofNullable
             Mirror = s.Mirror |> Option.ofNullable |> Option.map PushMirror.OfSerialised
+            ProtectedBranches =
+                match s.ProtectedBranches with
+                | null -> Set.empty
+                | a -> a |> Seq.map ProtectedBranch.OfSerialised |> Set.ofSeq
         }
 
 type GitHubRepo =
@@ -145,7 +164,7 @@ type Repo =
         }
 
     static member Render (client : Gitea.Client) (u : Gitea.Repository) : Repo Async =
-        if not (String.IsNullOrEmpty u.OriginalUrl) then
+        if u.Mirror = Some true && not (String.IsNullOrEmpty u.OriginalUrl) then
             {
                 Description = u.Description
                 GitHub =
@@ -165,6 +184,10 @@ type Repo =
                     if mirror.Length = 0 then None
                     elif mirror.Length = 1 then Some mirror.[0]
                     else failwith "Multiple mirrors not supported yet"
+
+                let! branchProtections =
+                    client.RepoListBranchProtection (u.Owner.LoginName, u.FullName)
+                    |> Async.AwaitTask
 
                 return
 
@@ -194,6 +217,15 @@ type Repo =
                                             GitHubAddress = Uri m.RemoteAddress
                                         }
                                     )
+                                ProtectedBranches =
+                                    branchProtections
+                                    |> Seq.map (fun bp ->
+                                        {
+                                            BranchName = bp.BranchName
+                                            BlockOnOutdatedBranch = bp.BlockOnOutdatedBranch
+                                        }
+                                    )
+                                    |> Set.ofSeq
                             }
                             |> Some
                     }

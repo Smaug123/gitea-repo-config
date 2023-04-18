@@ -188,6 +188,16 @@
               "$ref": "#/definitions/SerialisedPushMirror"
             }
           ]
+        },
+        "protectedBranches": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Protected branch configuration",
+          "items": {
+            "$ref": "#/definitions/SerialisedProtectedBranch"
+          }
         }
       }
     },
@@ -195,12 +205,28 @@
       "type": "object",
       "description": "Information about a repo that is to be created on Gitea without syncing from GitHub.",
       "additionalProperties": false,
+      "required": [
+        "gitHubAddress"
+      ],
       "properties": {
         "gitHubAddress": {
-          "type": [
-            "null",
-            "string"
-          ]
+          "type": "string"
+        }
+      }
+    },
+    "SerialisedProtectedBranch": {
+      "type": "object",
+      "description": "Information about a repo that is to be created on Gitea without syncing from GitHub.",
+      "additionalProperties": false,
+      "required": [
+        "branchName"
+      ],
+      "properties": {
+        "branchName": {
+          "type": "string"
+        },
+        "blockOnOutdatedBranch": {
+          "type": "boolean"
         }
       }
     }

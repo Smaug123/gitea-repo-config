@@ -13,7 +13,20 @@ type SerialisedMergeStyle = string
 [<Description "Information about a repo that is to be created on Gitea without syncing from GitHub.">]
 type SerialisedPushMirror =
     {
+        [<JsonProperty(Required = Required.Always)>]
         GitHubAddress : string
+    }
+
+[<RequireQualifiedAccess>]
+[<Struct>]
+[<CLIMutable>]
+[<Description "Information about a repo that is to be created on Gitea without syncing from GitHub.">]
+type SerialisedProtectedBranch =
+    {
+        [<JsonProperty(Required = Required.Always)>]
+        BranchName : string
+        [<JsonProperty(Required = Required.DisallowNull)>]
+        BlockOnOutdatedBranch : Nullable<bool>
     }
 
 [<RequireQualifiedAccess>]
@@ -67,6 +80,9 @@ type internal SerialisedNativeRepo =
         [<JsonProperty(Required = Required.DisallowNull)>]
         [<Description "Configure a GitHub push mirror to sync this repo to">]
         Mirror : Nullable<SerialisedPushMirror>
+        [<JsonProperty(Required = Required.Default)>]
+        [<Description "Protected branch configuration">]
+        ProtectedBranches : SerialisedProtectedBranch array
     }
 
 [<Struct>]

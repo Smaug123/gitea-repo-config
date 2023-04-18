@@ -232,11 +232,18 @@ module Gitea =
                     }
                 | AlignmentError.ConfigurationDiffers (desired, actual) ->
                     match desired.GitHub, actual.GitHub with
-                    | None, Some _
+                    | None, Some gitHub ->
+                        async {
+                            logger.LogCritical (
+                                "Unable to reconcile the desire to move a repo from GitHub-based to Gitea-based. This feature is not exposed on the Gitea API. You must manually convert the following repo to a normal repository first: {User}:{Repo}.",
+                                user,
+                                r
+                            )
+                        }
                     | Some _, None ->
                         async {
                             logger.LogError (
-                                "Unable to reconcile the desire to move a repo from Gitea to GitHub or vice versa: {User}, {Repo}.",
+                                "Unable to reconcile the desire to move a repo from Gitea-based to GitHub-based: {User}:{Repo}.",
                                 user,
                                 r
                             )
@@ -474,6 +481,86 @@ module Gitea =
                                     async { logger.LogCritical ("Push mirror on {User}:{Repo} differs.", user, r) }
                                 else
                                     async.Return ()
+
+                        do!
+                            // TODO: lift this out to a function and then put it into the new-repo flow too
+                            let extraActualProtected =
+                                Set.difference actual.ProtectedBranches desired.ProtectedBranches
+
+                            let extraDesiredProtected =
+                                Set.difference desired.ProtectedBranches actual.ProtectedBranches
+
+                            Seq.append
+                                (Seq.map Choice1Of2 extraActualProtected)
+                                (Seq.map Choice2Of2 extraDesiredProtected)
+                            |> Seq.groupBy (fun b ->
+                                match b with
+                                | Choice1Of2 b -> b.BranchName
+                                | Choice2Of2 b -> b.BranchName
+                            )
+                            |> Seq.map (fun (key, values) ->
+                                match Seq.toList values with
+                                | [] -> failwith "can't have appeared no times in a groupBy"
+                                | [ Choice1Of2 x ] ->
+                                    // This is an extra rule; delete it
+                                    async {
+                                        logger.LogInformation (
+                                            "Deleting branch protection rule {BranchProtection} on {User}:{Repo}",
+                                            x.BranchName,
+                                            user,
+                                            r
+                                        )
+
+                                        let! _ =
+                                            client.RepoDeleteBranchProtection (user, r, x.BranchName)
+                                            |> Async.AwaitTask
+
+                                        return ()
+                                    }
+                                | [ Choice2Of2 y ] ->
+                                    // This is an absent rule; add it
+                                    async {
+                                        logger.LogInformation (
+                                            "Creating branch protection rule {BranchProtection} on {User}:{Repo}",
+                                            y.BranchName,
+                                            user,
+                                            r
+                                        )
+
+                                        let s = Gitea.CreateBranchProtectionOption ()
+                                        s.BranchName <- y.BranchName
+                                        s.RuleName <- y.BranchName
+                                        s.BlockOnOutdatedBranch <- y.BlockOnOutdatedBranch
+                                        let! _ = client.RepoCreateBranchProtection (user, r, s) |> Async.AwaitTask
+                                        return ()
+                                    }
+                                | [ Choice1Of2 x ; Choice2Of2 y ]
+                                | [ Choice2Of2 y ; Choice1Of2 x ] ->
+                                    // Need to reconcile the two; the Choice2Of2 is what we want to keep
+                                    async {
+                                        logger.LogInformation (
+                                            "Reconciling branch protection rule {BranchProtection} on {User}:{Repo}",
+                                            y.BranchName,
+                                            user,
+                                            r
+                                        )
+
+                                        let s = Gitea.EditBranchProtectionOption ()
+                                        s.BlockOnOutdatedBranch <- y.BlockOnOutdatedBranch
+
+                                        let! _ =
+                                            client.RepoEditBranchProtection (user, r, y.BranchName, s)
+                                            |> Async.AwaitTask
+
+                                        return ()
+                                    }
+                                | [ Choice1Of2 _ ; Choice1Of2 _ ]
+                                | [ Choice2Of2 _ ; Choice2Of2 _ ] ->
+                                    failwith "can't have the same choice appearing twice"
+                                | _ :: _ :: _ :: _ -> failwith "can't have appeared three times"
+                            )
+                            |> Async.Parallel
+                            |> Async.map (Array.iter id)
                     }
             )
         )
