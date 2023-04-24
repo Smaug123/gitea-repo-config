@@ -41,7 +41,7 @@
         };
     in {
       packages = {
-        fantomas = dotnetTool "fantomas" "5.2.0-alpha-008" "sha256-1egphbWXTjs2I5aFaWibFDKgu3llP1o32o1X5vab6v4=";
+        fantomas = dotnetTool "fantomas" "6.0.1" "sha256-TNAkurZ0NYI2Tkr99ms9MdAMLLKCQzemx5zHo/hDOTo=";
         fetchDeps = let
           flags = [];
           runtimeIds = ["win-x64"] ++ map (system: pkgs.dotnetCorePackages.systemToDotnetRid system) dotnet-sdk.meta.platforms;

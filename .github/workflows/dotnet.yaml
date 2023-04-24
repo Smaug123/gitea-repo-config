@@ -62,7 +62,7 @@ jobs:
           extra_nix_config: |
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
       - name: Run Fantomas
-        run: nix run .#fantomas -- -r --check .
+        run: nix run .#fantomas -- --check .
 
   check-nix-format:
     runs-on: ubuntu-latest
