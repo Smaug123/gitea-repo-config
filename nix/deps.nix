@@ -178,8 +178,8 @@
   })
   (fetchNuGet {
     pname = "Nerdbank.GitVersioning";
-    version = "3.5.119";
-    sha256 = "0g7a812lfa5y140pinpy5q3nl3xcarydflpxzzcyxxk4hjjlawy0";
+    version = "3.6.128";
+    sha256 = "1ip5qlhssfhx7q6gjnx7syvwc9m1bf4ikd17z5cbn9l257465hrj";
   })
   (fetchNuGet {
     pname = "NETStandard.Library";
