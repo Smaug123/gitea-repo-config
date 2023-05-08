@@ -173,8 +173,8 @@
   })
   (fetchNuGet {
     pname = "Namotion.Reflection";
-    version = "2.1.0";
-    sha256 = "0ql10m9i5qm3cmcw6abk6wvm823vc4s8wzx351yffd6syd50mkb7";
+    version = "2.1.2";
+    sha256 = "17hg2vbd1lv8d1igl978a9ndsnkclb32ljrkq4qp0vf796n8dcy8";
   })
   (fetchNuGet {
     pname = "Nerdbank.GitVersioning";
@@ -208,8 +208,8 @@
   })
   (fetchNuGet {
     pname = "NJsonSchema";
-    version = "10.8.0";
-    sha256 = "1mzqskv4vx5mzq0rykjwgc323afs2km0hslr2xr6r9fz9qygd28h";
+    version = "10.9.0";
+    sha256 = "151vgcx7vl3mqjl5jdqz4vvd0fyrl90cgj1r6a535xr43ycxj4zd";
   })
   (fetchNuGet {
     pname = "NuGet.Frameworks";
