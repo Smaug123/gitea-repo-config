@@ -28,8 +28,8 @@
   })
   (fetchNuGet {
     pname = "FsUnit";
-    version = "5.2.0";
-    sha256 = "0l4n453slnynp8x372618yx6gjwywfai1dyl4m5iyw87d0iam7q3";
+    version = "5.3.0";
+    sha256 = "0fqjada5fysqfhqsxj9dxc849dckfn1256ra9yafx9w7npihaffa";
   })
   (fetchNuGet {
     pname = "Microsoft.Bcl.AsyncInterfaces";
