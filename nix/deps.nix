@@ -8,8 +8,8 @@
   })
   (fetchNuGet {
     pname = "coverlet.collector";
-    version = "3.2.0";
-    sha256 = "1qxpv8v10p5wn162lzdm193gdl6c5f81zadj8h889dprlnj3g8yr";
+    version = "6.0.0";
+    sha256 = "12j34vrkmph8lspbafnqmfnj2qvysz1jcrks2khw798s6dwv0j90";
   })
   (fetchNuGet {
     pname = "FSharp.Core";
