@@ -10,11 +10,3 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-
-  - package-ecosystem: "nuget"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    ignore:
-      # Target the lowest version of FSharp.Core, for max compat
-      - dependency-name: "FSharp.Core"
