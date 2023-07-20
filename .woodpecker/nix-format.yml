@@ -1,0 +1,6 @@
+pipeline:
+    build:
+        image: nixos/nix:2.15.0
+        commands:
+            - "nix develop --command alejandra --check ."
+

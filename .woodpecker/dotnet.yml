@@ -1,0 +1,10 @@
+matrix:
+    config: ["Release", "Debug"]
+
+pipeline:
+    build:
+        image: mcr.microsoft.com/dotnet/sdk:7.0
+        commands:
+            - dotnet restore
+            - dotnet build --no-restore --configuration ${config}
+            - dotnet test --no-build --verbosity normal --configuration ${config}

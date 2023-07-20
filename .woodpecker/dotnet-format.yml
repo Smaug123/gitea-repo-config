@@ -1,0 +1,5 @@
+pipeline:
+    check-dotnet-format:
+        image: nixos/nix:2.15.0
+        commands:
+            - "nix run .#fantomas -- --check ."

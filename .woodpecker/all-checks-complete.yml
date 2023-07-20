@@ -1,0 +1,12 @@
+pipeline:
+  deploy:
+    image: ubuntu-latest
+    commands:
+      - echo "All required checks complete"
+
+depends_on:
+  - dotnet-format
+  - nix-format
+  - dotnet
+  - nix-build
+  - link-check
