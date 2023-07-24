@@ -227,10 +227,9 @@ type Repo =
                                             BlockOnOutdatedBranch = bp.BlockOnOutdatedBranch
                                             RequiredStatusChecks =
                                                 if bp.EnableStatusCheck = Some true then
-                                                    bp.StatusCheckContexts
-                                                    |> List.ofArray
-                                                    |> Some
-                                                else None
+                                                    bp.StatusCheckContexts |> List.ofArray |> Some
+                                                else
+                                                    None
                                         }
                                     )
                                     |> Set.ofSeq

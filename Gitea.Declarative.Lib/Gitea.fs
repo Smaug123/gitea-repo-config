@@ -549,9 +549,9 @@ module Gitea =
 
                                         let s = Gitea.EditBranchProtectionOption ()
                                         s.BlockOnOutdatedBranch <- y.BlockOnOutdatedBranch
+
                                         match y.RequiredStatusChecks with
-                                        | None ->
-                                            s.EnableStatusCheck <- Some false
+                                        | None -> s.EnableStatusCheck <- Some false
                                         | Some checks ->
                                             s.EnableStatusCheck <- Some true
                                             s.StatusCheckContexts <- Array.ofList checks
