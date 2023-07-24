@@ -38,12 +38,14 @@ type ProtectedBranch =
     {
         BranchName : string
         BlockOnOutdatedBranch : bool option
+        RequiredStatusChecks : string list option
     }
 
     static member OfSerialised (s : SerialisedProtectedBranch) : ProtectedBranch =
         {
             BranchName = s.BranchName
             BlockOnOutdatedBranch = Option.ofNullable s.BlockOnOutdatedBranch
+            RequiredStatusChecks = Option.ofObj s.RequiredStatusChecks |> Option.map List.ofArray
         }
 
 type NativeRepo =
@@ -185,7 +187,7 @@ type Repo =
                     elif mirror.Length = 1 then Some mirror.[0]
                     else failwith "Multiple mirrors not supported yet"
 
-                let! branchProtections =
+                let! (branchProtections : Gitea.BranchProtection[]) =
                     client.RepoListBranchProtection (u.Owner.LoginName, u.FullName)
                     |> Async.AwaitTask
 
@@ -223,6 +225,11 @@ type Repo =
                                         {
                                             BranchName = bp.BranchName
                                             BlockOnOutdatedBranch = bp.BlockOnOutdatedBranch
+                                            RequiredStatusChecks =
+                                                if bp.EnableStatusCheck = Some true then
+                                                    bp.StatusCheckContexts |> List.ofArray |> Some
+                                                else
+                                                    None
                                         }
                                     )
                                     |> Set.ofSeq

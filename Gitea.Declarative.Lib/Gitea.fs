@@ -484,6 +484,8 @@ module Gitea =
 
                         do!
                             // TODO: lift this out to a function and then put it into the new-repo flow too
+                            // The current behaviour is kind of desirable, because it gives you a chance to push to
+                            // the protected branch before it becomes protected.
                             let extraActualProtected =
                                 Set.difference actual.ProtectedBranches desired.ProtectedBranches
 
@@ -547,6 +549,12 @@ module Gitea =
 
                                         let s = Gitea.EditBranchProtectionOption ()
                                         s.BlockOnOutdatedBranch <- y.BlockOnOutdatedBranch
+
+                                        match y.RequiredStatusChecks with
+                                        | None -> s.EnableStatusCheck <- Some false
+                                        | Some checks ->
+                                            s.EnableStatusCheck <- Some true
+                                            s.StatusCheckContexts <- Array.ofList checks
 
                                         let! _ =
                                             client.RepoEditBranchProtection (user, r, y.BranchName, s)

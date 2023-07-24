@@ -227,6 +227,16 @@
         },
         "blockOnOutdatedBranch": {
           "type": "boolean"
+        },
+        "requiredStatusChecks": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "A list of status check patterns; merge into this branch will be blocked unless all these checks have run and passed. (Probably go with alphanumeric strings, I can't find any docs.)",
+          "items": {
+            "type": "string"
+          }
         }
       }
     }
