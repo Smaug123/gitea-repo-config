@@ -66,6 +66,7 @@ type NativeRepo =
         AllowMergeCommits : bool option
         Mirror : PushMirror option
         ProtectedBranches : ProtectedBranch Set
+        Collaborators : string Set
     }
 
     static member Default : NativeRepo =
@@ -86,6 +87,7 @@ type NativeRepo =
             AllowMergeCommits = Some false
             Mirror = None
             ProtectedBranches = Set.empty
+            Collaborators = Set.empty
         }
 
     member this.OverrideDefaults () =
@@ -110,6 +112,7 @@ type NativeRepo =
             AllowMergeCommits = this.AllowMergeCommits |> Option.orElse NativeRepo.Default.AllowMergeCommits
             Mirror = this.Mirror
             ProtectedBranches = this.ProtectedBranches // TODO should this replace null with empty?
+            Collaborators = this.Collaborators
         }
 
     static member internal OfSerialised (s : SerialisedNativeRepo) =
@@ -133,6 +136,10 @@ type NativeRepo =
                 match s.ProtectedBranches with
                 | null -> Set.empty
                 | a -> a |> Seq.map ProtectedBranch.OfSerialised |> Set.ofSeq
+            Collaborators =
+                match s.Collaborators with
+                | null -> Set.empty
+                | l -> Set.ofArray l
         }
 
 type GitHubRepo =
@@ -180,7 +187,10 @@ type Repo =
             |> async.Return
         else
             async {
-                let! mirror = getAllPushMirrors client u.Owner.LoginName u.FullName
+                let! mirror =
+                    getAllPaginated (fun page count ->
+                        client.RepoListPushMirrors (u.Owner.LoginName, u.FullName, Some page, Some count)
+                    )
 
                 let mirror =
                     if mirror.Length = 0 then None
@@ -190,6 +200,11 @@ type Repo =
                 let! (branchProtections : Gitea.BranchProtection[]) =
                     client.RepoListBranchProtection (u.Owner.LoginName, u.FullName)
                     |> Async.AwaitTask
+
+                let! (collaborators : Gitea.User[]) =
+                    getAllPaginated (fun page count ->
+                        client.RepoListCollaborators (u.Owner.LoginName, u.FullName, Some page, Some count)
+                    )
 
                 return
 
@@ -233,6 +248,7 @@ type Repo =
                                         }
                                     )
                                     |> Set.ofSeq
+                                Collaborators = collaborators |> Seq.map (fun user -> user.LoginName) |> Set.ofSeq
                             }
                             |> Some
                     }
