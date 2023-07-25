@@ -86,6 +86,9 @@ type internal SerialisedNativeRepo =
         [<JsonProperty(Required = Required.Default)>]
         [<Description "Protected branch configuration">]
         ProtectedBranches : SerialisedProtectedBranch array
+        [<JsonProperty(Required = Required.Default)>]
+        [<Description "Usernames on this Gitea instance who are collaborators on this repo">]
+        Collaborators : string array
     }
 
 [<Struct>]

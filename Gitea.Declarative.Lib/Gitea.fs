@@ -182,7 +182,10 @@ module Gitea =
                                 options.RemotePassword <- token
                                 options.Interval <- "8h0m0s"
 
-                                let! mirrors = getAllPushMirrors client user r
+                                let! mirrors =
+                                    getAllPaginated (fun page count ->
+                                        client.RepoListPushMirrors (user, r, Some page, Some count)
+                                    )
 
                                 match mirrors |> Array.tryFind (fun m -> m.RemoteAddress = options.RemoteAddress) with
                                 | None ->
@@ -481,6 +484,46 @@ module Gitea =
                                     async { logger.LogCritical ("Push mirror on {User}:{Repo} differs.", user, r) }
                                 else
                                     async.Return ()
+
+                        do!
+                            let desiredButNotPresent = Set.difference desired.Collaborators actual.Collaborators
+                            let presentButNotDesired = Set.difference actual.Collaborators desired.Collaborators
+
+                            [|
+                                desiredButNotPresent
+                                |> Seq.map (fun desired ->
+                                    async {
+                                        logger.LogTrace (
+                                            "Setting collaborator {Collaborator} on repo {User}:{Repo}",
+                                            desired,
+                                            user,
+                                            r
+                                        )
+
+                                        do! client.RepoAddCollaborator (user, r, desired) |> Async.AwaitTask
+                                    }
+                                )
+                                |> Async.Parallel
+                                |> Async.map (Array.iter id)
+
+                                presentButNotDesired
+                                |> Seq.map (fun desired ->
+                                    async {
+                                        logger.LogTrace (
+                                            "Deleting collaborator {Collaborator} on repo {User}:{Repo}",
+                                            desired,
+                                            user,
+                                            r
+                                        )
+
+                                        do! client.RepoDeleteCollaborator (user, r, desired) |> Async.AwaitTask
+                                    }
+                                )
+                                |> Async.Parallel
+                                |> Async.map (Array.iter id)
+                            |]
+                            |> Async.Parallel
+                            |> Async.map (Array.iter id)
 
                         do!
                             // TODO: lift this out to a function and then put it into the new-repo flow too

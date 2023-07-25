@@ -198,6 +198,16 @@
           "items": {
             "$ref": "#/definitions/SerialisedProtectedBranch"
           }
+        },
+        "collaborators": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Usernames on this Gitea instance who are collaborators on this repo",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
