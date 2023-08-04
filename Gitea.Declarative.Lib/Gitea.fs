@@ -138,6 +138,359 @@ module Gitea =
                     Error (Map.ofArray errors)
         }
 
+    let reconcileDifferingConfiguration
+        (logger : ILogger)
+        (client : Gitea.Client)
+        (githubApiToken : string option)
+        (user : string)
+        (repoName : string)
+        (desired : Repo)
+        (actual : Repo)
+        =
+        match desired.GitHub, actual.GitHub with
+        | None, Some gitHub ->
+            async {
+                logger.LogCritical (
+                    "Unable to reconcile the desire to move a repo from GitHub-based to Gitea-based. This feature is not exposed on the Gitea API. You must manually convert the following repo to a normal repository first: {User}:{Repo}.",
+                    user,
+                    repoName
+                )
+            }
+        | Some _, None ->
+            async {
+                logger.LogError (
+                    "Unable to reconcile the desire to move a repo from Gitea-based to GitHub-based: {User}:{Repo}.",
+                    user,
+                    repoName
+                )
+            }
+        | Some desiredGitHub, Some actualGitHub ->
+            async {
+                let mutable hasChanged = false
+                let options = Gitea.EditRepoOption ()
+
+                if desiredGitHub.Uri <> actualGitHub.Uri then
+                    logger.LogError (
+                        "Refusing to migrate repo {User}:{Repo} to a different GitHub URL. Desired: {DesiredUrl}. Actual: {ActualUrl}.",
+                        user,
+                        repoName,
+                        desiredGitHub.Uri,
+                        actualGitHub.Uri
+                    )
+
+                if desiredGitHub.MirrorInterval <> actualGitHub.MirrorInterval then
+                    logger.LogDebug ("On {User}:{Repo}, setting {Property}", user, repoName, "MirrorInterval")
+                    options.MirrorInterval <- desiredGitHub.MirrorInterval
+                    hasChanged <- true
+
+                if desired.Description <> actual.Description then
+                    logger.LogDebug ("On {User}:{Repo}, setting {Property}", user, repoName, "Description")
+                    options.Description <- desired.Description
+                    hasChanged <- true
+
+                if hasChanged then
+                    let! result = client.RepoEdit (user, repoName, options) |> Async.AwaitTask
+                    return ()
+            }
+        | None, None ->
+
+        async {
+            let mutable hasChanged = false
+            let options = Gitea.EditRepoOption ()
+
+            if desired.Description <> actual.Description then
+                options.Description <- desired.Description
+                logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, repoName, "Description")
+                hasChanged <- true
+
+            let desired =
+                match desired.Native with
+                | None ->
+                    failwith
+                        $"Expected a native section of desired for {user}:{repoName} since there was no GitHub, but got None"
+                | Some n -> n
+
+            let actual =
+                match actual.Native with
+                | None ->
+                    failwith
+                        $"Expected a native section of actual for {user}:{repoName} since there was no GitHub, but got None"
+                | Some n -> n
+
+            if desired.Private <> actual.Private then
+                options.Private <- desired.Private
+                logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, repoName, "Private")
+                hasChanged <- true
+
+            if desired.AllowRebase <> actual.AllowRebase then
+                options.AllowRebase <- desired.AllowRebase
+                logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, repoName, "AllowRebase")
+                hasChanged <- true
+
+            if desired.DefaultBranch <> actual.DefaultBranch then
+                options.DefaultBranch <- desired.DefaultBranch
+
+                logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, repoName, "DefaultBranch")
+
+                hasChanged <- true
+
+            if desired.HasIssues <> actual.HasIssues then
+                options.HasIssues <- desired.HasIssues
+                logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, repoName, "HasIssues")
+                hasChanged <- true
+
+            if desired.HasProjects <> actual.HasProjects then
+                options.HasProjects <- desired.HasProjects
+                logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, repoName, "HasProjects")
+                hasChanged <- true
+
+            if desired.HasWiki <> actual.HasWiki then
+                options.HasWiki <- desired.HasWiki
+                logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, repoName, "HasWiki")
+                hasChanged <- true
+
+            if desired.HasPullRequests <> actual.HasPullRequests then
+                options.HasPullRequests <- desired.HasPullRequests
+
+                logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, repoName, "HasPullRequests")
+
+                hasChanged <- true
+
+            if desired.AllowMergeCommits <> actual.AllowMergeCommits then
+                options.AllowMergeCommits <- desired.AllowMergeCommits
+
+                logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, repoName, "AllowMergeCommits")
+
+                hasChanged <- true
+
+            if desired.AllowRebaseExplicit <> actual.AllowRebaseExplicit then
+                options.AllowRebaseExplicit <- desired.AllowRebaseExplicit
+
+                logger.LogDebug (
+                    "On {User}:{Repo}, will set {Property} property",
+                    user,
+                    repoName,
+                    "AllowRebaseExplicit"
+                )
+
+                hasChanged <- true
+
+            if desired.AllowRebase <> actual.AllowRebase then
+                options.AllowRebase <- desired.AllowRebase
+                logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, repoName, "AllowRebase")
+                hasChanged <- true
+
+            if desired.AllowRebaseUpdate <> actual.AllowRebaseUpdate then
+                options.AllowRebaseUpdate <- desired.AllowRebaseUpdate
+
+                logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, repoName, "AllowRebaseUpdate")
+
+                hasChanged <- true
+
+            if desired.AllowSquashMerge <> actual.AllowSquashMerge then
+                options.AllowSquashMerge <- desired.AllowSquashMerge
+
+                logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, repoName, "AllowSquashMerge")
+
+                hasChanged <- true
+
+            if desired.DefaultMergeStyle <> actual.DefaultMergeStyle then
+                options.DefaultMergeStyle <- desired.DefaultMergeStyle |> Option.map MergeStyle.toString |> Option.toObj
+
+                logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, repoName, "DefaultMergeStyle")
+
+                hasChanged <- true
+
+            if desired.IgnoreWhitespaceConflicts <> actual.IgnoreWhitespaceConflicts then
+                options.IgnoreWhitespaceConflicts <- desired.IgnoreWhitespaceConflicts
+
+                logger.LogDebug (
+                    "On {User}:{Repo}, will set {Property} property",
+                    user,
+                    repoName,
+                    "IgnoreWhitespaceConflicts"
+                )
+
+                hasChanged <- true
+
+            if desired.DeleteBranchAfterMerge <> actual.DeleteBranchAfterMerge then
+                options.DefaultDeleteBranchAfterMerge <- desired.DeleteBranchAfterMerge
+
+                logger.LogDebug (
+                    "On {User}:{Repo}, will set {Property} property",
+                    user,
+                    repoName,
+                    "DeleteBranchAfterMerge"
+                )
+
+                hasChanged <- true
+
+            do!
+                if hasChanged then
+                    logger.LogInformation ("Editing repo {User}:{Repo}", user, repoName)
+                    client.RepoEdit (user, repoName, options) |> Async.AwaitTask |> Async.Ignore
+                else
+                    async.Return ()
+
+            do!
+                match desired.Mirror, actual.Mirror with
+                | None, None -> async.Return ()
+                | None, Some m ->
+                    async { logger.LogError ("Refusing to delete push mirror for {User}:{Repo}", user, repoName) }
+                | Some desired, None ->
+                    match githubApiToken with
+                    | None ->
+                        async {
+                            logger.LogCritical (
+                                "Cannot add push mirror for {User}:{Repo} due to lack of GitHub API token",
+                                user,
+                                repoName
+                            )
+                        }
+                    | Some token ->
+                        async {
+                            logger.LogInformation ("Setting up push mirror on {User}:{Repo}", user, repoName)
+                            let options = Gitea.CreatePushMirrorOption ()
+                            options.SyncOnCommit <- Some true
+                            options.RemoteAddress <- (desired.GitHubAddress : Uri).ToString ()
+                            options.RemoteUsername <- token
+                            options.RemotePassword <- token
+                            options.Interval <- "8h0m0s"
+                            let! _ = client.RepoAddPushMirror (user, repoName, options) |> Async.AwaitTask
+                            return ()
+                        }
+                | Some desired, Some actual ->
+                    if desired <> actual then
+                        async { logger.LogCritical ("Push mirror on {User}:{Repo} differs.", user, repoName) }
+                    else
+                        async.Return ()
+
+            do!
+                let desiredButNotPresent = Set.difference desired.Collaborators actual.Collaborators
+                let presentButNotDesired = Set.difference actual.Collaborators desired.Collaborators
+
+                [|
+                    desiredButNotPresent
+                    |> Seq.map (fun desired ->
+                        async {
+                            logger.LogTrace (
+                                "Setting collaborator {Collaborator} on repo {User}:{Repo}",
+                                desired,
+                                user,
+                                repoName
+                            )
+
+                            do! client.RepoAddCollaborator (user, repoName, desired) |> Async.AwaitTask
+                        }
+                    )
+                    |> Async.Parallel
+                    |> Async.map (Array.iter id)
+
+                    presentButNotDesired
+                    |> Seq.map (fun desired ->
+                        async {
+                            logger.LogTrace (
+                                "Deleting collaborator {Collaborator} on repo {User}:{Repo}",
+                                desired,
+                                user,
+                                repoName
+                            )
+
+                            do! client.RepoDeleteCollaborator (user, repoName, desired) |> Async.AwaitTask
+                        }
+                    )
+                    |> Async.Parallel
+                    |> Async.map (Array.iter id)
+                |]
+                |> Async.Parallel
+                |> Async.map (Array.iter id)
+
+            do!
+                // TODO: lift this out to a function and then put it into the new-repo flow too
+                // The current behaviour is kind of desirable, because it gives you a chance to push to
+                // the protected branch before it becomes protected.
+                let extraActualProtected =
+                    Set.difference actual.ProtectedBranches desired.ProtectedBranches
+
+                let extraDesiredProtected =
+                    Set.difference desired.ProtectedBranches actual.ProtectedBranches
+
+                Seq.append (Seq.map Choice1Of2 extraActualProtected) (Seq.map Choice2Of2 extraDesiredProtected)
+                |> Seq.groupBy (fun b ->
+                    match b with
+                    | Choice1Of2 b -> b.BranchName
+                    | Choice2Of2 b -> b.BranchName
+                )
+                |> Seq.map (fun (key, values) ->
+                    match Seq.toList values with
+                    | [] -> failwith "can't have appeared no times in a groupBy"
+                    | [ Choice1Of2 x ] ->
+                        // This is an extra rule; delete it
+                        async {
+                            logger.LogInformation (
+                                "Deleting branch protection rule {BranchProtection} on {User}:{Repo}",
+                                x.BranchName,
+                                user,
+                                repoName
+                            )
+
+                            let! _ =
+                                client.RepoDeleteBranchProtection (user, repoName, x.BranchName)
+                                |> Async.AwaitTask
+
+                            return ()
+                        }
+                    | [ Choice2Of2 y ] ->
+                        // This is an absent rule; add it
+                        async {
+                            logger.LogInformation (
+                                "Creating branch protection rule {BranchProtection} on {User}:{Repo}",
+                                y.BranchName,
+                                user,
+                                repoName
+                            )
+
+                            let s = Gitea.CreateBranchProtectionOption ()
+                            s.BranchName <- y.BranchName
+                            s.RuleName <- y.BranchName
+                            s.BlockOnOutdatedBranch <- y.BlockOnOutdatedBranch
+                            let! _ = client.RepoCreateBranchProtection (user, repoName, s) |> Async.AwaitTask
+                            return ()
+                        }
+                    | [ Choice1Of2 x ; Choice2Of2 y ]
+                    | [ Choice2Of2 y ; Choice1Of2 x ] ->
+                        // Need to reconcile the two; the Choice2Of2 is what we want to keep
+                        async {
+                            logger.LogInformation (
+                                "Reconciling branch protection rule {BranchProtection} on {User}:{Repo}",
+                                y.BranchName,
+                                user,
+                                repoName
+                            )
+
+                            let s = Gitea.EditBranchProtectionOption ()
+                            s.BlockOnOutdatedBranch <- y.BlockOnOutdatedBranch
+
+                            match y.RequiredStatusChecks with
+                            | None -> s.EnableStatusCheck <- Some false
+                            | Some checks ->
+                                s.EnableStatusCheck <- Some true
+                                s.StatusCheckContexts <- Array.ofList checks
+
+                            let! _ =
+                                client.RepoEditBranchProtection (user, repoName, y.BranchName, s)
+                                |> Async.AwaitTask
+
+                            return ()
+                        }
+                    | [ Choice1Of2 _ ; Choice1Of2 _ ]
+                    | [ Choice2Of2 _ ; Choice2Of2 _ ] -> failwith "can't have the same choice appearing twice"
+                    | _ :: _ :: _ :: _ -> failwith "can't have appeared three times"
+                )
+                |> Async.Parallel
+                |> Async.map (Array.iter id)
+        }
+
     let reconcileRepoErrors
         (logger : ILogger)
         (client : Gitea.Client)
@@ -223,6 +576,10 @@ module Gitea =
                             failwith $"Repo {user}:{r} has both Native and GitHub set; you must set exactly one."
 
                         logger.LogInformation ("Created repo {User}: {Repo}", user, r)
+
+                        let! newlyCreated = client.RepoGet (user, r) |> Async.AwaitTask
+                        let! newlyCreated = Repo.Render client newlyCreated
+                        do! reconcileDifferingConfiguration logger client githubApiToken user r desired newlyCreated
                         return ()
                     }
                 | AlignmentError.UnexpectedlyPresent ->
@@ -234,385 +591,7 @@ module Gitea =
                         )
                     }
                 | AlignmentError.ConfigurationDiffers (desired, actual) ->
-                    match desired.GitHub, actual.GitHub with
-                    | None, Some gitHub ->
-                        async {
-                            logger.LogCritical (
-                                "Unable to reconcile the desire to move a repo from GitHub-based to Gitea-based. This feature is not exposed on the Gitea API. You must manually convert the following repo to a normal repository first: {User}:{Repo}.",
-                                user,
-                                r
-                            )
-                        }
-                    | Some _, None ->
-                        async {
-                            logger.LogError (
-                                "Unable to reconcile the desire to move a repo from Gitea-based to GitHub-based: {User}:{Repo}.",
-                                user,
-                                r
-                            )
-                        }
-                    | Some desiredGitHub, Some actualGitHub ->
-                        async {
-                            let mutable hasChanged = false
-                            let options = Gitea.EditRepoOption ()
-
-                            if desiredGitHub.Uri <> actualGitHub.Uri then
-                                logger.LogError (
-                                    "Refusing to migrate repo {User}:{Repo} to a different GitHub URL. Desired: {DesiredUrl}. Actual: {ActualUrl}.",
-                                    user,
-                                    r,
-                                    desiredGitHub.Uri,
-                                    actualGitHub.Uri
-                                )
-
-                            if desiredGitHub.MirrorInterval <> actualGitHub.MirrorInterval then
-                                logger.LogDebug ("On {User}:{Repo}, setting {Property}", user, r, "MirrorInterval")
-                                options.MirrorInterval <- desiredGitHub.MirrorInterval
-                                hasChanged <- true
-
-                            if desired.Description <> actual.Description then
-                                logger.LogDebug ("On {User}:{Repo}, setting {Property}", user, r, "Description")
-                                options.Description <- desired.Description
-                                hasChanged <- true
-
-                            if hasChanged then
-                                let! result = client.RepoEdit (user, r, options) |> Async.AwaitTask
-                                return ()
-                        }
-                    | None, None ->
-
-                    async {
-                        let mutable hasChanged = false
-                        let options = Gitea.EditRepoOption ()
-
-                        if desired.Description <> actual.Description then
-                            options.Description <- desired.Description
-                            logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, r, "Description")
-                            hasChanged <- true
-
-                        let desired =
-                            match desired.Native with
-                            | None ->
-                                failwith
-                                    $"Expected a native section of desired for {user}:{r} since there was no GitHub, but got None"
-                            | Some n -> n
-
-                        let actual =
-                            match actual.Native with
-                            | None ->
-                                failwith
-                                    $"Expected a native section of actual for {user}:{r} since there was no GitHub, but got None"
-                            | Some n -> n
-
-                        if desired.Private <> actual.Private then
-                            options.Private <- desired.Private
-                            logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, r, "Private")
-                            hasChanged <- true
-
-                        if desired.AllowRebase <> actual.AllowRebase then
-                            options.AllowRebase <- desired.AllowRebase
-                            logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, r, "AllowRebase")
-                            hasChanged <- true
-
-                        if desired.DefaultBranch <> actual.DefaultBranch then
-                            options.DefaultBranch <- desired.DefaultBranch
-
-                            logger.LogDebug (
-                                "On {User}:{Repo}, will set {Property} property",
-                                user,
-                                r,
-                                "DefaultBranch"
-                            )
-
-                            hasChanged <- true
-
-                        if desired.HasIssues <> actual.HasIssues then
-                            options.HasIssues <- desired.HasIssues
-                            logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, r, "HasIssues")
-                            hasChanged <- true
-
-                        if desired.HasProjects <> actual.HasProjects then
-                            options.HasProjects <- desired.HasProjects
-                            logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, r, "HasProjects")
-                            hasChanged <- true
-
-                        if desired.HasWiki <> actual.HasWiki then
-                            options.HasWiki <- desired.HasWiki
-                            logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, r, "HasWiki")
-                            hasChanged <- true
-
-                        if desired.HasPullRequests <> actual.HasPullRequests then
-                            options.HasPullRequests <- desired.HasPullRequests
-
-                            logger.LogDebug (
-                                "On {User}:{Repo}, will set {Property} property",
-                                user,
-                                r,
-                                "HasPullRequests"
-                            )
-
-                            hasChanged <- true
-
-                        if desired.AllowMergeCommits <> actual.AllowMergeCommits then
-                            options.AllowMergeCommits <- desired.AllowMergeCommits
-
-                            logger.LogDebug (
-                                "On {User}:{Repo}, will set {Property} property",
-                                user,
-                                r,
-                                "AllowMergeCommits"
-                            )
-
-                            hasChanged <- true
-
-                        if desired.AllowRebaseExplicit <> actual.AllowRebaseExplicit then
-                            options.AllowRebaseExplicit <- desired.AllowRebaseExplicit
-
-                            logger.LogDebug (
-                                "On {User}:{Repo}, will set {Property} property",
-                                user,
-                                r,
-                                "AllowRebaseExplicit"
-                            )
-
-                            hasChanged <- true
-
-                        if desired.AllowRebase <> actual.AllowRebase then
-                            options.AllowRebase <- desired.AllowRebase
-                            logger.LogDebug ("On {User}:{Repo}, will set {Property} property", user, r, "AllowRebase")
-                            hasChanged <- true
-
-                        if desired.AllowRebaseUpdate <> actual.AllowRebaseUpdate then
-                            options.AllowRebaseUpdate <- desired.AllowRebaseUpdate
-
-                            logger.LogDebug (
-                                "On {User}:{Repo}, will set {Property} property",
-                                user,
-                                r,
-                                "AllowRebaseUpdate"
-                            )
-
-                            hasChanged <- true
-
-                        if desired.AllowSquashMerge <> actual.AllowSquashMerge then
-                            options.AllowSquashMerge <- desired.AllowSquashMerge
-
-                            logger.LogDebug (
-                                "On {User}:{Repo}, will set {Property} property",
-                                user,
-                                r,
-                                "AllowSquashMerge"
-                            )
-
-                            hasChanged <- true
-
-                        if desired.DefaultMergeStyle <> actual.DefaultMergeStyle then
-                            options.DefaultMergeStyle <-
-                                desired.DefaultMergeStyle |> Option.map MergeStyle.toString |> Option.toObj
-
-                            logger.LogDebug (
-                                "On {User}:{Repo}, will set {Property} property",
-                                user,
-                                r,
-                                "DefaultMergeStyle"
-                            )
-
-                            hasChanged <- true
-
-                        if desired.IgnoreWhitespaceConflicts <> actual.IgnoreWhitespaceConflicts then
-                            options.IgnoreWhitespaceConflicts <- desired.IgnoreWhitespaceConflicts
-
-                            logger.LogDebug (
-                                "On {User}:{Repo}, will set {Property} property",
-                                user,
-                                r,
-                                "IgnoreWhitespaceConflicts"
-                            )
-
-                            hasChanged <- true
-
-                        if desired.DeleteBranchAfterMerge <> actual.DeleteBranchAfterMerge then
-                            options.DefaultDeleteBranchAfterMerge <- desired.DeleteBranchAfterMerge
-
-                            logger.LogDebug (
-                                "On {User}:{Repo}, will set {Property} property",
-                                user,
-                                r,
-                                "DeleteBranchAfterMerge"
-                            )
-
-                            hasChanged <- true
-
-                        do!
-                            if hasChanged then
-                                logger.LogInformation ("Editing repo {User}:{Repo}", user, r)
-                                client.RepoEdit (user, r, options) |> Async.AwaitTask |> Async.Ignore
-                            else
-                                async.Return ()
-
-                        do!
-                            match desired.Mirror, actual.Mirror with
-                            | None, None -> async.Return ()
-                            | None, Some m ->
-                                async {
-                                    logger.LogError ("Refusing to delete push mirror for {User}:{Repo}", user, r)
-                                }
-                            | Some desired, None ->
-                                match githubApiToken with
-                                | None ->
-                                    async {
-                                        logger.LogCritical (
-                                            "Cannot add push mirror for {User}:{Repo} due to lack of GitHub API token",
-                                            user,
-                                            r
-                                        )
-                                    }
-                                | Some token ->
-                                    async {
-                                        logger.LogInformation ("Setting up push mirror on {User}:{Repo}", user, r)
-                                        let options = Gitea.CreatePushMirrorOption ()
-                                        options.SyncOnCommit <- Some true
-                                        options.RemoteAddress <- (desired.GitHubAddress : Uri).ToString ()
-                                        options.RemoteUsername <- token
-                                        options.RemotePassword <- token
-                                        options.Interval <- "8h0m0s"
-                                        let! _ = client.RepoAddPushMirror (user, r, options) |> Async.AwaitTask
-                                        return ()
-                                    }
-                            | Some desired, Some actual ->
-                                if desired <> actual then
-                                    async { logger.LogCritical ("Push mirror on {User}:{Repo} differs.", user, r) }
-                                else
-                                    async.Return ()
-
-                        do!
-                            let desiredButNotPresent = Set.difference desired.Collaborators actual.Collaborators
-                            let presentButNotDesired = Set.difference actual.Collaborators desired.Collaborators
-
-                            [|
-                                desiredButNotPresent
-                                |> Seq.map (fun desired ->
-                                    async {
-                                        logger.LogTrace (
-                                            "Setting collaborator {Collaborator} on repo {User}:{Repo}",
-                                            desired,
-                                            user,
-                                            r
-                                        )
-
-                                        do! client.RepoAddCollaborator (user, r, desired) |> Async.AwaitTask
-                                    }
-                                )
-                                |> Async.Parallel
-                                |> Async.map (Array.iter id)
-
-                                presentButNotDesired
-                                |> Seq.map (fun desired ->
-                                    async {
-                                        logger.LogTrace (
-                                            "Deleting collaborator {Collaborator} on repo {User}:{Repo}",
-                                            desired,
-                                            user,
-                                            r
-                                        )
-
-                                        do! client.RepoDeleteCollaborator (user, r, desired) |> Async.AwaitTask
-                                    }
-                                )
-                                |> Async.Parallel
-                                |> Async.map (Array.iter id)
-                            |]
-                            |> Async.Parallel
-                            |> Async.map (Array.iter id)
-
-                        do!
-                            // TODO: lift this out to a function and then put it into the new-repo flow too
-                            // The current behaviour is kind of desirable, because it gives you a chance to push to
-                            // the protected branch before it becomes protected.
-                            let extraActualProtected =
-                                Set.difference actual.ProtectedBranches desired.ProtectedBranches
-
-                            let extraDesiredProtected =
-                                Set.difference desired.ProtectedBranches actual.ProtectedBranches
-
-                            Seq.append
-                                (Seq.map Choice1Of2 extraActualProtected)
-                                (Seq.map Choice2Of2 extraDesiredProtected)
-                            |> Seq.groupBy (fun b ->
-                                match b with
-                                | Choice1Of2 b -> b.BranchName
-                                | Choice2Of2 b -> b.BranchName
-                            )
-                            |> Seq.map (fun (key, values) ->
-                                match Seq.toList values with
-                                | [] -> failwith "can't have appeared no times in a groupBy"
-                                | [ Choice1Of2 x ] ->
-                                    // This is an extra rule; delete it
-                                    async {
-                                        logger.LogInformation (
-                                            "Deleting branch protection rule {BranchProtection} on {User}:{Repo}",
-                                            x.BranchName,
-                                            user,
-                                            r
-                                        )
-
-                                        let! _ =
-                                            client.RepoDeleteBranchProtection (user, r, x.BranchName)
-                                            |> Async.AwaitTask
-
-                                        return ()
-                                    }
-                                | [ Choice2Of2 y ] ->
-                                    // This is an absent rule; add it
-                                    async {
-                                        logger.LogInformation (
-                                            "Creating branch protection rule {BranchProtection} on {User}:{Repo}",
-                                            y.BranchName,
-                                            user,
-                                            r
-                                        )
-
-                                        let s = Gitea.CreateBranchProtectionOption ()
-                                        s.BranchName <- y.BranchName
-                                        s.RuleName <- y.BranchName
-                                        s.BlockOnOutdatedBranch <- y.BlockOnOutdatedBranch
-                                        let! _ = client.RepoCreateBranchProtection (user, r, s) |> Async.AwaitTask
-                                        return ()
-                                    }
-                                | [ Choice1Of2 x ; Choice2Of2 y ]
-                                | [ Choice2Of2 y ; Choice1Of2 x ] ->
-                                    // Need to reconcile the two; the Choice2Of2 is what we want to keep
-                                    async {
-                                        logger.LogInformation (
-                                            "Reconciling branch protection rule {BranchProtection} on {User}:{Repo}",
-                                            y.BranchName,
-                                            user,
-                                            r
-                                        )
-
-                                        let s = Gitea.EditBranchProtectionOption ()
-                                        s.BlockOnOutdatedBranch <- y.BlockOnOutdatedBranch
-
-                                        match y.RequiredStatusChecks with
-                                        | None -> s.EnableStatusCheck <- Some false
-                                        | Some checks ->
-                                            s.EnableStatusCheck <- Some true
-                                            s.StatusCheckContexts <- Array.ofList checks
-
-                                        let! _ =
-                                            client.RepoEditBranchProtection (user, r, y.BranchName, s)
-                                            |> Async.AwaitTask
-
-                                        return ()
-                                    }
-                                | [ Choice1Of2 _ ; Choice1Of2 _ ]
-                                | [ Choice2Of2 _ ; Choice2Of2 _ ] ->
-                                    failwith "can't have the same choice appearing twice"
-                                | _ :: _ :: _ :: _ -> failwith "can't have appeared three times"
-                            )
-                            |> Async.Parallel
-                            |> Async.map (Array.iter id)
-                    }
+                    reconcileDifferingConfiguration logger client githubApiToken user r desired actual
             )
         )
         |> Async.Parallel
