@@ -222,7 +222,7 @@ type Repo =
             Native = this.Native |> Option.map (fun s -> s.OverrideDefaults ())
         }
 
-    static member Render (client : Gitea.Client) (u : Gitea.Repository) : Repo Async =
+    static member Render (client : IGiteaClient) (u : Gitea.Repository) : Repo Async =
         if u.Mirror = Some true && not (String.IsNullOrEmpty u.OriginalUrl) then
             {
                 Description = u.Description
