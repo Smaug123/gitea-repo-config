@@ -67,6 +67,7 @@ module Gitea =
 
     // TODO: check whether mirrors are out of sync e.g. in Public/Private status
     let checkRepos
+        (logger : ILogger)
         (config : GiteaConfig)
         (client : Gitea.Client)
         : Async<Result<unit, Map<User, Map<RepoName, AlignmentError<Repo>>>>>
@@ -115,7 +116,17 @@ module Gitea =
                             |> Map.toSeq
                             |> Seq.choose (fun (repo, desired) ->
                                 match Map.tryFind repo actualRepos with
-                                | None -> Some (repo, AlignmentError.DoesNotExist desired)
+                                | None ->
+                                    if desired.Deleted = Some true then
+                                        logger.LogInformation (
+                                            "The repo {User}:{Repo} is configured as Deleted, and is absent from the server. Remove this repo from configuration.",
+                                            user,
+                                            let (RepoName repo) = repo in repo
+                                        )
+
+                                        None
+                                    else
+                                        Some (repo, AlignmentError.DoesNotExist desired)
                                 | Some actual ->
                                     if desired <> actual then
                                         (repo, AlignmentError.ConfigurationDiffers (desired, actual)) |> Some
@@ -146,7 +157,15 @@ module Gitea =
         (repoName : string)
         (desired : Repo)
         (actual : Repo)
+        : Async<unit>
         =
+        if desired.Deleted = Some true then
+            async {
+                logger.LogWarning ("Deleting repo {User}:{Repo}", user, repoName)
+                return! Async.AwaitTask (client.RepoDelete (user, repoName))
+            }
+        else
+
         match desired.GitHub, actual.GitHub with
         | None, Some gitHub ->
             async {
@@ -585,7 +604,7 @@ module Gitea =
                 | AlignmentError.UnexpectedlyPresent ->
                     async {
                         logger.LogError (
-                            "For safety, refusing to delete unexpectedly present repo: {User}, {Repo}",
+                            "In the absence of the `deleted: true` configuration, refusing to delete unexpectedly present repo: {User}, {Repo}",
                             user,
                             r
                         )

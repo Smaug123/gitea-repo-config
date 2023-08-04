@@ -99,7 +99,7 @@ module Program =
                 )
 
             logger.LogInformation "Checking repos..."
-            let! repoErrors = Gitea.checkRepos config client
+            let! repoErrors = Gitea.checkRepos logger config client
 
             match repoErrors, args.DryRun with
             | Ok (), _ -> ()
