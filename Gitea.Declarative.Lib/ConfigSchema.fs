@@ -1,6 +1,7 @@
 namespace Gitea.Declarative
 
 open System
+open System.Collections.Generic
 open System.IO
 open Newtonsoft.Json
 
@@ -34,6 +35,11 @@ type PushMirror =
             GitHubAddress = Uri s.GitHubAddress
         }
 
+    member this.ToSerialised () : SerialisedPushMirror =
+        {
+            GitHubAddress = (this.GitHubAddress : Uri).ToString ()
+        }
+
 type ProtectedBranch =
     {
         BranchName : string
@@ -46,6 +52,16 @@ type ProtectedBranch =
             BranchName = s.BranchName
             BlockOnOutdatedBranch = Option.ofNullable s.BlockOnOutdatedBranch
             RequiredStatusChecks = Option.ofObj s.RequiredStatusChecks |> Option.map List.ofArray
+        }
+
+    member this.ToSerialised () : SerialisedProtectedBranch =
+        {
+            BranchName = this.BranchName
+            BlockOnOutdatedBranch = Option.toNullable this.BlockOnOutdatedBranch
+            RequiredStatusChecks =
+                match this.RequiredStatusChecks with
+                | None -> null
+                | Some l -> List.toArray l
         }
 
 type NativeRepo =
@@ -142,6 +158,33 @@ type NativeRepo =
                 | l -> Set.ofArray l
         }
 
+    member internal this.ToSerialised () : SerialisedNativeRepo =
+        {
+            DefaultBranch = this.DefaultBranch
+            Private = this.Private |> Option.toNullable
+            IgnoreWhitespaceConflicts = this.IgnoreWhitespaceConflicts |> Option.toNullable
+            HasPullRequests = this.HasPullRequests |> Option.toNullable
+            HasProjects = this.HasProjects |> Option.toNullable
+            HasIssues = this.HasIssues |> Option.toNullable
+            HasWiki = this.HasWiki |> Option.toNullable
+            DefaultMergeStyle =
+                match this.DefaultMergeStyle with
+                | None -> null
+                | Some mergeStyle -> MergeStyle.toString mergeStyle
+            DeleteBranchAfterMerge = this.DeleteBranchAfterMerge |> Option.toNullable
+            AllowSquashMerge = this.AllowSquashMerge |> Option.toNullable
+            AllowRebaseUpdate = this.AllowRebaseUpdate |> Option.toNullable
+            AllowRebase = this.AllowRebase |> Option.toNullable
+            AllowRebaseExplicit = this.AllowRebaseExplicit |> Option.toNullable
+            AllowMergeCommits = this.AllowMergeCommits |> Option.toNullable
+            Mirror =
+                match this.Mirror with
+                | None -> Nullable ()
+                | Some mirror -> Nullable (mirror.ToSerialised ())
+            ProtectedBranches = this.ProtectedBranches |> Seq.map (fun b -> b.ToSerialised ()) |> Array.ofSeq
+            Collaborators = Set.toArray this.Collaborators
+        }
+
 type GitHubRepo =
     {
         Uri : Uri
@@ -158,6 +201,12 @@ type GitHubRepo =
                     "8h0m0s"
                 else
                     s.MirrorInterval
+        }
+
+    member internal this.ToSerialised () : SerialisedGitHubRepo =
+        {
+            Uri = (this.Uri : Uri).ToString ()
+            MirrorInterval = this.MirrorInterval
         }
 
 type Repo =
@@ -261,6 +310,19 @@ type Repo =
             Native = s.Native |> Option.ofNullable |> Option.map NativeRepo.OfSerialised
         }
 
+    member internal this.ToSerialised () : SerialisedRepo =
+        {
+            Description = this.Description
+            GitHub =
+                match this.GitHub with
+                | None -> Nullable ()
+                | Some gitHub -> Nullable (gitHub.ToSerialised ())
+            Native =
+                match this.Native with
+                | None -> Nullable ()
+                | Some native -> Nullable (native.ToSerialised ())
+        }
+
 type UserInfoUpdate =
     | Admin of desired : bool option * actual : bool option
     | Email of desired : string * actual : string
@@ -297,6 +359,14 @@ type UserInfo =
             Email = s.Email
             Website = Option.ofObj s.Website
             Visibility = Option.ofObj s.Visibility
+        }
+
+    member internal this.ToSerialised () : SerialisedUserInfo =
+        {
+            IsAdmin = this.IsAdmin |> Option.toNullable
+            Email = this.Email
+            Website = this.Website |> Option.toObj
+            Visibility = this.Visibility |> Option.toObj
         }
 
     static member Resolve (desired : UserInfo) (actual : UserInfo) : UserInfoUpdate list =
@@ -338,6 +408,26 @@ type GiteaConfig =
                     user, repos
                 )
                 |> Map.ofSeq
+        }
+
+    member internal this.ToSerialised () : SerialisedGiteaConfig =
+        {
+            Users =
+                this.Users
+                |> Map.toSeq
+                |> Seq.map (fun (user, userInfo) -> KeyValuePair (user, userInfo.ToSerialised ()))
+                |> Dictionary
+            Repos =
+                this.Repos
+                |> Map.toSeq
+                |> Seq.map (fun (user, repos) ->
+                    repos
+                    |> Map.toSeq
+                    |> Seq.map (fun (repoName, repo) -> KeyValuePair (repoName, repo.ToSerialised ()))
+                    |> Dictionary
+                    |> fun repos -> KeyValuePair (user, repos)
+                )
+                |> Dictionary
         }
 
 [<RequireQualifiedAccess>]
