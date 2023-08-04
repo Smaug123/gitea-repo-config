@@ -82,6 +82,13 @@
               "$ref": "#/definitions/SerialisedNativeRepo"
             }
           ]
+        },
+        "deleted": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Set this to true to delete the repo. dotnet-gitea-declarative will refuse to delete any repo that is absent from configuration; the workflow is to first set its `deleted` to `true` (whereupon dotnet-gitea-declarative will delete it from Gitea) and then to delete it from configuration."
         }
       },
       "oneOf": [

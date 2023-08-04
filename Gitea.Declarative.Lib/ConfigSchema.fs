@@ -212,6 +212,7 @@ type GitHubRepo =
 type Repo =
     {
         Description : string
+        Deleted : bool option
         GitHub : GitHubRepo option
         Native : NativeRepo option
     }
@@ -232,6 +233,7 @@ type Repo =
                     }
                     |> Some
                 Native = None
+                Deleted = None
             }
             |> async.Return
         else
@@ -259,6 +261,7 @@ type Repo =
 
                     {
                         Description = u.Description
+                        Deleted = None
                         GitHub = None
                         Native =
                             {
@@ -308,6 +311,7 @@ type Repo =
             Repo.Description = s.Description
             GitHub = Option.ofNullable s.GitHub |> Option.map GitHubRepo.OfSerialised
             Native = s.Native |> Option.ofNullable |> Option.map NativeRepo.OfSerialised
+            Deleted = s.Deleted |> Option.ofNullable
         }
 
     member internal this.ToSerialised () : SerialisedRepo =
@@ -321,6 +325,10 @@ type Repo =
                 match this.Native with
                 | None -> Nullable ()
                 | Some native -> Nullable (native.ToSerialised ())
+            Deleted =
+                match this.Deleted with
+                | None -> Nullable ()
+                | Some v -> Nullable v
         }
 
 type UserInfoUpdate =
