@@ -604,7 +604,7 @@ module Gitea =
                 | AlignmentError.UnexpectedlyPresent ->
                     async {
                         logger.LogError (
-                            "For safety, refusing to delete unexpectedly present repo: {User}, {Repo}",
+                            "In the absence of the `deleted: true` configuration, refusing to delete unexpectedly present repo: {User}, {Repo}",
                             user,
                             r
                         )
