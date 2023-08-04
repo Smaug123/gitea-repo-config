@@ -146,7 +146,15 @@ module Gitea =
         (repoName : string)
         (desired : Repo)
         (actual : Repo)
+        : Async<unit>
         =
+        if desired.Deleted = Some true then
+            async {
+                logger.LogWarning ("Deleting repo {User}:{Repo}", user, repoName)
+                return! Async.AwaitTask (client.RepoDelete (user, repoName))
+            }
+        else
+
         match desired.GitHub, actual.GitHub with
         | None, Some gitHub ->
             async {
