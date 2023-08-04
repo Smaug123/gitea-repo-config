@@ -55,6 +55,40 @@
             { "branchName": "main" }
           ]
         }
+      },
+      "new-repo-mirrored-with-branches-and-protection": {
+        "description": "A repo that's created directly on this Gitea and mirrored to GitHub",
+        "native": {
+          "defaultBranch": "main",
+          "private": false,
+          "mirror": {
+            "gitHubAddress": "https://github.com/MyName/repo-name-3"
+          },
+          "protectedBranches": [
+            { "branchName": "main", "blockOnOutdatedBranch": true, "requiredStatusChecks": ["all-pr-checks-complete"] }
+          ]
+        }
+      },
+      "deleted-repo": {
+        "description": "A repo that's been scheduled for deletion at the next run of dotnet-gitea-declarative",
+        "deleted": true,
+        "native": {
+          "defaultBranch": "main",
+          "private": false,
+          "mirror": {
+            "gitHubAddress": "https://github.com/MyName/repo-name-3"
+          },
+          "protectedBranches": [
+            { "branchName": "main", "blockOnOutdatedBranch": true, "requiredStatusChecks": ["all-pr-checks-complete"] }
+          ]
+        }
+      },
+      "deleted-mirror": {
+        "description": "A repo that's been scheduled for deletion at the next run of dotnet-gitea-declarative",
+        "deleted": true,
+        "gitHub": {
+          "uri": "https://github.com/MyName/only-remaining-copy"
+        }
       }
     }
   }
