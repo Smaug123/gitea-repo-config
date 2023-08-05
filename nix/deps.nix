@@ -7,6 +7,11 @@
     sha256 = "1v996g0760qhiys2ahdpnvkldaxr2jn5f1falf789glnk4a6f3xl";
   })
   (fetchNuGet {
+    pname = "fantomas";
+    version = "6.0.3";
+    sha256 = "sha256-zYSF53RPbGEQt1ZBcHVYqEPHrFlmI1Ty3GQPW1uxPWw=";
+  })
+  (fetchNuGet {
     pname = "coverlet.collector";
     version = "6.0.0";
     sha256 = "12j34vrkmph8lspbafnqmfnj2qvysz1jcrks2khw798s6dwv0j90";
