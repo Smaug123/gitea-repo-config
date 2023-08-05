@@ -19,7 +19,7 @@ module Gitea =
 
     let checkUsers
         (config : GiteaConfig)
-        (client : Gitea.Client)
+        (client : IGiteaClient)
         : Async<Result<unit, Map<User, AlignmentError<UserInfo>>>>
         =
         async {
@@ -69,7 +69,7 @@ module Gitea =
     let checkRepos
         (logger : ILogger)
         (config : GiteaConfig)
-        (client : Gitea.Client)
+        (client : IGiteaClient)
         : Async<Result<unit, Map<User, Map<RepoName, AlignmentError<Repo>>>>>
         =
         async {
@@ -151,7 +151,7 @@ module Gitea =
 
     let reconcileDifferingConfiguration
         (logger : ILogger)
-        (client : Gitea.Client)
+        (client : IGiteaClient)
         (githubApiToken : string option)
         (user : string)
         (repoName : string)
@@ -512,7 +512,7 @@ module Gitea =
 
     let reconcileRepoErrors
         (logger : ILogger)
-        (client : Gitea.Client)
+        (client : IGiteaClient)
         (githubApiToken : string option)
         (m : Map<User, Map<RepoName, AlignmentError<Repo>>>)
         : Async<unit>
@@ -619,7 +619,7 @@ module Gitea =
     let reconcileUserErrors
         (log : ILogger)
         (getUserInput : string -> string)
-        (client : Gitea.Client)
+        (client : IGiteaClient)
         (m : Map<User, AlignmentError<UserInfo>>)
         =
         let userInputLock = obj ()

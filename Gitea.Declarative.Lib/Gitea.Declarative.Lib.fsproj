@@ -21,6 +21,7 @@
     <Compile Include="Map.fs" />
     <Compile Include="Async.fs" />
     <Compile Include="GiteaClient.fs" />
+    <Compile Include="IGiteaClient.fs" />
     <Compile Include="Domain.fs" />
     <Compile Include="SerialisedConfigSchema.fs" />
     <Compile Include="ConfigSchema.fs" />

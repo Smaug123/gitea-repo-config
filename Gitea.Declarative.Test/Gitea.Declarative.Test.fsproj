@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Gitea.Declarative.Lib\Gitea.Declarative.Lib.fsproj" />
+    <ProjectReference Include="..\Gitea.InMemory\Gitea.InMemory.fsproj" />
   </ItemGroup>
 
 </Project>

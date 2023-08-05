@@ -83,7 +83,7 @@ module Program =
         client.BaseAddress <- args.GiteaHost
         client.DefaultRequestHeaders.Add ("Authorization", $"token {args.GiteaAdminApiToken}")
 
-        let client = Gitea.Client client
+        let client = Gitea.Client client |> IGiteaClient.fromReal
 
         task {
             logger.LogInformation "Checking users..."

@@ -6,6 +6,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Gitea.Declarative.Test", "G
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Gitea.Declarative", "Gitea.Declarative\Gitea.Declarative.fsproj", "{77DA39F7-AF01-448A-B71C-3D495EE2F6F4}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Gitea.InMemory", "Gitea.InMemory\Gitea.InMemory.fsproj", "{E7620129-398A-4BEA-9390-373BDF38C4B8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{77DA39F7-AF01-448A-B71C-3D495EE2F6F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77DA39F7-AF01-448A-B71C-3D495EE2F6F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77DA39F7-AF01-448A-B71C-3D495EE2F6F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7620129-398A-4BEA-9390-373BDF38C4B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7620129-398A-4BEA-9390-373BDF38C4B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7620129-398A-4BEA-9390-373BDF38C4B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7620129-398A-4BEA-9390-373BDF38C4B8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
