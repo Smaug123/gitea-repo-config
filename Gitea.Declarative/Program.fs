@@ -63,7 +63,7 @@ module Program =
                 None
 
         match parsed with
-        | None -> 1
+        | None -> 127
         | Some parsed ->
 
         let args =
