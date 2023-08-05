@@ -11,8 +11,9 @@ open Argu
 type ArgsFragments =
     | [<ExactlyOnce ; EqualsAssignmentOrSpaced>] Config_File of string
     | [<ExactlyOnce ; EqualsAssignmentOrSpaced>] Gitea_Host of string
-    | [<ExactlyOnce ; EqualsAssignmentOrSpaced>] Gitea_Admin_Api_Token of string
-    | [<Unique ; EqualsAssignmentOrSpaced>] GitHub_Api_Token of string
+    | [<ExactlyOnce ; EqualsAssignmentOrSpaced ; CustomAppSettings "GITEA_ADMIN_API_TOKEN">] Gitea_Admin_Api_Token of
+        string
+    | [<Unique ; EqualsAssignmentOrSpaced ; CustomAppSettings "GITHUB_API_TOKEN">] GitHub_Api_Token of string
     | Dry_Run
 
     interface IArgParserTemplate with
@@ -21,8 +22,10 @@ type ArgsFragments =
             | Config_File _ ->
                 "a config file, JSON, conforming to GiteaConfig.schema.json, specifying the desired Gitea configuration"
             | Gitea_Host _ -> "the Gitea host, e.g. https://gitea.mydomain.com"
-            | Gitea_Admin_Api_Token _ -> "a Gitea admin user's API token"
-            | GitHub_Api_Token _ -> "a GitHub API token with read access to every desired sync-from-GitHub repo"
+            | Gitea_Admin_Api_Token _ ->
+                "a Gitea admin user's API token; can be read from the environment variable GITEA_ADMIN_API_TOKEN"
+            | GitHub_Api_Token _ ->
+                "a GitHub API token with read access to every desired sync-from-GitHub repo; can be read from the environment variable GITHUB_API_TOKEN"
             | Dry_Run _ -> "don't actually perform the reconciliation"
 
 type Args =
@@ -50,7 +53,18 @@ module Program =
     [<EntryPoint>]
     let main argv =
         let parser = ArgumentParser.Create<ArgsFragments> ()
-        let parsed = parser.Parse argv
+        let reader = ConfigurationReader.FromEnvironmentVariables ()
+
+        let parsed =
+            try
+                parser.Parse (argv, reader, raiseOnUsage = true) |> Some
+            with :? ArguParseException as e ->
+                eprintfn "%s" e.Message
+                None
+
+        match parsed with
+        | None -> 1
+        | Some parsed ->
 
         let args =
             {
