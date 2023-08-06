@@ -1,6 +1,11 @@
 namespace Gitea.Declarative.Test
 
+open System
 open System.IO
+open FsCheck
+
+type CustomArb () =
+    static member UriGen = Gen.constant (Uri "http://example.com") |> Arb.fromGen
 
 [<RequireQualifiedAccess>]
 module Utils =

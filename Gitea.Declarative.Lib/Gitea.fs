@@ -26,8 +26,8 @@ module Gitea =
             let desiredUsers = config.Users
 
             let! actualUsers =
-                Array.getPaginated (fun page count ->
-                    client.AdminGetAllUsers (Some page, Some count) |> Async.AwaitTask
+                Array.getPaginated (fun page limit ->
+                    client.AdminGetAllUsers (Some page, Some limit) |> Async.AwaitTask
                 )
 
             let actualUsers =

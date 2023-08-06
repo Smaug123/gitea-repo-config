@@ -3,7 +3,7 @@ namespace Gitea.Declarative
 open System.Threading.Tasks
 
 type IGiteaClient =
-    abstract AdminGetAllUsers : page : int64 option * count : int64 option -> Gitea.User array Task
+    abstract AdminGetAllUsers : page : int64 option * limit : int64 option -> Gitea.User array Task
     abstract AdminCreateUser : Gitea.CreateUserOption -> Gitea.User Task
     abstract AdminDeleteUser : user : string -> unit Task
     abstract AdminEditUser : user : string * Gitea.EditUserOption -> Gitea.User Task
@@ -42,7 +42,7 @@ type IGiteaClient =
 module IGiteaClient =
     let fromReal (client : Gitea.Client) : IGiteaClient =
         { new IGiteaClient with
-            member _.AdminGetAllUsers (page, count) = client.AdminGetAllUsers (page, count)
+            member _.AdminGetAllUsers (page, limit) = client.AdminGetAllUsers (page, limit)
             member _.AdminCreateUser user = client.AdminCreateUser user
             member _.AdminDeleteUser user = client.AdminDeleteUser user
             member _.AdminEditUser (user, option) = client.AdminEditUser (user, option)

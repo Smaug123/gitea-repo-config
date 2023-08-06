@@ -86,7 +86,7 @@ type GiteaClientMock =
         }
 
     interface IGiteaClient with
-        member this.AdminGetAllUsers (page, count) = this.AdminGetAllUsers (page, count)
+        member this.AdminGetAllUsers (page, limit) = this.AdminGetAllUsers (page, limit)
         member this.AdminCreateUser user = this.AdminCreateUser user
         member this.AdminDeleteUser user = this.AdminDeleteUser user
         member this.AdminEditUser (user, option) = this.AdminEditUser (user, option)
