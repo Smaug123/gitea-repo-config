@@ -26,7 +26,16 @@ The main argument you provide is a JSON configuration file, which should conform
 # Examples
 
 A no-op, where the configuration is already in sync with the remote Gitea instance:
-![No-op update](./docs/noop-update.svg)
+![No-op update demo](./docs/noop-update.svg)
+
+Create a repo by adding an appropriate entry in the config file:
+![Repo creation demo](./docs/on-creation.svg)
+
+Make a change to that repo by editing some of its fields in the config file:
+![Repo update demo](./docs/update.svg)
+
+Delete the repo by setting its `"deleted"` field to `true`:
+![Repo deletion demo](./docs/deletion.svg)
 
 # Development
 
