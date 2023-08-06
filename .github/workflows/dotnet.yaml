@@ -88,7 +88,8 @@ jobs:
           extra_nix_config: |
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
       - name: Run link checker
-        run: nix develop --command markdown-link-check README.md
+        # Sadly we're in Bash
+        run: 'nix develop --command markdown-link-check {,**/}*.md'
 
   all-required-checks-complete:
     needs: [check-dotnet-format, check-nix-format, build, build-nix, linkcheck]
