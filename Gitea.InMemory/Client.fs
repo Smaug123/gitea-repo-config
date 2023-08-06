@@ -61,16 +61,7 @@ module Client =
                 member _.AdminCreateUser createUserOption =
                     async {
                         let! () = server.PostAndAsyncReply (fun reply -> AddUser (createUserOption, reply))
-                        let result = Gitea.User ()
-                        result.Email <- createUserOption.Email
-                        result.Restricted <- createUserOption.Restricted
-                        // TODO: what is this username used for anyway
-                        // result.LoginName <- createUserOption.Username
-                        result.Visibility <- createUserOption.Visibility
-                        result.Created <- createUserOption.CreatedAt
-                        result.FullName <- createUserOption.FullName
-                        result.LoginName <- createUserOption.LoginName
-                        return result
+                        return Operations.createdUser createUserOption
                     }
                     |> Async.StartAsTask
 

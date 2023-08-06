@@ -4,27 +4,23 @@ open System
 open System.Threading.Tasks
 open Gitea.Declarative
 
-type BranchName = | BranchName of string
+module Types =
 
-type BranchProtectionRule =
-    {
-        RequiredChecks : string Set
-    }
+    type BranchName = | BranchName of string
 
-type NativeRepo =
-    {
-        BranchProtectionRules : (BranchName * BranchProtectionRule) list
-    }
+    type BranchProtectionRule =
+        {
+            RequiredChecks : string Set
+        }
 
-type Repo =
-    | GitHubMirror of Uri
-    | NativeRepo of NativeRepo
+    type NativeRepo =
+        {
+            BranchProtectionRules : (BranchName * BranchProtectionRule) list
+        }
 
-type GiteaState =
-    {
-        Users : User Set
-        Repositories : Map<User * RepoName, Repo>
-    }
+    type Repo =
+        | GitHubMirror of Uri
+        | NativeRepo of NativeRepo
 
 /// Allows us to use handy record-updating syntax.
 /// (I have a considerable dislike of Moq and friends.)

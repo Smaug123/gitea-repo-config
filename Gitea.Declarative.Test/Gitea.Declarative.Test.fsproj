@@ -7,7 +7,10 @@
 
   <ItemGroup>
     <Compile Include="Utils.fs" />
+    <Compile Include="Result.fs" />
+    <Compile Include="Logging.fs" />
     <Compile Include="TestUser.fs" />
+    <Compile Include="TestRepo.fs" />
     <Compile Include="TestJsonSchema.fs" />
     <Compile Include="TestSwaggerJson.fs" />
     <Content Include="GiteaConfig.json" />
