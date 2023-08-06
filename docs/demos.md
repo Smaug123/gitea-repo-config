@@ -1,4 +1,5 @@
 Demos taken with [asciinema](https://asciinema.org/).
+(Yes, I have revoked the access token I used when recording these.)
 
 # No-op
 
