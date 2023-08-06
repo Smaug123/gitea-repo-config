@@ -23,6 +23,11 @@ The main argument you provide is a JSON configuration file, which should conform
 * With Nix: `nix run github:Smaug123/dotnet-gitea-declarative -- --help`.
 * From source: clone the repository, and `dotnet run`.
 
+# Examples
+
+A no-op, where the configuration is already in sync with the remote Gitea instance:
+![No-op update](./docs/noop-update.svg)
+
 # Development
 
 To upgrade the NuGet dependencies in the flake, run `nix build .#fetchDeps` and copy the resulting file into `nix/deps.nix`.
