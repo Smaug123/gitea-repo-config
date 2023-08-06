@@ -1,0 +1,13 @@
+{"version": 2, "width": 100, "height": 73, "timestamp": 1691357568, "env": {"GITEA_TOKEN": "7a7ff894cba094122cdf4be6ceb60752317ce698", "SHELL": "/bin/zsh", "TERM": "tmux-256color"}}
+[0.041139, "o", "\r\u001b[0m\u001b[K"]
+[0.096085, "o", "\rquerying info about missing paths\u001b[0m\u001b[K"]
+[0.171285, "o", "\r\u001b[0m\u001b[K"]
+[0.171953, "o", "\r\u001b[K"]
+[0.369871, "o", "\u001b[40m\u001b[32minfo\u001b[39m\u001b[22m\u001b[49m: Gitea.Declarative[0]\r\n      Checking users...\r\n"]
+[0.553806, "o", "\u001b[40m\u001b[32minfo\u001b[39m\u001b[22m\u001b[49m: Gitea.Declarative[0]\r\n      Checking repos...\r\n"]
+[1.043268, "o", "\u001b[40m\u001b[37mdbug\u001b[39m\u001b[22m\u001b[49m: Gitea.Declarative[0]\r\n      On patrick:another-repo, will set Description property\r\n"]
+[1.044268, "o", "\u001b[40m\u001b[37mdbug\u001b[39m\u001b[22m\u001b[49m: Gitea.Declarative[0]\r\n      On patrick:another-repo, will set Private property\r\n"]
+[1.052673, "o", "\u001b[40m\u001b[32minfo\u001b[39m\u001b[22m\u001b[49m: Gitea.Declarative[0]\r\n      Editing repo patrick:another-repo\r\n"]
+[1.103453, "o", "\u001b[40m\u001b[32minfo\u001b[39m\u001b[22m\u001b[49m: Gitea.Declarative[0]\r\n      Reconciling branch protection rule main on patrick:another-repo\r\n"]
+[1.150379, "o", ">"]
+[2.158873, "o", "\\n> \r\n"]
