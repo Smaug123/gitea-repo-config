@@ -23,19 +23,9 @@ The main argument you provide is a JSON configuration file, which should conform
 * With Nix: `nix run github:Smaug123/dotnet-gitea-declarative -- --help`.
 * From source: clone the repository, and `dotnet run`.
 
-# Examples
+# Demos
 
-A no-op, where the configuration is already in sync with the remote Gitea instance:
-![No-op update demo](./docs/noop-update.svg)
-
-Create a repo by adding an appropriate entry in the config file:
-![Repo creation demo](./docs/on-creation.svg)
-
-Make a change to that repo by editing some of its fields in the config file:
-![Repo update demo](./docs/update.svg)
-
-Delete the repo by setting its `"deleted"` field to `true`:
-![Repo deletion demo](./docs/deletion.svg)
+See the [Demos file](./docs/demos.md).
 
 # Development
 
