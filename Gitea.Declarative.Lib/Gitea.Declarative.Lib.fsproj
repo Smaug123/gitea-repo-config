@@ -19,6 +19,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Map.fs" />
+    <Compile Include="Exception.fs" />
     <Compile Include="Async.fs" />
     <Compile Include="GiteaClient.fs" />
     <Compile Include="IGiteaClient.fs" />
