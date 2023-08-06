@@ -3,7 +3,7 @@ namespace Gitea.Declarative
 [<RequireQualifiedAccess>]
 module internal Array =
 
-    /// f takes a page number and a count.
+    /// f takes a page number and a limit (i.e. a desired page size).
     let getPaginated (f : int64 -> int64 -> 'a array Async) : 'a list Async =
         let count = 30
 

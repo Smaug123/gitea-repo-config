@@ -7,12 +7,14 @@
 
   <ItemGroup>
     <Compile Include="Utils.fs" />
+    <Compile Include="TestUser.fs" />
     <Compile Include="TestJsonSchema.fs" />
     <Compile Include="TestSwaggerJson.fs" />
     <Content Include="GiteaConfig.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FsCheck" Version="2.16.6" />
     <PackageReference Include="FsUnit" Version="5.3.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
     <PackageReference Include="NJsonSchema" Version="10.9.0" />
