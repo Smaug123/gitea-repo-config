@@ -1,0 +1,10 @@
+{"version": 2, "width": 100, "height": 73, "timestamp": 1691357171, "env": {"GITEA_TOKEN": "7a7ff894cba094122cdf4be6ceb60752317ce698", "SHELL": "/bin/zsh", "TERM": "tmux-256color"}}
+[0.041174, "o", "\r\u001b[0m\u001b[K"]
+[0.096126, "o", "\rquerying info about missing paths\u001b[0m\u001b[K"]
+[0.170815, "o", "\r\u001b[0m\u001b[K"]
+[0.17126, "o", "\r\u001b[K"]
+[0.365115, "o", "\u001b[40m\u001b[32minfo\u001b[39m\u001b[22m\u001b[49m: Gitea.Declarative[0]\r\n      Checking users...\r\n"]
+[0.521684, "o", "\u001b[40m\u001b[32minfo\u001b[39m\u001b[22m\u001b[49m: Gitea.Declarative[0]\r\n      Checking repos...\r\n"]
+[0.936521, "o", "\u001b[40m\u001b[32minfo\u001b[39m\u001b[22m\u001b[49m: Gitea.Declarative[0]\r\n      The repo patrick:another-repo is configured as Deleted, and is absent from the server. Remove this repo from configuration.\r\n"]
+[0.950991, "o", ">"]
+[1.961202, "o", " "]

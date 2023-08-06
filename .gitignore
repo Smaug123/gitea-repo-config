@@ -9,3 +9,7 @@ riderModule.iml
 .DS_Store
 result
 .profile*
+
+node_modules/
+package.json
+package-lock.json
