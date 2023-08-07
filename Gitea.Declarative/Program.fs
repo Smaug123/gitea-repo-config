@@ -25,7 +25,8 @@ module Program =
         // roll our own.
 
         match Array.tryHead argv with
-        | None ->
+        | None
+        | Some "--help" ->
             subcommands.Keys
             |> String.concat ","
             |> eprintfn "Subcommands (try each with `--help`): %s"
@@ -69,7 +70,9 @@ module Program =
 
                 match ofParseResult parsed with
                 | Error e ->
-                    eprintfn "%s" e.Message
+                    e.Message.Replace ("Gitea.Declarative ", sprintf "Gitea.Declarative %s " commandName)
+                    |> eprintfn "%s"
+
                     Error 127
                 | Ok args ->
 
