@@ -32,13 +32,13 @@ module Program =
 
             127
 
-        | Some command ->
+        | Some commandName ->
 
-        match Map.tryFind command subcommands with
+        match Map.tryFind commandName subcommands with
         | None ->
             subcommands.Keys
             |> String.concat ","
-            |> eprintfn "Unrecognised command '%s'. Subcommands (try each with `--help`): %s" command
+            |> eprintfn "Unrecognised command '%s'. Subcommands (try each with `--help`): %s" commandName
 
             127
 
@@ -58,7 +58,9 @@ module Program =
                     try
                         parser.Parse (argv, config, raiseOnUsage = true) |> Some
                     with :? ArguParseException as e ->
-                        eprintfn "%s" e.Message
+                        e.Message.Replace ("Gitea.Declarative ", sprintf "Gitea.Declarative %s " commandName)
+                        |> eprintfn "%s"
+
                         None
 
                 match parsed with
