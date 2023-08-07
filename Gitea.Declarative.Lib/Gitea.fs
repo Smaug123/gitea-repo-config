@@ -727,7 +727,7 @@ module Gitea =
         |> Async.Parallel
         |> fun a -> async.Bind (a, Array.iter id >> async.Return)
 
-    let refreshAuth (logger : ILogger) (client : IGiteaClient) (githubToken : string) =
+    let toRefresh (client : IGiteaClient) : Async<Map<User, Map<RepoName, Gitea.PushMirror list>>> =
         async {
             let! users =
                 Array.getPaginated (fun page limit ->
@@ -759,53 +759,55 @@ module Gitea =
                                             )
                                         )
 
-                                    let! added =
-                                        mirrors
-                                        |> Seq.map (fun mirror ->
-                                            async {
-                                                logger.LogInformation (
-                                                    "Refreshing push mirror on {User}:{Repo} to {PushMirrorRemote}",
-                                                    user.LoginName,
-                                                    r.Name,
-                                                    mirror.RemoteAddress
-                                                )
-
-                                                let option =
-                                                    createPushMirrorOption (Uri mirror.RemoteAddress) githubToken
-
-                                                option.Interval <- mirror.Interval
-                                                option.SyncOnCommit <- mirror.SyncOnCommit
-
-                                                let! newMirror =
-                                                    Async.AwaitTask (
-                                                        client.RepoAddPushMirror (user.LoginName, r.Name, option)
-                                                    )
-
-                                                let! deleteOldMirror =
-                                                    Async.AwaitTask (
-                                                        client.RepoDeletePushMirror (
-                                                            user.LoginName,
-                                                            r.Name,
-                                                            mirror.RemoteName
-                                                        )
-                                                    )
-
-                                                return ()
-                                            }
-                                        )
-                                        |> Async.Parallel
-
-                                    return added |> Array.iter id
+                                    return RepoName r.Name, mirrors
                                 }
                             )
                             |> Async.Parallel
 
-                        let () = pushMirrorResults |> Array.iter id
-
-                        return ()
+                        return User user.LoginName, Map.ofArray pushMirrorResults
                     }
                 )
                 |> Async.Parallel
 
-            return results |> Array.iter id
+            return results |> Map.ofArray
         }
+
+    let refreshAuth
+        (logger : ILogger)
+        (client : IGiteaClient)
+        (githubToken : string)
+        (instructions : Map<User, Map<RepoName, Gitea.PushMirror list>>)
+        : Async<unit>
+        =
+        instructions
+        |> Map.toSeq
+        |> Seq.collect (fun (User user, repos) ->
+            Map.toSeq repos
+            |> Seq.collect (fun (RepoName repoName, mirrors) ->
+                mirrors
+                |> Seq.map (fun mirror ->
+                    async {
+                        logger.LogInformation (
+                            "Refreshing push mirror on {User}:{Repo} to {PushMirrorRemote}",
+                            user,
+                            repoName,
+                            mirror.RemoteAddress
+                        )
+
+                        let option = createPushMirrorOption (Uri mirror.RemoteAddress) githubToken
+
+                        option.Interval <- mirror.Interval
+                        option.SyncOnCommit <- mirror.SyncOnCommit
+
+                        let! newMirror = Async.AwaitTask (client.RepoAddPushMirror (user, repoName, option))
+
+                        let! deleteOldMirror =
+                            Async.AwaitTask (client.RepoDeletePushMirror (user, repoName, mirror.RemoteName))
+
+                        return ()
+                    }
+                )
+            )
+        )
+        |> Async.Parallel
+        |> Async.map (Array.iter id)
