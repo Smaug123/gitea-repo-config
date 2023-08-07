@@ -721,5 +721,3 @@ module Gitea =
         )
         |> Async.Parallel
         |> fun a -> async.Bind (a, Array.iter id >> async.Return)
-
-    let refreshAuth () =
