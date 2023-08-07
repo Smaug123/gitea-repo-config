@@ -727,7 +727,7 @@ module Gitea =
         |> Async.Parallel
         |> fun a -> async.Bind (a, Array.iter id >> async.Return)
 
-    let refreshAuth (client : IGiteaClient) (githubToken : string) =
+    let refreshAuth (logger : ILogger) (client : IGiteaClient) (githubToken : string) =
         async {
             let! users =
                 Array.getPaginated (fun page limit ->
@@ -763,6 +763,13 @@ module Gitea =
                                         mirrors
                                         |> Seq.map (fun mirror ->
                                             async {
+                                                logger.LogInformation (
+                                                    "Refreshing push mirror on {User}:{Repo} to {PushMirrorRemote}",
+                                                    user.LoginName,
+                                                    r.Name,
+                                                    mirror.RemoteAddress
+                                                )
+
                                                 let option =
                                                     createPushMirrorOption (Uri mirror.RemoteAddress) githubToken
 

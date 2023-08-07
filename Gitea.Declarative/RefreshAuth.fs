@@ -46,7 +46,11 @@ module RefreshAuth =
         async {
             use httpClient = Utils.createHttpClient args.GiteaHost args.GiteaAdminApiToken
             let client = Gitea.Client httpClient |> IGiteaClient.fromReal
-            do! Gitea.refreshAuth client args.GitHubApiToken
+
+            use loggerProvider = Utils.createLoggerProvider ()
+            let logger = loggerProvider.CreateLogger "Gitea.Declarative"
+
+            do! Gitea.refreshAuth logger client args.GitHubApiToken
 
             return 0
         }
