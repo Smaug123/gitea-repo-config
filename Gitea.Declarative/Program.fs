@@ -16,6 +16,10 @@ module Program =
             "reconcile",
             ("Reconcile a remote Gitea server with a declarative configuration",
              ArgsCrate.make RunArgs.OfParse Reconcile.run)
+
+            "output-schema",
+            ("Output the verification schema", ArgsCrate.make OutputSchemaArgs.OfParse OutputSchema.run)
+
         |]
         |> Map.ofArray
 

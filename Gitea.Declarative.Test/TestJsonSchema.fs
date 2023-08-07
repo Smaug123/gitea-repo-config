@@ -18,6 +18,8 @@ module TestSchema =
     let ``Example conforms to schema`` () =
         let executing = Assembly.GetExecutingAssembly().Location |> FileInfo
 
+        // We choose to refer to the path specifically here, so that the "Update" functionality
+        // below can't be broken by an undetected file rename.
         let schemaFile =
             Utils.findFileAbove "Gitea.Declarative.Lib/GiteaConfig.schema.json" executing.Directory
 
@@ -36,6 +38,13 @@ module TestSchema =
         let executing = Assembly.GetExecutingAssembly().Location |> FileInfo
         let jsonFile = Utils.findFileAbove "GiteaConfig.json" executing.Directory
         GiteaConfig.get jsonFile |> ignore
+
+    [<Test>]
+    let ``Schema can be output`` () =
+        use schema = GiteaConfig.getSchema ()
+        let reader = new StreamReader (schema)
+        let schema = reader.ReadToEnd ()
+        schema.Contains "SerialisedGiteaConfig" |> shouldEqual true
 
     [<Test>]
     [<Explicit "Run this to regenerate the schema file">]
