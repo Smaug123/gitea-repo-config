@@ -149,6 +149,16 @@ module Gitea =
                     Error (Map.ofArray errors)
         }
 
+    let private createPushMirrorOption (target : Uri) (githubToken : string) : Gitea.CreatePushMirrorOption =
+        let options = Gitea.CreatePushMirrorOption ()
+        options.SyncOnCommit <- Some true
+        options.RemoteAddress <- target.ToString ()
+        options.RemoteUsername <- githubToken
+        options.RemotePassword <- githubToken
+        options.Interval <- "8h0m0s"
+
+        options
+
     let reconcileDifferingConfiguration
         (logger : ILogger)
         (client : IGiteaClient)
@@ -369,13 +379,8 @@ module Gitea =
                     | Some token ->
                         async {
                             logger.LogInformation ("Setting up push mirror on {User}:{Repo}", user, repoName)
-                            let options = Gitea.CreatePushMirrorOption ()
-                            options.SyncOnCommit <- Some true
-                            options.RemoteAddress <- (desired.GitHubAddress : Uri).ToString ()
-                            options.RemoteUsername <- token
-                            options.RemotePassword <- token
-                            options.Interval <- "8h0m0s"
-                            let! _ = client.RepoAddPushMirror (user, repoName, options) |> Async.AwaitTask
+                            let pushMirrorOption = createPushMirrorOption desired.GitHubAddress token
+                            let! _ = client.RepoAddPushMirror (user, repoName, pushMirrorOption) |> Async.AwaitTask
                             return ()
                         }
                 | Some desired, Some actual ->
@@ -721,3 +726,79 @@ module Gitea =
         )
         |> Async.Parallel
         |> fun a -> async.Bind (a, Array.iter id >> async.Return)
+
+    let refreshAuth (client : IGiteaClient) (githubToken : string) =
+        async {
+            let! users =
+                Array.getPaginated (fun page limit ->
+                    client.AdminGetAllUsers (Some page, Some limit) |> Async.AwaitTask
+                )
+
+            let! results =
+                users
+                |> Seq.map (fun user ->
+                    async {
+                        let! repos =
+                            Array.getPaginated (fun page count ->
+                                client.UserListRepos (user.LoginName, Some page, Some count) |> Async.AwaitTask
+                            )
+
+                        let! pushMirrorResults =
+                            repos
+                            |> Seq.map (fun r ->
+                                async {
+                                    let! mirrors =
+                                        Array.getPaginated (fun page count ->
+                                            Async.AwaitTask (
+                                                client.RepoListPushMirrors (
+                                                    user.LoginName,
+                                                    r.Name,
+                                                    Some page,
+                                                    Some count
+                                                )
+                                            )
+                                        )
+
+                                    let! added =
+                                        mirrors
+                                        |> Seq.map (fun mirror ->
+                                            async {
+                                                let option =
+                                                    createPushMirrorOption (Uri mirror.RemoteAddress) githubToken
+
+                                                option.Interval <- mirror.Interval
+                                                option.SyncOnCommit <- mirror.SyncOnCommit
+
+                                                let! newMirror =
+                                                    Async.AwaitTask (
+                                                        client.RepoAddPushMirror (user.LoginName, r.Name, option)
+                                                    )
+
+                                                let! deleteOldMirror =
+                                                    Async.AwaitTask (
+                                                        client.RepoDeletePushMirror (
+                                                            user.LoginName,
+                                                            r.Name,
+                                                            mirror.RemoteName
+                                                        )
+                                                    )
+
+                                                return ()
+                                            }
+                                        )
+                                        |> Async.Parallel
+
+                                    return added |> Array.iter id
+                                }
+                            )
+                            |> Async.Parallel
+
+                        let () = pushMirrorResults |> Array.iter id
+
+                        return ()
+                    }
+                )
+                |> Async.Parallel
+
+            return results |> Array.iter id
+        }

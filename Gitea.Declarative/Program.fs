@@ -22,6 +22,9 @@ module Program =
              ArgsCrate.make OutputSchemaArgs.OfParse OutputSchema.run)
 
             "verify", ("Verify a `reconcile` configuration file", ArgsCrate.make VerifyArgs.OfParse Verify.run)
+
+            "refresh-auth",
+            ("Refresh authentication for push mirrors", ArgsCrate.make RefreshAuthArgs.OfParse RefreshAuth.run)
         |]
         |> Map.ofArray
 
