@@ -11,16 +11,18 @@ This is a small project to allow you to specify a [Gitea](https://github.com/go-
   * Optional branch protection rules
   * Pull request configuration (e.g. whether rebase-merges are allowed, etc)
   * Collaborators
+* Reconciliation of differences between configuration and reality in the above
 * Deletion of repositories, guarded by the `"deleted": true` configuration
 
 # Arguments
 
 Run with the `--help` argument for a full listing.
 The main argument you provide is a JSON configuration file, which should conform to [the schema](./Gitea.Declarative.Lib/GiteaConfig.schema.json); there is [an example](./Gitea.Declarative.Test/GiteaConfig.json) in the tests.
+(You can call `dotnet-gitea-declarative verify $CONFIG_PATH` to verify against the schema, or `dotnet-gitea-declarative output-schema` to output the schema for local tooling to consume.)
 
 # How to build and run
 
-* With Nix: `nix run github:Smaug123/dotnet-gitea-declarative -- --help`.
+* With Nix: `nix run github:Smaug123/dotnet-gitea-declarative -- reconcile --help`.
 * From source: clone the repository, and `dotnet run`.
 
 # Demos
