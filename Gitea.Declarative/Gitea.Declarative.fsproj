@@ -18,8 +18,10 @@
   <ItemGroup>
     <Compile Include="ArgsCrate.fs" />
     <Compile Include="Result.fs" />
+    <Compile Include="Utils.fs" />
     <Compile Include="Reconcile.fs" />
     <Compile Include="OutputSchema.fs" />
+    <Compile Include="RefreshAuth.fs" />
     <Compile Include="Verify.fs" />
     <Compile Include="Program.fs" />
     <None Include="..\README.md" Pack="true" PackagePath="/" />

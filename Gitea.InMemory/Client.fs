@@ -75,6 +75,8 @@ module Client =
 
                 member _.RepoAddPushMirror (user, repo, createPushMirrorOption) = failwith "Not implemented"
 
+                member _.RepoDeletePushMirror (user, repo, remoteName) = failwith "Not implemented"
+
                 member _.RepoListPushMirrors (loginName, userName, page, count) = failwith "Not implemented"
 
                 member _.RepoListBranchProtection (loginName, userName) = failwith "Not implemented"

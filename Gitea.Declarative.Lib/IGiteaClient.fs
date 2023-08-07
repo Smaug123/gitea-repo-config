@@ -17,6 +17,8 @@ type IGiteaClient =
         loginName : string * userName : string * page : int64 option * count : int64 option ->
             Gitea.PushMirror array Task
 
+    abstract RepoDeletePushMirror : user : string * repo : string * remoteName : string -> unit Task
+
     abstract RepoListBranchProtection : loginName : string * userName : string -> Gitea.BranchProtection array Task
     abstract RepoDeleteBranchProtection : user : string * repo : string * branch : string -> unit Task
 
@@ -56,6 +58,9 @@ module IGiteaClient =
 
             member _.RepoListPushMirrors (loginName, userName, page, count) =
                 client.RepoListPushMirrors (loginName, userName, page, count)
+
+            member _.RepoDeletePushMirror (loginName, repo, remoteName) =
+                client.RepoDeletePushMirror (loginName, repo, remoteName)
 
             member _.RepoListBranchProtection (login, user) =
                 client.RepoListBranchProtection (login, user)

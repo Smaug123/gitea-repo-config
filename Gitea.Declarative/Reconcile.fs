@@ -2,10 +2,7 @@ namespace Gitea.Declarative
 
 open System
 open System.IO
-open System.Net.Http
 open Argu
-open Microsoft.Extensions.Logging.Console
-open Microsoft.Extensions.Options
 open Microsoft.Extensions.Logging
 
 type RunArgsFragment =
@@ -61,28 +58,12 @@ module Reconcile =
 
         let config = GiteaConfig.get args.ConfigFile
 
-        let options =
-            let options = ConsoleLoggerOptions ()
-
-            { new IOptionsMonitor<ConsoleLoggerOptions> with
-                member _.Get _ = options
-                member _.CurrentValue = options
-
-                member _.OnChange _ =
-                    { new IDisposable with
-                        member _.Dispose () = ()
-                    }
-            }
-
         async {
-            use loggerProvider = new ConsoleLoggerProvider (options)
+            use loggerProvider = Utils.createLoggerProvider ()
             let logger = loggerProvider.CreateLogger "Gitea.Declarative"
 
-            use client = new HttpClient ()
-            client.BaseAddress <- args.GiteaHost
-            client.DefaultRequestHeaders.Add ("Authorization", $"token {args.GiteaAdminApiToken}")
-
-            let client = Gitea.Client client |> IGiteaClient.fromReal
+            use httpClient = Utils.createHttpClient args.GiteaHost args.GiteaAdminApiToken
+            let client = Gitea.Client httpClient |> IGiteaClient.fromReal
 
             logger.LogInformation "Checking users..."
             let! userErrors = Gitea.checkUsers config client

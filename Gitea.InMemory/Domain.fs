@@ -35,6 +35,7 @@ type GiteaClientMock =
         UserListRepos : string * int64 option * int64 option -> Gitea.Repository array Task
 
         RepoAddPushMirror : string * string * Gitea.CreatePushMirrorOption -> Gitea.PushMirror Task
+        RepoDeletePushMirror : string * string * string -> unit Task
         RepoListPushMirrors : string * string * int64 option * int64 option -> Gitea.PushMirror array Task
 
         RepoListBranchProtection : string * string -> Gitea.BranchProtection array Task
@@ -64,6 +65,7 @@ type GiteaClientMock =
             UserListRepos = fun _ -> failwith "Unimplemented"
 
             RepoAddPushMirror = fun _ -> failwith "Unimplemented"
+            RepoDeletePushMirror = fun _ -> failwith "Unimplemented"
             RepoListPushMirrors = fun _ -> failwith "Unimplemented"
 
             RepoListBranchProtection = fun _ -> failwith "Unimplemented"
@@ -95,6 +97,9 @@ type GiteaClientMock =
 
         member this.RepoListPushMirrors (loginName, userName, page, count) =
             this.RepoListPushMirrors (loginName, userName, page, count)
+
+        member this.RepoDeletePushMirror (loginName, userName, remoteName) =
+            this.RepoDeletePushMirror (loginName, userName, remoteName)
 
         member this.RepoListBranchProtection (login, user) =
             this.RepoListBranchProtection (login, user)
