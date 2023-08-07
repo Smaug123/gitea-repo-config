@@ -18,8 +18,10 @@ module Program =
              ArgsCrate.make RunArgs.OfParse Reconcile.run)
 
             "output-schema",
-            ("Output the verification schema", ArgsCrate.make OutputSchemaArgs.OfParse OutputSchema.run)
+            ("Output a schema you can use to verify the `reconcile` config file",
+             ArgsCrate.make OutputSchemaArgs.OfParse OutputSchema.run)
 
+            "verify", ("Verify a `reconcile` configuration file", ArgsCrate.make VerifyArgs.OfParse Verify.run)
         |]
         |> Map.ofArray
 
