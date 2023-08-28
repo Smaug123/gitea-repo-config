@@ -1,4 +1,4 @@
-# .NET Declarative Gitea
+# gitea-repo-config
 
 This is a small project to allow you to specify a [Gitea](https://github.com/go-gitea/) configuration in a declarative manner, and to resolve differences between intended and actual config.
 
@@ -18,11 +18,11 @@ This is a small project to allow you to specify a [Gitea](https://github.com/go-
 
 Run with the `--help` argument for a full listing.
 The main argument you provide is a JSON configuration file, which should conform to [the schema](./Gitea.Declarative.Lib/GiteaConfig.schema.json); there is [an example](./Gitea.Declarative.Test/GiteaConfig.json) in the tests.
-(You can call `dotnet-gitea-declarative verify $CONFIG_PATH` to verify against the schema, or `dotnet-gitea-declarative output-schema` to output the schema for local tooling to consume.)
+(You can call `gitea-repo-config verify $CONFIG_PATH` to verify against the schema, or `gitea-repo-config output-schema` to output the schema for local tooling to consume.)
 
 # How to build and run
 
-* With Nix: `nix run github:Smaug123/dotnet-gitea-declarative -- reconcile --help`.
+* With Nix: `nix run github:Smaug123/gitea-repo-config -- reconcile --help`.
 * From source: clone the repository, and `dotnet run`.
 
 # Demos

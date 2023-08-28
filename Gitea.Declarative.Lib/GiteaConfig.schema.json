@@ -88,7 +88,7 @@
             "boolean",
             "null"
           ],
-          "description": "Set this to true to delete the repo. dotnet-gitea-declarative will refuse to delete any repo that is absent from configuration; the workflow is to first set its `deleted` to `true` (whereupon dotnet-gitea-declarative will delete it from Gitea) and then to delete it from configuration."
+          "description": "Set this to true to delete the repo. We will refuse to delete any repo that is absent from\n        configuration; the workflow is to first set its `deleted` to `true` (whereupon we will delete it from Gitea) and then to delete it from configuration."
         }
       },
       "oneOf": [
