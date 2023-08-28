@@ -78,19 +78,21 @@
           program = "${self.packages.${system}.default}/bin/Gitea.Declarative";
         };
       };
-      devShell = pkgs.mkShell {
-        buildInputs = with pkgs; [
-          (with dotnetCorePackages;
-            combinePackages [
-              dotnet-sdk_7
-              dotnetPackages.Nuget
-            ])
-        ];
-        packages = [
-          pkgs.alejandra
-          pkgs.nodePackages.markdown-link-check
-          pkgs.shellcheck
-        ];
+      devShells = {
+        default = pkgs.mkShell {
+          buildInputs = with pkgs; [
+            (with dotnetCorePackages;
+              combinePackages [
+                dotnet-sdk_7
+                dotnetPackages.Nuget
+              ])
+          ];
+          packages = [
+            pkgs.alejandra
+            pkgs.nodePackages.markdown-link-check
+            pkgs.shellcheck
+          ];
+        };
       };
     });
 }
