@@ -16,7 +16,7 @@
       pkgs = nixpkgs.legacyPackages.${system};
       projectFile = "./Gitea.Declarative/Gitea.Declarative.fsproj";
       testProjectFile = "./Gitea.Declarative.Test/Gitea.Declarative.Test.fsproj";
-      pname = "dotnet-gitea-declarative";
+      pname = "gitea-repo-config";
       dotnet-sdk = pkgs.dotnet-sdk_7;
       dotnet-runtime = pkgs.dotnetCorePackages.runtime_7_0;
       version = "0.1";
@@ -62,7 +62,7 @@
           }));
         default = pkgs.buildDotnetModule {
           pname = pname;
-          name = "gitea-declarative";
+          name = "gitea-repo-config";
           version = version;
           src = ./.;
           projectFile = projectFile;

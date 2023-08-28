@@ -70,7 +70,7 @@
         }
       },
       "deleted-repo": {
-        "description": "A repo that's been scheduled for deletion at the next run of dotnet-gitea-declarative",
+        "description": "A repo that's been scheduled for deletion at the next run",
         "deleted": true,
         "native": {
           "defaultBranch": "main",
@@ -84,7 +84,7 @@
         }
       },
       "deleted-mirror": {
-        "description": "A repo that's been scheduled for deletion at the next run of dotnet-gitea-declarative",
+        "description": "A repo that's been scheduled for deletion at the next run",
         "deleted": true,
         "gitHub": {
           "uri": "https://github.com/MyName/only-remaining-copy"
