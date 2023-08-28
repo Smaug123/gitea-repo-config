@@ -117,7 +117,8 @@ type internal SerialisedRepo =
         [<Description "If this repo is to be created natively on Gitea, the information about the repo.">]
         [<JsonProperty(Required = Required.Default)>]
         Native : Nullable<SerialisedNativeRepo>
-        [<Description "Set this to true to delete the repo. dotnet-gitea-declarative will refuse to delete any repo that is absent from configuration; the workflow is to first set its `deleted` to `true` (whereupon dotnet-gitea-declarative will delete it from Gitea) and then to delete it from configuration.">]
+        [<Description "Set this to true to delete the repo. We will refuse to delete any repo that is absent from
+        configuration; the workflow is to first set its `deleted` to `true` (whereupon we will delete it from Gitea) and then to delete it from configuration.">]
         [<JsonProperty(Required = Required.Default)>]
         Deleted : Nullable<bool>
     }

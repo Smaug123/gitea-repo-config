@@ -4,7 +4,7 @@ export GITEA_TOKEN="$1"
 
 function execute() {
     target="$1"
-    asciinema rec --overwrite --cols 100 --env "GITEA_TOKEN,SHELL,TERM" --command 'nix run github:Smaug123/dotnet-gitea-declarative -- \
+    asciinema rec --overwrite --cols 100 --env "GITEA_TOKEN,SHELL,TERM" --command 'nix run github:Smaug123/gitea-repo-config -- \
     --config-file /tmp/GiteaConfig.json \
     --gitea-host=https://gitea.patrickstevens.co.uk \
     --gitea-admin-api-token "$GITEA_TOKEN" \
