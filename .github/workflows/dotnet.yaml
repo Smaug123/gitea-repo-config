@@ -77,6 +77,19 @@ jobs:
       - name: Run Alejandra
         run: nix develop --command alejandra --check .
 
+  check-flake:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install Nix
+        uses: cachix/install-nix-action@v22
+        with:
+          extra_nix_config: |
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+      - name: Check flake
+        run: nix flake check
+
   linkcheck:
     name: Check links
     runs-on: ubuntu-latest
@@ -92,7 +105,7 @@ jobs:
         run: 'nix develop --command markdown-link-check {,**/}*.md'
 
   all-required-checks-complete:
-    needs: [check-dotnet-format, check-nix-format, build, build-nix, linkcheck]
+    needs: [check-dotnet-format, check-nix-format, build, build-nix, linkcheck, check-flake]
     runs-on: ubuntu-latest
     steps:
       - run: echo "All required checks complete."
