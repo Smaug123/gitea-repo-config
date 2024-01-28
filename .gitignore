@@ -9,6 +9,7 @@ riderModule.iml
 .DS_Store
 result
 .profile*
+.direnv/
 
 node_modules/
 package.json
