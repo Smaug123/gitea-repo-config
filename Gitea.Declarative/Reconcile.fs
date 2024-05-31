@@ -23,7 +23,7 @@ type RunArgsFragment =
                 "a Gitea admin user's API token; can be read from the environment variable GITEA_ADMIN_API_TOKEN"
             | GitHub_Api_Token _ ->
                 "a GitHub API token with read access to every desired sync-from-GitHub repo; can be read from the environment variable GITHUB_API_TOKEN"
-            | Dry_Run _ -> "don't actually perform the reconciliation"
+            | Dry_Run -> "don't actually perform the reconciliation"
 
 type RunArgs =
     {
