@@ -222,7 +222,8 @@ module TestRepo =
 
             recoveredUser |> shouldEqual user
 
-            CollectionAssert.AreEqual (existingRepos.Keys, errors.Keys)
+            existingRepos.Keys
+            |> shouldEqual errors.Keys
 
             for _repo, config in Map.toSeq errors do
                 match config with
