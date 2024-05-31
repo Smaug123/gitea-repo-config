@@ -41,19 +41,15 @@
         };
     in let
       default = pkgs.buildDotnetModule {
-        pname = pname;
+        inherit version pname projectFile testProjectFile dotnet-sdk dotnet-runtime;
         name = "gitea-repo-config";
-        version = version;
         src = ./.;
-        projectFile = projectFile;
         nugetDeps = ./nix/deps.nix; # `nix build .#default.passthru.fetch-deps && ./result` and put the result here
         doCheck = true;
-        dotnet-sdk = dotnet-sdk;
-        dotnet-runtime = dotnet-runtime;
       };
     in {
       packages = {
-        fantomas = dotnetTool "fantomas" (builtins.fromJSON (builtins.readFile ./.config/dotnet-tools.json)).tools.fantomas.version "sha256-zYSF53RPbGEQt1ZBcHVYqEPHrFlmI1Ty3GQPW1uxPWw=";
+        fantomas = dotnetTool "fantomas" (builtins.fromJSON (builtins.readFile ./.config/dotnet-tools.json)).tools.fantomas.version (builtins.head (builtins.filter (elem: elem.pname == "fantomas") ((import ./nix/deps.nix) {fetchNuGet = x: x;}))).sha256;
         default = default;
       };
       apps = {
@@ -64,12 +60,8 @@
       };
       devShells = {
         default = pkgs.mkShell {
-          buildInputs = with pkgs; [
-            (with dotnetCorePackages;
-              combinePackages [
-                dotnet-sdk_8
-                dotnetPackages.Nuget
-              ])
+          buildInputs = [
+            dotnet-sdk
           ];
           packages = [
             pkgs.alejandra
