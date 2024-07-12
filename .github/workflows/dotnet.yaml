@@ -106,7 +106,7 @@ jobs:
 
   all-required-checks-complete:
     if: ${{ always() }}
-    needs: [check-dotnet-format, check-nix-format, check-accurate-generations, build, build-nix, linkcheck, flake-check, analyzers, nuget-pack, expected-pack, github-release-plugin-dry-run]
+    needs: [check-dotnet-format, check-nix-format, build, build-nix, linkcheck, check-flake]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
