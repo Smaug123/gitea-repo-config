@@ -109,8 +109,6 @@ jobs:
     needs: [check-dotnet-format, check-nix-format, build, build-nix, linkcheck, check-flake]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Check job statuses
-        env:
-            RESULTS: ${{ toJSON(needs) }}
-        run: python .github/workflows/required_checks.py
+      - uses: Smaug123/all-required-checks-complete-action@05b40a8c47ef0b175ea326e9abb09802cb67b44e
+        with:
+          needs-context: ${{ toJSON(needs) }}
