@@ -50,7 +50,7 @@ module RefreshAuth =
     let run (args : RefreshAuthArgs) : Async<int> =
         async {
             use httpClient = Utils.createHttpClient args.GiteaHost args.GiteaAdminApiToken
-            let client = Gitea.Client httpClient |> IGiteaClient.fromReal
+            let client = GiteaClient.GiteaClient.make httpClient
 
             use loggerProvider = Utils.createLoggerProvider ()
             let logger = loggerProvider.CreateLogger "Gitea.Declarative"
@@ -58,7 +58,7 @@ module RefreshAuth =
             let! instructions = Gitea.toRefresh client
 
             if args.DryRun then
-                logger.LogInformation ("Stopping due to --dry-run.")
+                logger.LogInformation "Stopping due to --dry-run."
             else
                 do! Gitea.refreshAuth logger client args.GitHubApiToken instructions
 

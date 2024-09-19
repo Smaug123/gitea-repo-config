@@ -8,6 +8,10 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Gitea.Declarative", "Gitea.
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Gitea.InMemory", "Gitea.InMemory\Gitea.InMemory.fsproj", "{E7620129-398A-4BEA-9390-373BDF38C4B8}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "WoofWare.Myriad.Plugins", "..\WoofWare.Myriad\WoofWare.Myriad.Plugins\WoofWare.Myriad.Plugins.fsproj", "{FFB09427-D403-495B-B602-D5EA68A56E5F}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "WoofWare.Myriad.Plugins.Attributes", "..\WoofWare.Myriad\WoofWare.Myriad.Plugins.Attributes\WoofWare.Myriad.Plugins.Attributes.fsproj", "{98C9FEE7-A4C8-4FF6-AF09-ADDD79CFD17D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +34,13 @@ Global
 		{E7620129-398A-4BEA-9390-373BDF38C4B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E7620129-398A-4BEA-9390-373BDF38C4B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E7620129-398A-4BEA-9390-373BDF38C4B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFB09427-D403-495B-B602-D5EA68A56E5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFB09427-D403-495B-B602-D5EA68A56E5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFB09427-D403-495B-B602-D5EA68A56E5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFB09427-D403-495B-B602-D5EA68A56E5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98C9FEE7-A4C8-4FF6-AF09-ADDD79CFD17D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98C9FEE7-A4C8-4FF6-AF09-ADDD79CFD17D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98C9FEE7-A4C8-4FF6-AF09-ADDD79CFD17D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98C9FEE7-A4C8-4FF6-AF09-ADDD79CFD17D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

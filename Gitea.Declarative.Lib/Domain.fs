@@ -2,6 +2,7 @@ namespace Gitea.Declarative
 
 open System
 open System.ComponentModel
+open System.Text.Json.Nodes
 
 [<TypeConverter(typeof<UserTypeConverter>)>]
 type User =
@@ -10,6 +11,10 @@ type User =
     override this.ToString () =
         match this with
         | User u -> u
+
+    static member jsonParse (s : JsonNode) : User = s.GetValue<string> () |> User
+
+    static member toJsonNode (User u) : JsonNode = JsonValue.op_Implicit u
 
 and UserTypeConverter () =
     inherit TypeConverter ()
@@ -23,6 +28,10 @@ type RepoName =
     override this.ToString () =
         match this with
         | RepoName r -> r
+
+    static member jsonParse (s : JsonNode) : RepoName = s.GetValue<string> () |> RepoName
+
+    static member toJsonNode (RepoName r) : JsonNode = JsonValue.op_Implicit r
 
 and RepoNameTypeConverter () =
     inherit TypeConverter ()

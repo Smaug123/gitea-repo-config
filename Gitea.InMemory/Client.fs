@@ -5,11 +5,11 @@ open Gitea.Declarative
 
 type private ServerState =
     {
-        Users : Map<User, Gitea.CreateUserOption>
+        Users : Map<User, GiteaClient.CreateUserOption>
         Repos : (User * Repo) list
     }
 
-    member this.WithUser (create : Gitea.CreateUserOption) : ServerState =
+    member this.WithUser (create : GiteaClient.CreateUserOption) : ServerState =
         let user = User create.Username
 
         match Map.tryFind user this.Users with
@@ -27,7 +27,7 @@ type private ServerState =
             Repos = []
         }
 
-type private ServerMessage = | AddUser of Gitea.CreateUserOption * AsyncReplyChannel<unit>
+type private ServerMessage = | AddUser of GiteaClient.CreateUserOption * AsyncReplyChannel<unit>
 
 type Server =
     private
@@ -51,57 +51,18 @@ module Client =
                 return! loop (state.WithUser user) mailbox
         }
 
-    let make () : Server * IGiteaClient =
+    let make () : Server * GiteaClient.IGiteaClient =
         let server = MailboxProcessor.Start (loop ServerState.Empty)
 
         let client =
-            { new IGiteaClient with
-                member _.AdminGetAllUsers (page, limit) = failwith "Not implemented"
-
-                member _.AdminCreateUser createUserOption =
-                    async {
-                        let! () = server.PostAndAsyncReply (fun reply -> AddUser (createUserOption, reply))
-                        return Operations.createdUser createUserOption
-                    }
-                    |> Async.StartAsTask
-
-                member _.AdminDeleteUser user = failwith "Not implemented"
-
-                member _.AdminEditUser (user, editUserOption) = failwith "Not implemented"
-
-                member _.AdminCreateRepo (user, createRepoOption) = failwith "Not implemented"
-
-                member _.UserListRepos (user, page, count) = failwith "Not implemented"
-
-                member _.RepoAddPushMirror (user, repo, createPushMirrorOption) = failwith "Not implemented"
-
-                member _.RepoDeletePushMirror (user, repo, remoteName) = failwith "Not implemented"
-
-                member _.RepoListPushMirrors (loginName, userName, page, count) = failwith "Not implemented"
-
-                member _.RepoListBranchProtection (loginName, userName) = failwith "Not implemented"
-
-                member _.RepoDeleteBranchProtection (user, repo, branch) = failwith "Not implemented"
-
-                member _.RepoCreateBranchProtection (user, repo, createBranchProtectionOption) =
-                    failwith "Not implemented"
-
-                member _.RepoEditBranchProtection (user, repo, branch, editBranchProtectionOption) =
-                    failwith "Not implemented"
-
-                member _.RepoMigrate migrateRepoOptions = failwith "Not implemented"
-
-                member _.RepoGet (user, repo) = failwith "Not implemented"
-
-                member _.RepoDelete (user, repo) = failwith "Not implemented"
-
-                member _.RepoEdit (user, repo, editRepoOption) = failwith "Not implemented"
-
-                member _.RepoListCollaborators (loginName, userName, page, count) = failwith "Not implemented"
-
-                member _.RepoAddCollaborator (user, repo, collaborator) = failwith "Not implemented"
-
-                member _.RepoDeleteCollaborator (user, repo, collaborator) = failwith "Not implemented"
+            { GiteaClient.GiteaClientMock.Empty with
+                AdminCreateUser =
+                    fun (createUserOption, _ct) ->
+                        async {
+                            let! () = server.PostAndAsyncReply (fun reply -> AddUser (createUserOption, reply))
+                            return Operations.createdUser createUserOption
+                        }
+                        |> Async.StartAsTask
             }
 
         Server server, client
