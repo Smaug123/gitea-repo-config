@@ -28,11 +28,14 @@ type MergeStyle =
 type PushMirror =
     {
         GitHubAddress : Uri
+        /// Gitea should always tell us a remote name, but a user in their config can't.
+        RemoteName : string option
     }
 
     static member OfSerialised (s : SerialisedPushMirror) : PushMirror =
         {
             GitHubAddress = Uri s.GitHubAddress
+            RemoteName = None
         }
 
     member this.ToSerialised () : SerialisedPushMirror =
@@ -80,7 +83,7 @@ type NativeRepo =
         AllowRebase : bool option
         AllowRebaseExplicit : bool option
         AllowMergeCommits : bool option
-        Mirror : PushMirror option
+        Mirrors : PushMirror list
         ProtectedBranches : ProtectedBranch Set
         Collaborators : string Set
     }
@@ -101,7 +104,7 @@ type NativeRepo =
             AllowRebase = Some false
             AllowRebaseExplicit = Some false
             AllowMergeCommits = Some false
-            Mirror = None
+            Mirrors = []
             ProtectedBranches = Set.empty
             Collaborators = Set.empty
         }
@@ -126,7 +129,7 @@ type NativeRepo =
             AllowRebase = this.AllowRebase |> Option.orElse NativeRepo.Default.AllowRebase
             AllowRebaseExplicit = this.AllowRebaseExplicit |> Option.orElse NativeRepo.Default.AllowRebaseExplicit
             AllowMergeCommits = this.AllowMergeCommits |> Option.orElse NativeRepo.Default.AllowMergeCommits
-            Mirror = this.Mirror
+            Mirrors = this.Mirrors
             ProtectedBranches = this.ProtectedBranches // TODO should this replace null with empty?
             Collaborators = this.Collaborators
         }
@@ -147,7 +150,12 @@ type NativeRepo =
             AllowRebase = s.AllowRebase |> Option.ofNullable
             AllowRebaseExplicit = s.AllowRebaseExplicit |> Option.ofNullable
             AllowMergeCommits = s.AllowMergeCommits |> Option.ofNullable
-            Mirror = s.Mirror |> Option.ofNullable |> Option.map PushMirror.OfSerialised
+            Mirrors =
+                s.Mirrors
+                |> Option.ofObj
+                |> Option.defaultValue [||]
+                |> List.ofArray
+                |> List.map PushMirror.OfSerialised
             ProtectedBranches =
                 match s.ProtectedBranches with
                 | null -> Set.empty
@@ -177,10 +185,7 @@ type NativeRepo =
             AllowRebase = this.AllowRebase |> Option.toNullable
             AllowRebaseExplicit = this.AllowRebaseExplicit |> Option.toNullable
             AllowMergeCommits = this.AllowMergeCommits |> Option.toNullable
-            Mirror =
-                match this.Mirror with
-                | None -> Nullable ()
-                | Some mirror -> Nullable (mirror.ToSerialised ())
+            Mirrors = this.Mirrors |> List.toArray |> Array.map (fun a -> a.ToSerialised ())
             ProtectedBranches = this.ProtectedBranches |> Seq.map (fun b -> b.ToSerialised ()) |> Array.ofSeq
             Collaborators = Set.toArray this.Collaborators
         }
@@ -260,17 +265,11 @@ type Repo =
                     | None -> failwith "Owner of repo unexpectedly had no login name!"
                     | Some n -> n
 
-                let! mirror =
+                let! mirrors =
                     List.getPaginated (fun page count ->
                         client.RepoListPushMirrors (loginName, repoFullName, page, count)
                         |> Async.AwaitTask
                     )
-
-                let mirror =
-                    match mirror with
-                    | [] -> None
-                    | [ mirror ] -> Some mirror
-                    | _ -> failwith "Multiple mirrors not supported yet"
 
                 let! (branchProtections : GiteaClient.BranchProtection list) =
                     client.RepoListBranchProtection (loginName, repoFullName) |> Async.AwaitTask
@@ -322,14 +321,17 @@ type Repo =
                                 AllowRebase = u.AllowRebase
                                 AllowRebaseExplicit = u.AllowRebaseExplicit
                                 AllowMergeCommits = u.AllowMergeCommits
-                                Mirror =
-                                    mirror
-                                    |> Option.map (fun m ->
-                                        match m.RemoteAddress with
-                                        | None -> failwith "Unexpectedly have a PushMirror but no remote address!"
-                                        | Some s ->
+                                Mirrors =
+                                    mirrors
+                                    |> List.map (fun m ->
+                                        match m.RemoteAddress, m.RemoteName with
+                                        | None, _ -> failwith "Unexpectedly have a PushMirror but no remote address!"
+                                        | Some _, None ->
+                                            failwith "Unexpectedly have a PushMirror with no remote name!"
+                                        | Some s, Some remoteName ->
                                             {
                                                 GitHubAddress = Uri s
+                                                RemoteName = Some remoteName
                                             }
                                     )
                                 ProtectedBranches =

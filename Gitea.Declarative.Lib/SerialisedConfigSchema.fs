@@ -81,8 +81,8 @@ type internal SerialisedNativeRepo =
         [<Description "either `true` to allow merging pull requests with a merge commit, or `false` to prevent merging pull requests with merge commits.">]
         AllowMergeCommits : Nullable<bool>
         [<JsonProperty(Required = Required.DisallowNull)>]
-        [<Description "Configure a GitHub push mirror to sync this repo to">]
-        Mirror : Nullable<SerialisedPushMirror>
+        [<Description "Configure GitHub push mirrors to sync this repo to">]
+        Mirrors : SerialisedPushMirror[]
         [<JsonProperty(Required = Required.Default)>]
         [<Description "Protected branch configuration">]
         ProtectedBranches : SerialisedProtectedBranch array

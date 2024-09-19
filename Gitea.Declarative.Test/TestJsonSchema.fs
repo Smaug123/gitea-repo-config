@@ -1,5 +1,6 @@
 namespace Gitea.Declarative.Test
 
+open System
 open System.IO
 open System.Reflection
 open Gitea.Declarative

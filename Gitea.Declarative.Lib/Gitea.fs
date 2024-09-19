@@ -382,34 +382,136 @@ module Gitea =
                 else
                     async.Return ()
 
+            // Push mirrors
             do!
-                match desired'.Mirror, actual'.Mirror with
-                | None, None -> async.Return ()
-                | None, Some m ->
-                    async { logger.LogError ("Refusing to delete push mirror for {User}:{Repo}", user, repoName) }
-                | Some desired, None ->
-                    match githubApiToken with
-                    | None ->
-                        async {
-                            logger.LogCritical (
-                                "Cannot add push mirror for {User}:{Repo} due to lack of GitHub API token",
-                                user,
-                                repoName
-                            )
-                        }
-                    | Some token ->
-                        async {
-                            logger.LogInformation ("Setting up push mirror on {User}:{Repo}", user, repoName)
-                            let pushMirrorOption = createPushMirrorOption desired.GitHubAddress token
-                            let! _ = client.RepoAddPushMirror (user, repoName, pushMirrorOption) |> Async.AwaitTask
-                            return ()
-                        }
-                | Some desired, Some actual ->
-                    if desired <> actual then
-                        async { logger.LogCritical ("Push mirror on {User}:{Repo} differs.", user, repoName) }
-                    else
-                        async.Return ()
+                let desired =
+                    desired'.Mirrors
+                    |> List.groupBy (fun m -> (m.GitHubAddress : Uri).ToString ())
+                    |> Map.ofList
 
+                let desired =
+                    desired
+                    |> Map.toSeq
+                    |> Seq.map (fun (name, pm) ->
+                        match pm with
+                        | [] -> failwith "LOGIC ERROR"
+                        | [ pm ] -> pm.GitHubAddress.ToString ()
+                        | _ ->
+                            failwith
+                                $"Config validation failed on repo %s{repoName}: multiple push mirrors configured for target %s{name}"
+                    )
+                    |> Set.ofSeq
+
+                let actual =
+                    actual'.Mirrors
+                    |> List.groupBy (fun m -> (m.GitHubAddress : Uri).ToString ())
+                    |> Map.ofList
+
+                // If any mirror target has multiple push mirrors for it, just delete them all before continuing.
+                let deleteExisting =
+                    actual
+                    |> Map.toSeq
+                    |> Seq.choose (fun (k, vs) ->
+                        match vs with
+                        | [] -> failwith "LOGIC ERROR"
+                        | [ _ ] -> None
+                        | vs ->
+                            vs
+                            |> List.map (fun pm ->
+                                async {
+                                    logger.LogWarning (
+                                        "Multiple push mirrors on repo {Owner}/{RepoName} for target {PushMirrorTarget} found. Deleting them all before recreating.",
+                                        user,
+                                        repoName,
+                                        k
+                                    )
+
+                                    let! ct = Async.CancellationToken
+                                    // sigh, domain model - it's *such* a faff to represent this correctly though
+                                    do!
+                                        client.RepoDeletePushMirror (user, repoName, Option.get pm.RemoteName, ct)
+                                        |> Async.AwaitTask
+                                }
+                            )
+                            |> Async.Sequential
+                            |> Async.map (Array.iter id)
+                            |> Some
+                    )
+                    |> Seq.toList
+
+                let actual =
+                    match deleteExisting with
+                    | [] -> actual
+                    | _ -> Map.empty
+
+                let distinctActual = actual.Keys |> Set.ofSeq
+
+                let presentButNotDesired = Set.difference distinctActual desired
+                let desiredButNotPresent = Set.difference desired distinctActual
+
+                let deleteUndesired =
+                    presentButNotDesired
+                    |> Seq.map (fun toDelete ->
+                        logger.LogWarning (
+                            "Deleting push mirror on repo {Owner}/{RepoName} for target {PushMirrorTarget}",
+                            user,
+                            repoName,
+                            toDelete
+                        )
+
+                        let toDelete = actual.[toDelete]
+
+                        toDelete
+                        |> Seq.map (fun pm ->
+                            async {
+                                let! ct = Async.CancellationToken
+
+                                do!
+                                    client.RepoDeletePushMirror (user, repoName, Option.get pm.RemoteName, ct)
+                                    |> Async.AwaitTask
+                            }
+                        )
+                        |> Async.Sequential
+                        |> Async.map (Array.iter id)
+                    )
+                    |> Async.Sequential
+                    |> Async.map (Array.iter id)
+
+                let addDesired =
+                    desiredButNotPresent
+                    |> Seq.map (fun toAdd ->
+                        match githubApiToken with
+                        | None ->
+                            async {
+                                logger.LogCritical (
+                                    "Cannot add push mirror for {User}:{Repo} due to lack of GitHub API token",
+                                    user,
+                                    repoName
+                                )
+                            }
+                        | Some token ->
+                            async {
+                                logger.LogInformation ("Setting up push mirror on {User}:{Repo}", user, repoName)
+                                let! ct = Async.CancellationToken
+                                let pushMirrorOption = createPushMirrorOption (Uri toAdd) token
+
+                                let! _ =
+                                    client.RepoAddPushMirror (user, repoName, pushMirrorOption, ct)
+                                    |> Async.AwaitTask
+
+                                return ()
+                            }
+                    )
+                    |> Async.Sequential
+                    |> Async.map (Array.iter id)
+
+                async {
+                    do! deleteExisting |> Async.Sequential |> Async.map (Array.iter id)
+                    do! deleteUndesired
+                    do! addDesired
+                }
+
+            // Collaborators
             do!
                 let desiredButNotPresent =
                     Set.difference desired'.Collaborators actual'.Collaborators
@@ -636,36 +738,48 @@ module Gitea =
                             | Choice2Of2 e -> raise (AggregateException ($"Error creating {user}:{r}", e))
                             | Choice1Of2 _ -> ()
 
-                            match native.Mirror, githubApiToken with
-                            | None, _ -> ()
-                            | Some mirror, None -> failwith "Cannot push to GitHub mirror with an API key"
-                            | Some mirror, Some token ->
+                            match native.Mirrors, githubApiToken with
+                            | [], _ -> ()
+                            | _ :: _, None -> failwith "Cannot push to GitHub mirror without an API key"
+                            | mirrors, Some token ->
                                 logger.LogInformation ("Setting up push mirror for {User}:{Repo}", user, r)
 
-                                let options : GiteaClient.CreatePushMirrorOption =
-                                    {
-                                        AdditionalProperties = Dictionary ()
-                                        Interval = Some "8h0m0s"
-                                        RemoteAddress = (mirror.GitHubAddress : Uri).ToString () |> Some
-                                        RemotePassword = Some token
-                                        RemoteUsername = Some token
-                                        SyncOnCommit = Some true
-                                    }
-
-                                let! mirrors =
+                                let! actualMirrors =
                                     List.getPaginated (fun page count ->
                                         client.RepoListPushMirrors (user, r, page, count) |> Async.AwaitTask
                                     )
 
-                                match mirrors |> List.tryFind (fun m -> m.RemoteAddress = options.RemoteAddress) with
-                                | None ->
-                                    let! _ = client.RepoAddPushMirror (user, r, options) |> Async.AwaitTask
-                                    ()
-                                | Some existing ->
-                                    if existing.SyncOnCommit <> Some true then
-                                        failwith $"sync on commit should have been true for {user}:{r}"
+                                do!
+                                    mirrors
+                                    |> List.map (fun mirror ->
+                                        let options : GiteaClient.CreatePushMirrorOption =
+                                            {
+                                                AdditionalProperties = Dictionary ()
+                                                Interval = Some "8h0m0s"
+                                                RemoteAddress = (mirror.GitHubAddress : Uri).ToString () |> Some
+                                                RemotePassword = Some token
+                                                RemoteUsername = Some token
+                                                SyncOnCommit = Some true
+                                            }
 
-                                ()
+                                        async {
+                                            match
+                                                actualMirrors
+                                                |> List.tryFind (fun m -> m.RemoteAddress = options.RemoteAddress)
+                                            with
+                                            | None ->
+                                                let! _ =
+                                                    client.RepoAddPushMirror (user, r, options) |> Async.AwaitTask
+
+                                                ()
+                                            | Some existing ->
+                                                if existing.SyncOnCommit <> Some true then
+                                                    failwith $"sync on commit should have been true for {user}:{r}"
+                                        }
+                                    )
+                                    |> Async.Sequential
+                                    |> Async.map (Array.iter id)
+
                         | Some github, None ->
                             let options : GiteaClient.MigrateRepoOptions =
                                 {
@@ -890,7 +1004,10 @@ module Gitea =
 
     let toRefresh (client : GiteaClient.IGiteaClient) : Async<Map<User, Map<RepoName, GiteaClient.PushMirror list>>> =
         async {
-            let! users = List.getPaginated (fun page limit -> client.AdminGetAllUsers (page, limit) |> Async.AwaitTask)
+            let! ct = Async.CancellationToken
+
+            let! users =
+                List.getPaginated (fun page limit -> client.AdminGetAllUsers (page, limit, ct) |> Async.AwaitTask)
 
             let! results =
                 users
@@ -901,9 +1018,11 @@ module Gitea =
                             | None -> failwith "Gitea returned a User with no login name!"
                             | Some name -> name
 
+                        let! ct = Async.CancellationToken
+
                         let! repos =
                             List.getPaginated (fun page count ->
-                                client.UserListRepos (loginName, page, count) |> Async.AwaitTask
+                                client.UserListRepos (loginName, page, count, ct) |> Async.AwaitTask
                             )
 
                         let! pushMirrorResults =
@@ -915,10 +1034,12 @@ module Gitea =
                                         | None -> failwith "Gitea returned a Repo with no name!"
                                         | Some name -> name
 
+                                    let! ct = Async.CancellationToken
+
                                     let! mirrors =
                                         List.getPaginated (fun page count ->
                                             Async.AwaitTask (
-                                                client.RepoListPushMirrors (loginName, repoName, page, count)
+                                                client.RepoListPushMirrors (loginName, repoName, page, count, ct)
                                             )
                                         )
 
@@ -946,7 +1067,7 @@ module Gitea =
         |> Map.toSeq
         |> Seq.collect (fun (User user, repos) ->
             Map.toSeq repos
-            |> Seq.collect (fun (RepoName repoName, mirrors) ->
+            |> Seq.map (fun (RepoName repoName, mirrors) ->
                 mirrors
                 |> Seq.map (fun mirror ->
                     async {
@@ -974,14 +1095,21 @@ module Gitea =
                                 SyncOnCommit = mirror.SyncOnCommit
                             }
 
-                        let! newMirror = Async.AwaitTask (client.RepoAddPushMirror (user, repoName, option))
+                        let! ct = Async.CancellationToken
+
+                        let! newMirror = Async.AwaitTask (client.RepoAddPushMirror (user, repoName, option, ct))
 
                         let! deleteOldMirror =
-                            Async.AwaitTask (client.RepoDeletePushMirror (user, repoName, remoteName))
+                            Async.AwaitTask (client.RepoDeletePushMirror (user, repoName, remoteName, ct))
+
 
                         return ()
                     }
                 )
+                // Gitea will attempt to lock the repo config file for every push mirror, so these have to happen
+                // serially, on pain of 500 Internal Server Error :facepalm:
+                |> Async.Sequential
+                |> Async.map (Array.iter id)
             )
         )
         |> Async.Parallel
