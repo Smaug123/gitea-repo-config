@@ -18,12 +18,14 @@ type MergeStyle =
         elif s = "rebase-merge" then MergeStyle.RebaseMerge
         else failwithf "Unrecognised merge style '%s'" s
 
-    static member toString (s : MergeStyle) : string =
-        match s with
+    override this.ToString () : string =
+        match this with
         | Merge -> "merge"
         | RebaseMerge -> "rebase-merge"
         | Rebase -> "rebase"
         | Squash -> "squash"
+
+    static member toString (m : MergeStyle) = m.ToString ()
 
 type PushMirror =
     {
