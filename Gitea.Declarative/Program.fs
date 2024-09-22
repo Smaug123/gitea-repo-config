@@ -85,7 +85,7 @@ module Program =
                     Error 127
                 | Ok args ->
 
-                run args |> Ok
+                run args |> Async.RunSynchronously |> Ok
         }
         |> command.Apply
-        |> Result.cata Async.RunSynchronously id
+        |> Result.cata id id
