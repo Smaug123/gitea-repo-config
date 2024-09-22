@@ -188,13 +188,12 @@
           "type": "boolean",
           "description": "either `true` to allow merging pull requests with a merge commit, or `false` to prevent merging pull requests with merge commits."
         },
-        "mirror": {
-          "description": "Configure a GitHub push mirror to sync this repo to",
-          "oneOf": [
-            {
-              "$ref": "#/definitions/SerialisedPushMirror"
-            }
-          ]
+        "mirrors": {
+          "type": "array",
+          "description": "Configure GitHub push mirrors to sync this repo to",
+          "items": {
+            "$ref": "#/definitions/SerialisedPushMirror"
+          }
         },
         "protectedBranches": {
           "type": [

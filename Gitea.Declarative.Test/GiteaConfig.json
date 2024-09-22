@@ -38,9 +38,11 @@
                 "native": {
                     "defaultBranch": "main",
                     "private": false,
-                    "mirror": {
-                        "gitHubAddress": "https://github.com/MyName/repo-name-3"
-                    }
+                    "mirrors": [
+                        {
+                            "gitHubAddress": "https://github.com/MyName/repo-name-3"
+                        }
+                    ]
                 }
             },
             "new-repo-mirrored-with-branches": {
@@ -48,9 +50,11 @@
                 "native": {
                     "defaultBranch": "main",
                     "private": false,
-                    "mirror": {
-                        "gitHubAddress": "https://github.com/MyName/repo-name-3"
-                    },
+                    "mirrors": [
+                        {
+                            "gitHubAddress": "https://github.com/MyName/repo-name-3"
+                        }
+                    ],
                     "protectedBranches": [
                         {
                             "branchName": "main"
@@ -63,9 +67,11 @@
                 "native": {
                     "defaultBranch": "main",
                     "private": false,
-                    "mirror": {
-                        "gitHubAddress": "https://github.com/MyName/repo-name-3"
-                    },
+                    "mirrors": [
+                        {
+                            "gitHubAddress": "https://github.com/MyName/repo-name-3"
+                        }
+                    ],
                     "protectedBranches": [
                         {
                             "branchName": "main",
@@ -83,9 +89,11 @@
                 "native": {
                     "defaultBranch": "main",
                     "private": false,
-                    "mirror": {
-                        "gitHubAddress": "https://github.com/MyName/repo-name-3"
-                    },
+                    "mirrors": [
+                        {
+                            "gitHubAddress": "https://github.com/MyName/repo-name-3"
+                        }
+                    ],
                     "protectedBranches": [
                         {
                             "branchName": "main",

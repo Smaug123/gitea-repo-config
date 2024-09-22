@@ -46,15 +46,14 @@ module TestSchema =
         let schema = reader.ReadToEnd ()
         schema.Contains "SerialisedGiteaConfig" |> shouldEqual true
 
-    [<Test>]
-    [<Explicit "Run this to regenerate the schema file">]
-    let ``Update schema file`` () =
-        let schemaFile =
+    let schemaFile : Lazy<FileInfo> =
+        lazy
             Assembly.GetExecutingAssembly().Location
             |> FileInfo
             |> fun fi -> fi.Directory
             |> Utils.findFileAbove "Gitea.Declarative.Lib/GiteaConfig.schema.json"
 
+    let computeSchema () =
         let settings = JsonSchemaGeneratorSettings ()
 
         settings.SerializerSettings <-
@@ -78,4 +77,16 @@ module TestSchema =
             schema.RequiredProperties.Add "native"
             serialisedRepoSchema.OneOf.Add schema
 
-        File.WriteAllText (schemaFile.FullName, schema.ToJson ())
+        schema
+
+    [<Test>]
+    let ``Schema hasn't changed`` () =
+        let computed = computeSchema () |> fun x -> x.ToJson ()
+        let actual = File.ReadAllText (schemaFile.Force().FullName)
+        computed |> shouldEqual actual
+
+    [<Test>]
+    [<Explicit "Run this to regenerate the schema file">]
+    let ``Update schema file`` () =
+        let schema = computeSchema ()
+        File.WriteAllText (schemaFile.Force().FullName, schema.ToJson ())

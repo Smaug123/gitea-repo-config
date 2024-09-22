@@ -27,14 +27,28 @@ type MergeStyle =
 
     static member toString (m : MergeStyle) = m.ToString ()
 
+[<NoComparison>]
+[<CustomEquality>]
 type PushMirror =
     {
         GitHubAddress : Uri
+        /// Gitea should always tell us a remote name, but a user in their config can't.
+        RemoteName : string option
     }
+
+    /// Equality check ignores remote names, which are not known to the user but which Gitea tracks internally.
+    override this.Equals (other : obj) : bool =
+        match other with
+        | :? PushMirror as other -> this.GitHubAddress.ToString () = other.GitHubAddress.ToString ()
+        | _ -> false
+
+    override this.GetHashCode () : int =
+        this.GitHubAddress.ToString().GetHashCode ()
 
     static member OfSerialised (s : SerialisedPushMirror) : PushMirror =
         {
             GitHubAddress = Uri s.GitHubAddress
+            RemoteName = None
         }
 
     member this.ToSerialised () : SerialisedPushMirror =
@@ -82,7 +96,7 @@ type NativeRepo =
         AllowRebase : bool option
         AllowRebaseExplicit : bool option
         AllowMergeCommits : bool option
-        Mirror : PushMirror option
+        Mirrors : PushMirror list
         ProtectedBranches : ProtectedBranch Set
         Collaborators : string Set
     }
@@ -103,7 +117,7 @@ type NativeRepo =
             AllowRebase = Some false
             AllowRebaseExplicit = Some false
             AllowMergeCommits = Some false
-            Mirror = None
+            Mirrors = []
             ProtectedBranches = Set.empty
             Collaborators = Set.empty
         }
@@ -128,7 +142,7 @@ type NativeRepo =
             AllowRebase = this.AllowRebase |> Option.orElse NativeRepo.Default.AllowRebase
             AllowRebaseExplicit = this.AllowRebaseExplicit |> Option.orElse NativeRepo.Default.AllowRebaseExplicit
             AllowMergeCommits = this.AllowMergeCommits |> Option.orElse NativeRepo.Default.AllowMergeCommits
-            Mirror = this.Mirror
+            Mirrors = this.Mirrors
             ProtectedBranches = this.ProtectedBranches // TODO should this replace null with empty?
             Collaborators = this.Collaborators
         }
@@ -149,7 +163,12 @@ type NativeRepo =
             AllowRebase = s.AllowRebase |> Option.ofNullable
             AllowRebaseExplicit = s.AllowRebaseExplicit |> Option.ofNullable
             AllowMergeCommits = s.AllowMergeCommits |> Option.ofNullable
-            Mirror = s.Mirror |> Option.ofNullable |> Option.map PushMirror.OfSerialised
+            Mirrors =
+                s.Mirrors
+                |> Option.ofObj
+                |> Option.defaultValue [||]
+                |> List.ofArray
+                |> List.map PushMirror.OfSerialised
             ProtectedBranches =
                 match s.ProtectedBranches with
                 | null -> Set.empty
@@ -179,10 +198,7 @@ type NativeRepo =
             AllowRebase = this.AllowRebase |> Option.toNullable
             AllowRebaseExplicit = this.AllowRebaseExplicit |> Option.toNullable
             AllowMergeCommits = this.AllowMergeCommits |> Option.toNullable
-            Mirror =
-                match this.Mirror with
-                | None -> Nullable ()
-                | Some mirror -> Nullable (mirror.ToSerialised ())
+            Mirrors = this.Mirrors |> List.toArray |> Array.map (fun a -> a.ToSerialised ())
             ProtectedBranches = this.ProtectedBranches |> Seq.map (fun b -> b.ToSerialised ()) |> Array.ofSeq
             Collaborators = Set.toArray this.Collaborators
         }
@@ -239,16 +255,17 @@ type Repo =
             }
             |> async.Return
         else
-            async {
-                let! mirror =
-                    getAllPaginated (fun page count ->
-                        client.RepoListPushMirrors (u.Owner.LoginName, u.FullName, Some page, Some count)
-                    )
+            let repoFullName = u.FullName
 
-                let mirror =
-                    if mirror.Length = 0 then None
-                    elif mirror.Length = 1 then Some mirror.[0]
-                    else failwith "Multiple mirrors not supported yet"
+            async {
+                let owner = u.Owner
+
+                let loginName = owner.LoginName
+
+                let! mirrors =
+                    getAllPaginated (fun page count ->
+                        client.RepoListPushMirrors (loginName, repoFullName, Some page, Some count)
+                    )
 
                 let! (branchProtections : Gitea.BranchProtection[]) =
                     client.RepoListBranchProtection (u.Owner.LoginName, u.FullName)
@@ -259,16 +276,23 @@ type Repo =
                         client.RepoListCollaborators (u.Owner.LoginName, u.FullName, Some page, Some count)
                     )
 
+                let defaultBranch = u.DefaultBranch
+
+                let collaborators =
+                    collaborators |> Seq.map (fun user -> user.LoginName) |> Set.ofSeq
+
+                let description = u.Description
+
                 return
 
                     {
-                        Description = u.Description
+                        Description = description
                         Deleted = None
                         GitHub = None
                         Native =
                             {
                                 Private = u.Private
-                                DefaultBranch = u.DefaultBranch
+                                DefaultBranch = defaultBranch
                                 IgnoreWhitespaceConflicts = u.IgnoreWhitespaceConflicts
                                 HasPullRequests = u.HasPullRequests
                                 HasProjects = u.HasProjects
@@ -281,11 +305,13 @@ type Repo =
                                 AllowRebase = u.AllowRebase
                                 AllowRebaseExplicit = u.AllowRebaseExplicit
                                 AllowMergeCommits = u.AllowMergeCommits
-                                Mirror =
-                                    mirror
-                                    |> Option.map (fun m ->
+                                Mirrors =
+                                    mirrors
+                                    |> Array.toList
+                                    |> List.map (fun m ->
                                         {
                                             GitHubAddress = Uri m.RemoteAddress
+                                            RemoteName = Some m.RemoteName
                                         }
                                     )
                                 ProtectedBranches =
@@ -302,7 +328,7 @@ type Repo =
                                         }
                                     )
                                     |> Set.ofSeq
-                                Collaborators = collaborators |> Seq.map (fun user -> user.LoginName) |> Set.ofSeq
+                                Collaborators = collaborators
                             }
                             |> Some
                     }
