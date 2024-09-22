@@ -187,10 +187,7 @@ type NativeRepo =
             AllowRebase = this.AllowRebase |> Option.toNullable
             AllowRebaseExplicit = this.AllowRebaseExplicit |> Option.toNullable
             AllowMergeCommits = this.AllowMergeCommits |> Option.toNullable
-            Mirrors =
-                this.Mirrors
-                |> List.toArray
-                |> Array.map (fun a -> a.ToSerialised ())
+            Mirrors = this.Mirrors |> List.toArray |> Array.map (fun a -> a.ToSerialised ())
             ProtectedBranches = this.ProtectedBranches |> Seq.map (fun b -> b.ToSerialised ()) |> Array.ofSeq
             Collaborators = Set.toArray this.Collaborators
         }
@@ -271,11 +268,7 @@ type Repo =
                 let defaultBranch = u.DefaultBranch
 
                 let collaborators =
-                    collaborators
-                    |> Seq.map (fun user ->
-                        user.LoginName
-                    )
-                    |> Set.ofSeq
+                    collaborators |> Seq.map (fun user -> user.LoginName) |> Set.ofSeq
 
                 let description = u.Description
 

@@ -81,13 +81,9 @@ module TestSchema =
 
     [<Test>]
     let ``Schema hasn't changed`` () =
-        let computed =
-            computeSchema ()
-            |> fun x -> x.ToJson ()
-        let actual =
-            File.ReadAllText (schemaFile.Force().FullName)
-        computed
-        |> shouldEqual actual
+        let computed = computeSchema () |> fun x -> x.ToJson ()
+        let actual = File.ReadAllText (schemaFile.Force().FullName)
+        computed |> shouldEqual actual
 
     [<Test>]
     [<Explicit "Run this to regenerate the schema file">]

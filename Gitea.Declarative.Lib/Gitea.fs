@@ -404,6 +404,7 @@ module Gitea =
                                         repoName,
                                         k
                                     )
+
                                     let! ct = Async.CancellationToken
                                     // sigh, domain model - it's *such* a faff to represent this correctly though
                                     do!
@@ -416,13 +417,16 @@ module Gitea =
                             |> Some
                     )
                     |> Seq.toList
+
                 let actual =
                     match deleteExisting with
                     | [] -> actual
                     | _ -> Map.empty
+
                 let distinctActual = actual.Keys |> Set.ofSeq
                 let presentButNotDesired = Set.difference distinctActual desired
                 let desiredButNotPresent = Set.difference desired distinctActual
+
                 let deleteUndesired =
                     presentButNotDesired
                     |> Seq.map (fun toDelete ->
@@ -432,11 +436,14 @@ module Gitea =
                             repoName,
                             toDelete
                         )
+
                         let toDelete = actual.[toDelete]
+
                         toDelete
                         |> Seq.map (fun pm ->
                             async {
                                 let! ct = Async.CancellationToken
+
                                 do!
                                     client.RepoDeletePushMirror (user, repoName, Option.get pm.RemoteName)
                                     |> Async.AwaitTask
@@ -465,9 +472,7 @@ module Gitea =
                                 let! ct = Async.CancellationToken
                                 let pushMirrorOption = createPushMirrorOption (Uri toAdd) token
 
-                                let! _ =
-                                    client.RepoAddPushMirror (user, repoName, pushMirrorOption)
-                                    |> Async.AwaitTask
+                                let! _ = client.RepoAddPushMirror (user, repoName, pushMirrorOption) |> Async.AwaitTask
 
                                 return ()
                             }
@@ -647,10 +652,12 @@ module Gitea =
                             | _ :: _, None -> failwith "Cannot push to GitHub mirror without an API key"
                             | mirrors, Some token ->
                                 logger.LogInformation ("Setting up push mirror for {User}:{Repo}", user, r)
+
                                 let! actualMirrors =
                                     getAllPaginated (fun page count ->
                                         client.RepoListPushMirrors (user, r, Some page, Some count)
                                     )
+
                                 do!
                                     mirrors
                                     |> List.map (fun mirror ->
@@ -678,6 +685,7 @@ module Gitea =
                                     )
                                     |> Async.Sequential
                                     |> Async.map (Array.iter id)
+
                                 ()
                         | Some github, None ->
                             let options = Gitea.MigrateRepoOptions ()
