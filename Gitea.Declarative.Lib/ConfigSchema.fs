@@ -25,6 +25,8 @@ type MergeStyle =
         | Rebase -> "rebase"
         | Squash -> "squash"
 
+    static member toString (m : MergeStyle) = m.ToString ()
+
 type PushMirror =
     {
         GitHubAddress : Uri
