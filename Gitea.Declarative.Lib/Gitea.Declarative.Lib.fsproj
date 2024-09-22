@@ -14,6 +14,8 @@
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>gitea</PackageTags>
+    
+    <WoofWareMyriadPluginVersion>3.1.1</WoofWareMyriadPluginVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,7 +24,7 @@
     <Compile Include="GeneratedSwaggerGitea.fs">
       <MyriadFile>swagger.v1.json</MyriadFile>
       <MyriadParams>
-        <GenerateMockInternal>false</GenerateMockInternal>
+        <GenerateMockVisibility>public</GenerateMockVisibility>
         <ClassName>GiteaClient</ClassName>
       </MyriadParams>
     </Compile>
@@ -48,12 +50,12 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="SwaggerProvider" Version="1.0.1" />
     <PackageReference Include="System.Text.Json" Version="8.0.4" />
-    <PackageReference Update="FSharp.Core" Version="6.0.0" />
-    <ProjectReference Include="..\..\WoofWare.Myriad\WoofWare.Myriad.Plugins\WoofWare.Myriad.Plugins.fsproj" PrivateAssets="all" />
-    <ProjectReference Include="..\..\WoofWare.Myriad\WoofWare.Myriad.Plugins.Attributes\WoofWare.Myriad.Plugins.Attributes.fsproj" />
+    <PackageReference Update="FSharp.Core" Version="6.0.1" />
     <PackageReference Include="Myriad.Sdk" Version="0.8.3" PrivateAssets="all" />
+    <PackageReference Include="WoofWare.Myriad.Plugins.Attributes" Version="3.6.2" />
+    <PackageReference Include="WoofWare.Myriad.Plugins" Version="$(WoofWareMyriadPluginVersion)" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
-    <MyriadSdkGenerator Include="$(MSBuildThisFileDirectory)..\..\WoofWare.Myriad\WoofWare.Myriad.Plugins\bin\$(Configuration)\net6.0\WoofWare.Myriad.Plugins.dll"/>
+    <MyriadSdkGenerator Include="$(NuGetPackageRoot)/woofware.myriad.plugins/$(WoofWareMyriadPluginVersion)/lib/net6.0/WoofWare.Myriad.Plugins.dll" />
   </ItemGroup>
 </Project>
