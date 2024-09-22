@@ -15,7 +15,7 @@ module TestRepo =
     [<Test>]
     let ``We refuse to delete a repo if we get to Reconcile without positive confirmation`` () =
         let property (gitHubToken : string option) =
-            let client = GiteaClientMock.Unimplemented
+            let client = GiteaClient.GiteaClientMock.Empty
 
             let lf, messages = LoggerFactory.makeTest ()
             let logger = lf.CreateLogger "test"
@@ -42,10 +42,10 @@ module TestRepo =
             (user : User)
             (repos : Map<RepoName, Repo>)
             (userInfo : UserInfo)
-            (repo : Gitea.Repository)
-            (reposToReturn : Gitea.Repository[])
+            (repo : GiteaClient.Repository)
+            (reposToReturn : GiteaClient.Repository list)
             =
-            let reposToReturn = Array.append [| repo |] reposToReturn
+            let reposToReturn = repo :: reposToReturn
 
             let reposToReturn =
                 if reposToReturn.Length >= 5 then
@@ -53,25 +53,35 @@ module TestRepo =
                 else
                     reposToReturn
 
+            for repo in reposToReturn do
+                match repo.Name with
+                | None -> failwith "generator should have put a name on every repo"
+                | Some _ -> ()
+
             let lf, messages = LoggerFactory.makeTest ()
             let logger = lf.CreateLogger "test"
 
             let client =
-                { GiteaClientMock.Unimplemented with
+                { GiteaClient.GiteaClientMock.Empty with
                     UserListRepos =
-                        fun (_username, _page, _limit) ->
+                        fun (_username, _page, _limit, ct) ->
                             async {
                                 return
                                     reposToReturn
-                                    |> Array.filter (fun r -> not (repos.ContainsKey (RepoName r.Name)))
+                                    |> List.filter (fun r -> not (repos.ContainsKey (RepoName (Option.get r.Name))))
                             }
-                            |> Async.StartAsTask
+                            |> fun a -> Async.StartAsTask (a, ?cancellationToken = ct)
 
-                    RepoListPushMirrors = fun _ -> async { return [||] } |> Async.StartAsTask
+                    RepoListPushMirrors =
+                        fun (_, _, _, _, ct) ->
+                            async { return [] } |> fun a -> Async.StartAsTask (a, ?cancellationToken = ct)
 
-                    RepoListBranchProtection = fun _ -> async { return [||] } |> Async.StartAsTask
+                    RepoListBranchProtection =
+                        fun (_, _, ct) -> async { return [] } |> fun a -> Async.StartAsTask (a, ?cancellationToken = ct)
 
-                    RepoListCollaborators = fun _ -> async { return [||] } |> Async.StartAsTask
+                    RepoListCollaborators =
+                        fun (_, _, _, _, ct) ->
+                            async { return [] } |> fun a -> Async.StartAsTask (a, ?cancellationToken = ct)
                 }
 
             let config : GiteaConfig =
@@ -121,14 +131,14 @@ module TestRepo =
             let logger = lf.CreateLogger "test"
 
             let client =
-                { GiteaClientMock.Unimplemented with
-                    UserListRepos = fun _ -> Task.FromResult [||]
+                { GiteaClient.GiteaClientMock.Empty with
+                    UserListRepos = fun _ -> Task.FromResult []
 
-                    RepoListPushMirrors = fun _ -> async { return [||] } |> Async.StartAsTask
+                    RepoListPushMirrors = fun _ -> async { return [] } |> Async.StartAsTask
 
-                    RepoListBranchProtection = fun _ -> async { return [||] } |> Async.StartAsTask
+                    RepoListBranchProtection = fun _ -> async { return [] } |> Async.StartAsTask
 
-                    RepoListCollaborators = fun _ -> async { return [||] } |> Async.StartAsTask
+                    RepoListCollaborators = fun _ -> async { return [] } |> Async.StartAsTask
                 }
 
             let config : GiteaConfig =
@@ -168,13 +178,10 @@ module TestRepo =
 
             let existingRepos = existingRepos |> Map.add oneExistingRepoName oneExistingRepo
 
-            let giteaUser =
-                let result = Gitea.User ()
-                result.LoginName <- user.ToString ()
-                result
+            let giteaUser = Types.emptyUser (user.ToString ())
 
             let client =
-                { GiteaClientMock.Unimplemented with
+                { GiteaClient.GiteaClientMock.Empty with
                     UserListRepos =
                         fun _ ->
                             async {
@@ -182,20 +189,20 @@ module TestRepo =
                                     existingRepos
                                     |> Map.toSeq
                                     |> Seq.map (fun (RepoName repoName, _repoSpec) ->
-                                        let repo = Gitea.Repository ()
-                                        repo.Name <- repoName
-                                        repo.Owner <- giteaUser
-                                        repo
+                                        { Types.emptyRepo repoName "main" with
+                                            Name = Some repoName
+                                            Owner = Some giteaUser
+                                        }
                                     )
-                                    |> Seq.toArray
+                                    |> Seq.toList
                             }
                             |> Async.StartAsTask
 
-                    RepoListPushMirrors = fun _ -> async { return [||] } |> Async.StartAsTask
+                    RepoListPushMirrors = fun _ -> async { return [] } |> Async.StartAsTask
 
-                    RepoListBranchProtection = fun _ -> async { return [||] } |> Async.StartAsTask
+                    RepoListBranchProtection = fun _ -> async { return [] } |> Async.StartAsTask
 
-                    RepoListCollaborators = fun _ -> async { return [||] } |> Async.StartAsTask
+                    RepoListCollaborators = fun _ -> async { return [] } |> Async.StartAsTask
                 }
 
             let config : GiteaConfig =

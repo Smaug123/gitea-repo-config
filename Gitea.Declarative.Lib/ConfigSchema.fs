@@ -240,48 +240,90 @@ type Repo =
             Native = this.Native |> Option.map (fun s -> s.OverrideDefaults ())
         }
 
-    static member Render (client : IGiteaClient) (u : Gitea.Repository) : Repo Async =
-        if u.Mirror = Some true && not (String.IsNullOrEmpty u.OriginalUrl) then
+    static member Render (client : GiteaClient.IGiteaClient) (u : GiteaClient.Repository) : Repo Async =
+        match u.Mirror, u.OriginalUrl with
+        | Some true, Some originalUrl when originalUrl <> "" ->
             {
-                Description = u.Description
+                Description =
+                    match u.Description with
+                    | None -> "(no description)"
+                    | Some d -> d
                 GitHub =
                     {
-                        Uri = Uri u.OriginalUrl
-                        MirrorInterval = u.MirrorInterval
+                        Uri = Uri originalUrl
+                        MirrorInterval =
+                            match u.MirrorInterval with
+                            | None -> "8h0m0s"
+                            | Some s -> s
                     }
                     |> Some
                 Native = None
                 Deleted = None
             }
             |> async.Return
-        else
-            let repoFullName = u.FullName
+        | _, _ ->
+            let repoFullName =
+                match u.FullName with
+                | None -> failwith "Repo unexpectedly had no full name!"
+                | Some f -> f
 
             async {
-                let owner = u.Owner
+                let owner =
+                    match u.Owner with
+                    | None -> failwith "Gitea unexpectedly gave us a repository with no owner!"
+                    | Some owner -> owner
 
-                let loginName = owner.LoginName
+                let loginName =
+                    match owner.LoginName with
+                    | None -> failwith "Owner of repo unexpectedly had no login name!"
+                    | Some n -> n
 
                 let! mirrors =
-                    getAllPaginated (fun page count ->
-                        client.RepoListPushMirrors (loginName, repoFullName, Some page, Some count)
+                    List.getPaginated (fun page count ->
+                        async {
+                            let! ct = Async.CancellationToken
+
+                            return!
+                                client.RepoListPushMirrors (loginName, repoFullName, page, count, ct)
+                                |> Async.AwaitTask
+                        }
                     )
 
-                let! (branchProtections : Gitea.BranchProtection[]) =
-                    client.RepoListBranchProtection (u.Owner.LoginName, u.FullName)
-                    |> Async.AwaitTask
+                let! (branchProtections : GiteaClient.BranchProtection list) =
+                    async {
+                        let! ct = Async.CancellationToken
+                        return! client.RepoListBranchProtection (loginName, repoFullName, ct) |> Async.AwaitTask
+                    }
 
-                let! (collaborators : Gitea.User[]) =
-                    getAllPaginated (fun page count ->
-                        client.RepoListCollaborators (u.Owner.LoginName, u.FullName, Some page, Some count)
+                let! (collaborators : GiteaClient.User list) =
+                    List.getPaginated (fun page count ->
+                        async {
+                            let! ct = Async.CancellationToken
+
+                            return!
+                                client.RepoListCollaborators (loginName, repoFullName, page, count, ct)
+                                |> Async.AwaitTask
+                        }
                     )
 
-                let defaultBranch = u.DefaultBranch
+                let defaultBranch =
+                    match u.DefaultBranch with
+                    | None -> failwith "repo unexpectedly had no default branch!"
+                    | Some d -> d
 
                 let collaborators =
-                    collaborators |> Seq.map (fun user -> user.LoginName) |> Set.ofSeq
+                    collaborators
+                    |> Seq.map (fun user ->
+                        match user.LoginName with
+                        | None -> failwith "user unexpectedly had no login name!"
+                        | Some n -> n
+                    )
+                    |> Set.ofSeq
 
-                let description = u.Description
+                let description =
+                    match u.Description with
+                    | None -> failwith "Unexpectedly got no description on a repo!"
+                    | Some d -> d
 
                 return
 
@@ -298,7 +340,7 @@ type Repo =
                                 HasProjects = u.HasProjects
                                 HasIssues = u.HasIssues
                                 HasWiki = u.HasWiki
-                                DefaultMergeStyle = u.DefaultMergeStyle |> Option.ofObj |> Option.map MergeStyle.Parse
+                                DefaultMergeStyle = u.DefaultMergeStyle |> Option.map MergeStyle.Parse
                                 DeleteBranchAfterMerge = u.DefaultDeleteBranchAfterMerge
                                 AllowSquashMerge = u.AllowSquashMerge
                                 AllowRebaseUpdate = u.AllowRebaseUpdate
@@ -307,22 +349,30 @@ type Repo =
                                 AllowMergeCommits = u.AllowMergeCommits
                                 Mirrors =
                                     mirrors
-                                    |> Array.toList
                                     |> List.map (fun m ->
-                                        {
-                                            GitHubAddress = Uri m.RemoteAddress
-                                            RemoteName = Some m.RemoteName
-                                        }
+                                        match m.RemoteAddress, m.RemoteName with
+                                        | None, _ -> failwith "Unexpectedly have a PushMirror but no remote address!"
+                                        | Some _, None ->
+                                            failwith "Unexpectedly have a PushMirror with no remote name!"
+                                        | Some s, Some remoteName ->
+                                            {
+                                                GitHubAddress = Uri s
+                                                RemoteName = Some remoteName
+                                            }
                                     )
                                 ProtectedBranches =
                                     branchProtections
                                     |> Seq.map (fun bp ->
+                                        match bp.BranchName with
+                                        | None -> failwith "Unexpectedly have a BranchProtection with no branch name!"
+                                        | Some branchName ->
+
                                         {
-                                            BranchName = bp.BranchName
+                                            BranchName = branchName
                                             BlockOnOutdatedBranch = bp.BlockOnOutdatedBranch
                                             RequiredStatusChecks =
                                                 if bp.EnableStatusCheck = Some true then
-                                                    bp.StatusCheckContexts |> List.ofArray |> Some
+                                                    bp.StatusCheckContexts
                                                 else
                                                     None
                                         }
@@ -373,20 +423,24 @@ type UserInfo =
         Visibility : string option
     }
 
-    static member Render (u : Gitea.User) : UserInfo =
+    static member Render (u : GiteaClient.User) : UserInfo =
+        let website =
+            u.Website
+            |> Option.bind (fun ws ->
+                match Uri.TryCreate (ws, UriKind.Absolute) with
+                | false, _ -> None
+                | true, uri -> Some uri
+            )
+
+        let email =
+            u.Email
+            |> Option.defaultWith (fun () -> failwith "Gitea user failed to have an email!")
+
         {
             IsAdmin = u.IsAdmin
-            Email = u.Email
-            Website =
-                if String.IsNullOrEmpty u.Website then
-                    None
-                else
-                    Some (Uri u.Website)
-            Visibility =
-                if String.IsNullOrEmpty u.Visibility then
-                    None
-                else
-                    Some u.Visibility
+            Email = email
+            Website = website
+            Visibility = u.Visibility
         }
 
     static member internal OfSerialised (s : SerialisedUserInfo) =

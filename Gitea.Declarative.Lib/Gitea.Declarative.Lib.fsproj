@@ -20,19 +20,27 @@
 
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <None Include="swagger.v1.json" />
+    <Compile Include="GeneratedSwaggerGitea.fs">
+      <MyriadFile>swagger.v1.json</MyriadFile>
+      <MyriadParams>
+        <GenerateMockVisibility>public</GenerateMockVisibility>
+        <ClassName>GiteaClient</ClassName>
+      </MyriadParams>
+    </Compile>
+    <Compile Include="Generated2SwaggerGitea.fs">
+      <MyriadFile>GeneratedSwaggerGitea.fs</MyriadFile>
+    </Compile>
     <Compile Include="Map.fs" />
     <Compile Include="Exception.fs" />
+    <Compile Include="List.fs" />
     <Compile Include="Async.fs" />
-    <Compile Include="GiteaClient.fs" />
-    <Compile Include="IGiteaClient.fs" />
     <Compile Include="Domain.fs" />
     <Compile Include="SerialisedConfigSchema.fs" />
     <Compile Include="ConfigSchema.fs" />
-    <Compile Include="Array.fs" />
     <Compile Include="UserInput.fs" />
     <Compile Include="Gitea.fs" />
     <EmbeddedResource Include="GiteaConfig.schema.json" />
-    <Content Include="swagger.v1.json" />
     <EmbeddedResource Include="version.json" />
     <None Include="..\README.md" Pack="true" PackagePath="/" />
   </ItemGroup>

@@ -63,7 +63,7 @@ module Reconcile =
             let logger = loggerProvider.CreateLogger "Gitea.Declarative"
 
             use httpClient = Utils.createHttpClient args.GiteaHost args.GiteaAdminApiToken
-            let client = Gitea.Client httpClient |> IGiteaClient.fromReal
+            let client = GiteaClient.GiteaClient.make httpClient
 
             logger.LogInformation "Checking users..."
             let! userErrors = Gitea.checkUsers config client

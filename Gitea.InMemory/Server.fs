@@ -1,18 +1,33 @@
 namespace Gitea.InMemory
 
-open Gitea.Declarative
+open System.Collections.Generic
 
 [<RequireQualifiedAccess>]
 module Operations =
-    let createdUser (createUserOption : Gitea.CreateUserOption) : Gitea.User =
-        let result = Gitea.User ()
-        result.Email <- createUserOption.Email
-        result.Restricted <- createUserOption.Restricted
-        // TODO: what is this username used for anyway
-        // result.LoginName <- createUserOption.Username
-        result.Visibility <- createUserOption.Visibility
-        result.Created <- createUserOption.CreatedAt
-        result.FullName <- createUserOption.FullName
-        result.LoginName <- createUserOption.LoginName
+    let createdUser (createUserOption : GiteaClient.CreateUserOption) : GiteaClient.User =
+        let result : GiteaClient.User =
+            {
+                AdditionalProperties = Dictionary ()
+                Active = None
+                AvatarUrl = None
+                Created = None
+                Description = None
+                Email = Some createUserOption.Email
+                FollowersCount = None
+                FollowingCount = None
+                FullName = createUserOption.FullName
+                Id = None
+                IsAdmin = None
+                Language = None
+                LastLogin = None
+                Location = None
+                Login = None
+                LoginName = createUserOption.LoginName
+                ProhibitLogin = failwith "todo"
+                Restricted = createUserOption.Restricted
+                StarredReposCount = None
+                Visibility = createUserOption.Visibility
+                Website = None
+            }
 
         result

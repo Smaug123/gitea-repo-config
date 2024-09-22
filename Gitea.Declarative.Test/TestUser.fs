@@ -21,14 +21,14 @@ module TestUser =
             let result = TaskCompletionSource<bool option> ()
 
             let client =
-                { GiteaClientMock.Unimplemented with
+                { GiteaClient.GiteaClientMock.Empty with
                     AdminCreateUser =
-                        fun options ->
+                        fun (options, ct) ->
                             async {
                                 result.SetResult options.MustChangePassword
-                                return null
+                                return Types.emptyUser "username"
                             }
-                            |> Async.StartAsTask
+                            |> fun a -> Async.StartAsTask (a, ?cancellationToken = ct)
                 }
 
             [ User "username", AlignmentError.DoesNotExist desiredUser ]

@@ -12,6 +12,8 @@ This is a small project to allow you to specify a [Gitea](https://github.com/go-
   * Pull request configuration (e.g. whether rebase-merges are allowed, etc)
   * Collaborators
 * Reconciliation of differences between configuration and reality in the above
+  * Note that deleting a line of configuration will generally simply take that property out of declarative management.
+    It does *not* return the configured property to its default value. Explicit is better than implicit.
 * Deletion of repositories, guarded by the `"deleted": true` configuration
 
 # Arguments
@@ -31,7 +33,7 @@ See the [Demos file](./docs/demos.md).
 
 # Development
 
-To upgrade the NuGet dependencies in the flake, run `nix build .#fetchDeps` and copy the resulting file into `nix/deps.nix`.
+To upgrade the NuGet dependencies in the flake, run `nix build .#default.passthru.fetch-deps && ./result` and copy the resulting file into `nix/deps.nix`.
 
 ## Formatting
 
