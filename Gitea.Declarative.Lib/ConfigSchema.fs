@@ -27,12 +27,23 @@ type MergeStyle =
 
     static member toString (m : MergeStyle) = m.ToString ()
 
+[<NoComparison>]
+[<CustomEquality>]
 type PushMirror =
     {
         GitHubAddress : Uri
         /// Gitea should always tell us a remote name, but a user in their config can't.
         RemoteName : string option
     }
+
+    /// Equality check ignores remote names, which are not known to the user but which Gitea tracks internally.
+    override this.Equals (other : obj) : bool =
+        match other with
+        | :? PushMirror as other -> this.GitHubAddress.ToString () = other.GitHubAddress.ToString ()
+        | _ -> false
+
+    override this.GetHashCode () : int =
+        this.GitHubAddress.ToString().GetHashCode ()
 
     static member OfSerialised (s : SerialisedPushMirror) : PushMirror =
         {
