@@ -3,7 +3,6 @@ namespace Gitea.Declarative
 open System
 open System.ComponentModel
 open System.Text.Json.Nodes
-open WoofWare.Myriad.Plugins
 
 [<TypeConverter(typeof<UserTypeConverter>)>]
 type User =
