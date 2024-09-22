@@ -280,17 +280,30 @@ type Repo =
 
                 let! mirrors =
                     List.getPaginated (fun page count ->
-                        client.RepoListPushMirrors (loginName, repoFullName, page, count)
-                        |> Async.AwaitTask
+                        async {
+                            let! ct = Async.CancellationToken
+
+                            return!
+                                client.RepoListPushMirrors (loginName, repoFullName, page, count, ct)
+                                |> Async.AwaitTask
+                        }
                     )
 
                 let! (branchProtections : GiteaClient.BranchProtection list) =
-                    client.RepoListBranchProtection (loginName, repoFullName) |> Async.AwaitTask
+                    async {
+                        let! ct = Async.CancellationToken
+                        return! client.RepoListBranchProtection (loginName, repoFullName, ct) |> Async.AwaitTask
+                    }
 
                 let! (collaborators : GiteaClient.User list) =
                     List.getPaginated (fun page count ->
-                        client.RepoListCollaborators (loginName, repoFullName, page, count)
-                        |> Async.AwaitTask
+                        async {
+                            let! ct = Async.CancellationToken
+
+                            return!
+                                client.RepoListCollaborators (loginName, repoFullName, page, count, ct)
+                                |> Async.AwaitTask
+                        }
                     )
 
                 let defaultBranch =

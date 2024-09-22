@@ -27,7 +27,12 @@ module Gitea =
             let desiredUsers = config.Users
 
             let! actualUsers =
-                List.getPaginated (fun page limit -> client.AdminGetAllUsers (page, limit) |> Async.AwaitTask)
+                List.getPaginated (fun page limit ->
+                    async {
+                        let! ct = Async.CancellationToken
+                        return! client.AdminGetAllUsers (page, limit, ct) |> Async.AwaitTask
+                    }
+                )
 
             let actualUsers =
                 actualUsers
@@ -87,7 +92,10 @@ module Gitea =
                     async {
                         let! repos =
                             List.getPaginated (fun page count ->
-                                client.UserListRepos (user, page, count) |> Async.AwaitTask
+                                async {
+                                    let! ct = Async.CancellationToken
+                                    return! client.UserListRepos (user, page, count, ct) |> Async.AwaitTask
+                                }
                             )
 
                         let! actualRepos =
@@ -160,7 +168,7 @@ module Gitea =
     let private createPushMirrorOption (target : Uri) (githubToken : string) : GiteaClient.CreatePushMirrorOption =
         {
             SyncOnCommit = Some true
-            RemoteAddress = target.ToString () |> Some
+            RemoteAddress = (target : Uri).ToString () |> Some
             RemoteUsername = Some githubToken
             RemotePassword = Some githubToken
             Interval = Some "8h0m0s"
@@ -180,7 +188,8 @@ module Gitea =
         if desired.Deleted = Some true then
             async {
                 logger.LogWarning ("Deleting repo {User}:{Repo}", user, repoName)
-                return! Async.AwaitTask (client.RepoDelete (user, repoName))
+                let! ct = Async.CancellationToken
+                return! Async.AwaitTask (client.RepoDelete (user, repoName, ct))
             }
         else
 
@@ -263,7 +272,8 @@ module Gitea =
                     }
 
                 if hasChanged then
-                    let! result = client.RepoEdit (user, repoName, options) |> Async.AwaitTask
+                    let! ct = Async.CancellationToken
+                    let! _result = client.RepoEdit (user, repoName, options, ct) |> Async.AwaitTask
                     return ()
             }
         | None, None ->
@@ -375,10 +385,12 @@ module Gitea =
 
                 }
 
+            let! ct = Async.CancellationToken
+
             do!
                 if hasChanged then
                     logger.LogInformation ("Editing repo {User}:{Repo}", user, repoName)
-                    client.RepoEdit (user, repoName, options) |> Async.AwaitTask |> Async.Ignore
+                    client.RepoEdit (user, repoName, options, ct) |> Async.AwaitTask |> Async.Ignore
                 else
                     async.Return ()
 
@@ -395,7 +407,7 @@ module Gitea =
                     |> Seq.map (fun (name, pm) ->
                         match pm with
                         | [] -> failwith "LOGIC ERROR"
-                        | [ pm ] -> pm.GitHubAddress.ToString ()
+                        | [ pm ] -> (pm.GitHubAddress : Uri).ToString ()
                         | _ ->
                             failwith
                                 $"Config validation failed on repo %s{repoName}: multiple push mirrors configured for target %s{name}"
@@ -536,7 +548,11 @@ module Gitea =
                                     Permission = None
                                 }
 
-                            do! client.RepoAddCollaborator (user, repoName, desired, option) |> Async.AwaitTask
+                            let! ct = Async.CancellationToken
+
+                            do!
+                                client.RepoAddCollaborator (user, repoName, desired, option, ct)
+                                |> Async.AwaitTask
                         }
                     )
                     |> Async.Parallel
@@ -552,7 +568,8 @@ module Gitea =
                                 repoName
                             )
 
-                            do! client.RepoDeleteCollaborator (user, repoName, desired) |> Async.AwaitTask
+                            let! ct = Async.CancellationToken
+                            do! client.RepoDeleteCollaborator (user, repoName, desired, ct) |> Async.AwaitTask
                         }
                     )
                     |> Async.Parallel
@@ -590,8 +607,10 @@ module Gitea =
                                 repoName
                             )
 
+                            let! ct = Async.CancellationToken
+
                             let! _ =
-                                client.RepoDeleteBranchProtection (user, repoName, x.BranchName)
+                                client.RepoDeleteBranchProtection (user, repoName, x.BranchName, ct)
                                 |> Async.AwaitTask
 
                             return ()
@@ -634,7 +653,8 @@ module Gitea =
                                     UnprotectedFilePatterns = None
                                 }
 
-                            let! _ = client.RepoCreateBranchProtection (user, repoName, s) |> Async.AwaitTask
+                            let! ct = Async.CancellationToken
+                            let! _ = client.RepoCreateBranchProtection (user, repoName, s, ct) |> Async.AwaitTask
                             return ()
                         }
                     | [ Choice1Of2 x ; Choice2Of2 y ]
@@ -679,8 +699,10 @@ module Gitea =
                                     UnprotectedFilePatterns = None
                                 }
 
+                            let! ct = Async.CancellationToken
+
                             let! _ =
-                                client.RepoEditBranchProtection (user, repoName, y.BranchName, s)
+                                client.RepoEditBranchProtection (user, repoName, y.BranchName, s, ct)
                                 |> Async.AwaitTask
 
                             return ()
@@ -732,7 +754,8 @@ module Gitea =
                                     TrustModel = None
                                 }
 
-                            let! result = client.AdminCreateRepo (user, options) |> Async.AwaitTask |> Async.Catch
+                            let! ct = Async.CancellationToken
+                            let! result = client.AdminCreateRepo (user, options, ct) |> Async.AwaitTask |> Async.Catch
 
                             match result with
                             | Choice2Of2 e -> raise (AggregateException ($"Error creating {user}:{r}", e))
@@ -746,7 +769,13 @@ module Gitea =
 
                                 let! actualMirrors =
                                     List.getPaginated (fun page count ->
-                                        client.RepoListPushMirrors (user, r, page, count) |> Async.AwaitTask
+                                        async {
+                                            let! ct = Async.CancellationToken
+
+                                            return!
+                                                client.RepoListPushMirrors (user, r, page, count, ct)
+                                                |> Async.AwaitTask
+                                        }
                                     )
 
                                 do!
