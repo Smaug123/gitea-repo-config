@@ -191,7 +191,7 @@ type NativeRepo =
             DefaultMergeStyle =
                 match this.DefaultMergeStyle with
                 | None -> null
-                | Some mergeStyle -> (mergeStyle : MergeStyle).ToString ()
+                | Some mergeStyle -> MergeStyle.toString mergeStyle
             DeleteBranchAfterMerge = this.DeleteBranchAfterMerge |> Option.toNullable
             AllowSquashMerge = this.AllowSquashMerge |> Option.toNullable
             AllowRebaseUpdate = this.AllowRebaseUpdate |> Option.toNullable
