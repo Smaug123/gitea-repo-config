@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -14,6 +14,8 @@
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>gitea</PackageTags>
+
+    <WoofWareMyriadPluginVersion>3.1.1</WoofWareMyriadPluginVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -37,8 +39,15 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
-    <PackageReference Include="SwaggerProvider" Version="1.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Update="FSharp.Core" Version="6.0.0" />
+    <PackageReference Include="SwaggerProvider" Version="1.0.1" />
+    <PackageReference Include="System.Text.Json" Version="8.0.4" />
+    <PackageReference Update="FSharp.Core" Version="6.0.1" />
+    <PackageReference Include="Myriad.Sdk" Version="0.8.3" PrivateAssets="all" />
+    <PackageReference Include="WoofWare.Myriad.Plugins.Attributes" Version="3.6.2" />
+    <PackageReference Include="WoofWare.Myriad.Plugins" Version="$(WoofWareMyriadPluginVersion)" PrivateAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
+    <MyriadSdkGenerator Include="$(NuGetPackageRoot)/woofware.myriad.plugins/$(WoofWareMyriadPluginVersion)/lib/net6.0/WoofWare.Myriad.Plugins.dll" />
   </ItemGroup>
 </Project>
