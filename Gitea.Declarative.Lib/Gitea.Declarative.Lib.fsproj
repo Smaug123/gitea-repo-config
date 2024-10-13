@@ -49,7 +49,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="SwaggerProvider" Version="1.0.1" />
-    <PackageReference Include="System.Text.Json" Version="8.0.4" />
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
     <PackageReference Update="FSharp.Core" Version="6.0.1" />
     <PackageReference Include="Myriad.Sdk" Version="0.8.3" PrivateAssets="all" />
     <PackageReference Include="WoofWare.Myriad.Plugins.Attributes" Version="3.6.2" />

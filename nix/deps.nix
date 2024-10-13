@@ -8,8 +8,8 @@
   })
   (fetchNuGet {
     pname = "fantomas";
-    version = "6.3.4";
-    hash = "sha256-1aWqZynBkQoznenGoP0sbf1PcUXAbcHiWyECuv89xa0=";
+    version = "6.3.15";
+    hash = "sha256-Gjw7MxjUNckMWSfnOye4UTe5fZWnor6RHCls3PNsuG8=";
   })
   (fetchNuGet {
     pname = "Fantomas.Core";
@@ -938,8 +938,8 @@
   })
   (fetchNuGet {
     pname = "System.Text.Json";
-    version = "8.0.4";
-    hash = "sha256-g5oT7fbXxQ9Iah1nMCr4UUX/a2l+EVjJyTrw3FTbIaI=";
+    version = "8.0.5";
+    hash = "sha256-yKxo54w5odWT6nPruUVsaX53oPRe+gKzGvLnnxtwP68=";
   })
   (fetchNuGet {
     pname = "System.Text.RegularExpressions";
