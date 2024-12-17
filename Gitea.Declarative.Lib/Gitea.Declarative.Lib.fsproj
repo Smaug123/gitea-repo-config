@@ -14,8 +14,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>gitea</PackageTags>
-
-    <WoofWareMyriadPluginVersion>3.1.1</WoofWareMyriadPluginVersion>
+    <WoofWareMyriadPluginVersion>4.0.9</WoofWareMyriadPluginVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -52,8 +51,11 @@
     <PackageReference Include="System.Text.Json" Version="8.0.5" />
     <PackageReference Update="FSharp.Core" Version="6.0.1" />
     <PackageReference Include="Myriad.Sdk" Version="0.8.3" PrivateAssets="all" />
-    <PackageReference Include="WoofWare.Myriad.Plugins.Attributes" Version="3.6.2" />
+    <PackageReference Include="WoofWare.Myriad.Plugins.Attributes" Version="3.6.6" />
     <PackageReference Include="WoofWare.Myriad.Plugins" Version="$(WoofWareMyriadPluginVersion)" PrivateAssets="all" />
+
+    <!-- Absolutely astonishing stuff here, world class software everyone, nice work https://github.com/dotnet/sdk/issues/42651#issuecomment-2372410311 -->
+    <PackageReference Include="System.Private.Uri" Version="4.3.2" />
   </ItemGroup>
   <ItemGroup>
     <MyriadSdkGenerator Include="$(NuGetPackageRoot)/woofware.myriad.plugins/$(WoofWareMyriadPluginVersion)/lib/net6.0/WoofWare.Myriad.Plugins.dll" />

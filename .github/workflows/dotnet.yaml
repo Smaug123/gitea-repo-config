@@ -27,16 +27,17 @@ jobs:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0 # so that NerdBank.GitVersioning has access to history
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+    - name: Install Nix
+      uses: cachix/install-nix-action@v30
       with:
-        dotnet-version: 7.0.x
+        extra_nix_config: |
+          access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
     - name: Restore dependencies
-      run: dotnet restore
+      run: nix develop --command dotnet restore
     - name: Build
-      run: dotnet build --no-restore --configuration ${{matrix.config}}
+      run: nix develop --command dotnet build --no-restore --configuration ${{matrix.config}}
     - name: Test
-      run: dotnet test --no-build --verbosity normal --configuration ${{matrix.config}}
+      run: nix develop --command dotnet test --no-build --verbosity normal --configuration ${{matrix.config}}
 
   build-nix:
     runs-on: ubuntu-latest
@@ -107,10 +108,10 @@ jobs:
         run: 'nix develop --command markdown-link-check {,**/}*.md'
 
   all-required-checks-complete:
-    if: ${{ always() }}
     needs: [check-dotnet-format, check-nix-format, build, build-nix, linkcheck, check-flake]
+    if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
-      - uses: Smaug123/all-required-checks-complete-action@05b40a8c47ef0b175ea326e9abb09802cb67b44e
+      - uses: G-Research/common-actions/check-required-lite@2b7dc49cb14f3344fbe6019c14a31165e258c059
         with:
           needs-context: ${{ toJSON(needs) }}
