@@ -30,7 +30,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 7.0.x
+        dotnet-version: 8.0.x
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -107,10 +107,10 @@ jobs:
         run: 'nix develop --command markdown-link-check {,**/}*.md'
 
   all-required-checks-complete:
-    if: ${{ always() }}
     needs: [check-dotnet-format, check-nix-format, build, build-nix, linkcheck, check-flake]
+    if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
-      - uses: Smaug123/all-required-checks-complete-action@05b40a8c47ef0b175ea326e9abb09802cb67b44e
+      - uses: G-Research/common-actions/check-required-lite@2b7dc49cb14f3344fbe6019c14a31165e258c059
         with:
           needs-context: ${{ toJSON(needs) }}
