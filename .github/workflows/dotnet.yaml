@@ -27,16 +27,17 @@ jobs:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0 # so that NerdBank.GitVersioning has access to history
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+    - name: Install Nix
+      uses: cachix/install-nix-action@v30
       with:
-        dotnet-version: 8.0.x
+        extra_nix_config: |
+          access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
     - name: Restore dependencies
-      run: dotnet restore
+      run: nix develop --command dotnet restore
     - name: Build
-      run: dotnet build --no-restore --configuration ${{matrix.config}}
+      run: nix develop --command dotnet build --no-restore --configuration ${{matrix.config}}
     - name: Test
-      run: dotnet test --no-build --verbosity normal --configuration ${{matrix.config}}
+      run: nix develop --command dotnet test --no-build --verbosity normal --configuration ${{matrix.config}}
 
   build-nix:
     runs-on: ubuntu-latest
