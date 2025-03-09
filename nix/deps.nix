@@ -8,11 +8,6 @@
     hash = "sha256-tA9nFJmWvoSOo8oFV6wUuatG57a3QSW0jxADc8AzKe0=";
   })
   (fetchNuGet {
-    pname = "fantomas";
-    version = "6.3.15";
-    hash = "sha256-Gjw7MxjUNckMWSfnOye4UTe5fZWnor6RHCls3PNsuG8=";
-  })
-  (fetchNuGet {
     pname = "Fantomas.Core";
     version = "6.1.1";
     hash = "sha256-FcTLHQFvKkQY/kV08jhhy/St/+FmXpp3epp/R3zUXMA=";
@@ -29,48 +24,13 @@
   })
   (fetchNuGet {
     pname = "FSharp.Core";
-    version = "4.2.3";
-    hash = "sha256-yMGMrMUY+4Lwnh9JIbD2/3FBGIFcSK7leGURWaSQsLQ=";
-  })
-  (fetchNuGet {
-    pname = "FSharp.Core";
-    version = "4.3.2";
-    hash = "sha256-UuzjOUvDAWxQuwI9mMJ5Jd9mwtfYSK7KUhW8wNbbZak=";
-  })
-  (fetchNuGet {
-    pname = "FSharp.Core";
-    version = "4.3.4";
-    hash = "sha256-styyo+6mJy+yxE0NZG/b1hxkAjPOnJfMgd9zWzCJ5uk=";
-  })
-  (fetchNuGet {
-    pname = "FSharp.Core";
-    version = "4.5.0";
-    hash = "sha256-7+B+8rsm/dMKvNBty8z5qB+kOxMwUzExy0F04xM88sk=";
-  })
-  (fetchNuGet {
-    pname = "FSharp.Core";
-    version = "4.7.0";
-    hash = "sha256-7aa4bga9XWLkq7J5KXv8Bilf1KGum77lSUqp+ooYIUg=";
-  })
-  (fetchNuGet {
-    pname = "FSharp.Core";
-    version = "4.7.2";
-    hash = "sha256-1eDe16w8+syA35AtrSiViMHQYgwBqmdViS4yCa4AMZ8=";
-  })
-  (fetchNuGet {
-    pname = "FSharp.Core";
-    version = "5.0.2";
-    hash = "sha256-YOoosLEiszPsOOaNAkWhFGU04JJKDOFVoA/ggrZMN10=";
-  })
-  (fetchNuGet {
-    pname = "FSharp.Core";
     version = "6.0.1";
     hash = "sha256-Ehsgt3nCJijpaVuJguC1TPVEKSkJd6PSc07D2ZQSemI=";
   })
   (fetchNuGet {
     pname = "FSharp.Core";
-    version = "9.0.101";
-    hash = "sha256-bR4PHanvKrzD43qFQxmOmmhhpz+ZmKZMPlgGnlRNcp4=";
+    version = "9.0.201";
+    hash = "sha256-38Y0QFg/knogSJtxDVpVXKo5n4zAo8zaffeT6tbhahk=";
   })
   (fetchNuGet {
     pname = "FSharp.SystemTextJson";
@@ -321,11 +281,6 @@
     pname = "NJsonSchema";
     version = "10.9.0";
     hash = "sha256-7RPZmR8k9zKKMjnIx0Ci2TvQ9iYfN1moxHXQfTp7O5Q=";
-  })
-  (fetchNuGet {
-    pname = "NUnit";
-    version = "4.0.1";
-    hash = "sha256-jd1CD5nHVXkpvBNpVDJcJyfTggCHLyDBySVSvtrA8Uk=";
   })
   (fetchNuGet {
     pname = "NUnit";
