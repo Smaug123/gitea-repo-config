@@ -44,12 +44,14 @@
         inherit version pname projectFile testProjectFile dotnet-sdk dotnet-runtime;
         name = "gitea-repo-config";
         src = ./.;
-        nugetDeps = ./nix/deps.nix; # `nix build .#default.passthru.fetch-deps && ./result nix/deps.nix`
+        nugetDeps = ./nix/deps.json; # `nix build .#default.passthru.fetch-deps && ./result nix/deps.nix`
         doCheck = true;
       };
     in {
-      packages = {
-        fantomas = dotnetTool "fantomas" (builtins.fromJSON (builtins.readFile ./.config/dotnet-tools.json)).tools.fantomas.version (builtins.head (builtins.filter (elem: elem.pname == "fantomas") ((import ./nix/deps.nix) {fetchNuGet = x: x;}))).hash;
+      packages = let
+        deps = builtins.fromJSON (builtins.readFile ./nix/deps.json);
+      in {
+        fantomas = dotnetTool "fantomas" (builtins.fromJSON (builtins.readFile ./.config/dotnet-tools.json)).tools.fantomas.version (builtins.head (builtins.filter (elem: elem.pname == "fantomas") deps)).hash;
         default = default;
       };
       apps = {

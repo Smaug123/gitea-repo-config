@@ -22,10 +22,10 @@ jobs:
         run: 'nix flake update'
 
       - name: Build passthru
-        run: 'nix build ".#default.passthru.fetch-deps"'
+        run: 'nix build ".#default.fetch-deps"'
 
       - name: Run passthru
-        run: ./result nix/deps.nix
+        run: ./result nix/deps.json
 
       - name: Format
         run: 'nix develop --command alejandra .'
