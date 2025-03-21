@@ -296,8 +296,8 @@
   },
   {
     "pname": "Nerdbank.GitVersioning",
-    "version": "3.6.133",
-    "hash": "sha256-AEnBQaGGPMBmZJjZrdWARq/jY4SluuPIsKBbvfNEvLE="
+    "version": "3.8.38-alpha",
+    "hash": "sha256-gPMrVbjOZxXoofczF/pn6eVkLhjVSJIyQrLO2oljrDc="
   },
   {
     "pname": "Newtonsoft.Json",

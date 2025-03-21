@@ -44,7 +44,7 @@
         inherit version pname projectFile testProjectFile dotnet-sdk dotnet-runtime;
         name = "gitea-repo-config";
         src = ./.;
-        nugetDeps = ./nix/deps.json; # `nix build .#default.passthru.fetch-deps && ./result nix/deps.nix`
+        nugetDeps = ./nix/deps.json; # `nix build .#default.fetch-deps && ./result nix/deps.json`
         doCheck = true;
       };
     in {
