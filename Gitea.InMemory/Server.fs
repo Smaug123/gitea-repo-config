@@ -23,11 +23,13 @@ module Operations =
                 Location = None
                 Login = None
                 LoginName = createUserOption.LoginName
-                ProhibitLogin = failwith "todo"
+                ProhibitLogin = None
                 Restricted = createUserOption.Restricted
                 StarredReposCount = None
                 Visibility = createUserOption.Visibility
                 Website = None
+                HtmlUrl = None
+                SourceId = None
             }
 
         result

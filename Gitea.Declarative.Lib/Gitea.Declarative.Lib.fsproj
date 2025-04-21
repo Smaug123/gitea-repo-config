@@ -14,7 +14,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>gitea</PackageTags>
-    <WoofWareMyriadPluginVersion>7.0.1</WoofWareMyriadPluginVersion>
+    <WoofWareMyriadPluginVersion>7.0.5</WoofWareMyriadPluginVersion>
   </PropertyGroup>
 
   <ItemGroup>
