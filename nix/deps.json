@@ -26,48 +26,13 @@
   },
   {
     "pname": "FSharp.Core",
-    "version": "4.2.3",
-    "hash": "sha256-yMGMrMUY+4Lwnh9JIbD2/3FBGIFcSK7leGURWaSQsLQ="
-  },
-  {
-    "pname": "FSharp.Core",
-    "version": "4.3.2",
-    "hash": "sha256-UuzjOUvDAWxQuwI9mMJ5Jd9mwtfYSK7KUhW8wNbbZak="
-  },
-  {
-    "pname": "FSharp.Core",
-    "version": "4.3.4",
-    "hash": "sha256-styyo+6mJy+yxE0NZG/b1hxkAjPOnJfMgd9zWzCJ5uk="
-  },
-  {
-    "pname": "FSharp.Core",
-    "version": "4.5.0",
-    "hash": "sha256-7+B+8rsm/dMKvNBty8z5qB+kOxMwUzExy0F04xM88sk="
-  },
-  {
-    "pname": "FSharp.Core",
-    "version": "4.7.0",
-    "hash": "sha256-7aa4bga9XWLkq7J5KXv8Bilf1KGum77lSUqp+ooYIUg="
-  },
-  {
-    "pname": "FSharp.Core",
-    "version": "4.7.2",
-    "hash": "sha256-1eDe16w8+syA35AtrSiViMHQYgwBqmdViS4yCa4AMZ8="
-  },
-  {
-    "pname": "FSharp.Core",
-    "version": "5.0.2",
-    "hash": "sha256-YOoosLEiszPsOOaNAkWhFGU04JJKDOFVoA/ggrZMN10="
-  },
-  {
-    "pname": "FSharp.Core",
     "version": "6.0.1",
     "hash": "sha256-Ehsgt3nCJijpaVuJguC1TPVEKSkJd6PSc07D2ZQSemI="
   },
   {
     "pname": "FSharp.Core",
-    "version": "9.0.101",
-    "hash": "sha256-bR4PHanvKrzD43qFQxmOmmhhpz+ZmKZMPlgGnlRNcp4="
+    "version": "9.0.202",
+    "hash": "sha256-64Gub0qemmCoMa1tDus6TeTuB1+5sHfE6KD2j4o84mA="
   },
   {
     "pname": "FSharp.SystemTextJson",
@@ -106,8 +71,8 @@
   },
   {
     "pname": "Microsoft.Build.Tasks.Git",
-    "version": "1.1.1",
-    "hash": "sha256-PHxHmsCty8Si5dCUQSizeHkJrHa9+j2nRsg6Sz+5Za0="
+    "version": "8.0.0",
+    "hash": "sha256-vX6/kPij8vNAu8f7rrvHHhPrNph20IcufmrBgZNxpQA="
   },
   {
     "pname": "Microsoft.CodeCoverage",
@@ -256,13 +221,13 @@
   },
   {
     "pname": "Microsoft.SourceLink.Common",
-    "version": "1.1.1",
-    "hash": "sha256-b4FaNFneDVDbvJVX1iNyhhLTrnxUfnmyypeJr47GbXY="
+    "version": "8.0.0",
+    "hash": "sha256-AfUqleVEqWuHE7z2hNiwOLnquBJ3tuYtbkdGMppHOXc="
   },
   {
     "pname": "Microsoft.SourceLink.GitHub",
-    "version": "1.1.1",
-    "hash": "sha256-3hc9ym5ReONp00ruCKio/Ka1gYXo/jDlUHtfK1wZPiU="
+    "version": "8.0.0",
+    "hash": "sha256-hNTkpKdCLY5kIuOmznD1mY+pRdJ0PKu2HypyXog9vb0="
   },
   {
     "pname": "Microsoft.TestPlatform.ObjectModel",
@@ -318,11 +283,6 @@
     "pname": "NJsonSchema",
     "version": "10.9.0",
     "hash": "sha256-7RPZmR8k9zKKMjnIx0Ci2TvQ9iYfN1moxHXQfTp7O5Q="
-  },
-  {
-    "pname": "NUnit",
-    "version": "4.0.1",
-    "hash": "sha256-jd1CD5nHVXkpvBNpVDJcJyfTggCHLyDBySVSvtrA8Uk="
   },
   {
     "pname": "NUnit",
@@ -916,17 +876,17 @@
   },
   {
     "pname": "WoofWare.Myriad.Plugins",
-    "version": "4.0.9",
-    "hash": "sha256-VWpStkuvdFZWsEs/tC0mjChneFgxWw+1YETH+3aCoz4="
+    "version": "7.0.1",
+    "hash": "sha256-pqYc2jqlR9PzxIp1YAxIGgmRmUzHzdkgtTOHFdYtDto="
   },
   {
     "pname": "WoofWare.Myriad.Plugins.Attributes",
-    "version": "3.6.6",
-    "hash": "sha256-68T5JQNp4V0DDad0I3snVh8BCe7rz11mLyvm60hxwaA="
+    "version": "3.6.9",
+    "hash": "sha256-8+bOWoTG/OeEU3I/BrA9E3fznKB5evTHUByPf1UtGSQ="
   },
   {
     "pname": "WoofWare.Whippet.Fantomas",
-    "version": "0.3.1",
-    "hash": "sha256-i5oiqcrxzM90Ocuq5MIu2Ha5lV0aYu5nCvuwmFqp6NA="
+    "version": "0.6.2",
+    "hash": "sha256-nDT/W5eBwM/E+Z2oQ80maAGYrEyRJQXL1unxR9q6ztU="
   }
 ]
