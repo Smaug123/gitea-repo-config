@@ -43,6 +43,68 @@ type AccessToken =
         TokenLastEight : string option
     }
 
+/// ActionTask represents a ActionTask
+[<JsonParse true ; JsonSerialize true>]
+type ActionTask =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "created_at">]
+        CreatedAt : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "display_title">]
+        DisplayTitle : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "event">]
+        Event : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "head_branch">]
+        HeadBranch : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "head_sha">]
+        HeadSha : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "id">]
+        Id : int option
+        [<System.Text.Json.Serialization.JsonPropertyName "name">]
+        Name : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "run_number">]
+        RunNumber : int option
+        [<System.Text.Json.Serialization.JsonPropertyName "run_started_at">]
+        RunStartedAt : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "status">]
+        Status : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "updated_at">]
+        UpdatedAt : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "url">]
+        Url : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "workflow_id">]
+        WorkflowId : string option
+    }
+
+/// ActionTaskResponse returns a ActionTask
+[<JsonParse true ; JsonSerialize true>]
+type ActionTaskResponse =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "total_count">]
+        TotalCount : int option
+        [<System.Text.Json.Serialization.JsonPropertyName "workflow_runs">]
+        WorkflowRuns : ActionTask list option
+    }
+
+/// ActionVariable return value of the query API
+[<JsonParse true ; JsonSerialize true>]
+type ActionVariable =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "data">]
+        Data : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "name">]
+        Name : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "owner_id">]
+        OwnerId : int option
+        [<System.Text.Json.Serialization.JsonPropertyName "repo_id">]
+        RepoId : int option
+    }
+
 /// ActivityPub type
 [<JsonParse true ; JsonSerialize true>]
 type ActivityPub =
@@ -113,6 +175,22 @@ type Attachment =
         Uuid : string option
     }
 
+/// Badge represents a user badge
+[<JsonParse true ; JsonSerialize true>]
+type Badge =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "description">]
+        Description : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "id">]
+        Id : int option
+        [<System.Text.Json.Serialization.JsonPropertyName "image_url">]
+        ImageUrl : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "slug">]
+        Slug : string option
+    }
+
 /// BranchProtection represents a branch protection for a repository
 [<JsonParse true ; JsonSerialize true>]
 type BranchProtection =
@@ -123,6 +201,8 @@ type BranchProtection =
         ApprovalsWhitelistTeams : string list option
         [<System.Text.Json.Serialization.JsonPropertyName "approvals_whitelist_username">]
         ApprovalsWhitelistUsername : string list option
+        [<System.Text.Json.Serialization.JsonPropertyName "block_admin_merge_override">]
+        BlockAdminMergeOverride : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "block_on_official_review_requests">]
         BlockOnOfficialReviewRequests : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "block_on_outdated_branch">]
@@ -137,6 +217,10 @@ type BranchProtection =
         DismissStaleApprovals : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "enable_approvals_whitelist">]
         EnableApprovalsWhitelist : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "enable_force_push">]
+        EnableForcePush : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "enable_force_push_allowlist">]
+        EnableForcePushAllowlist : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "enable_merge_whitelist">]
         EnableMergeWhitelist : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "enable_push">]
@@ -145,10 +229,20 @@ type BranchProtection =
         EnablePushWhitelist : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "enable_status_check">]
         EnableStatusCheck : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "force_push_allowlist_deploy_keys">]
+        ForcePushAllowlistDeployKeys : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "force_push_allowlist_teams">]
+        ForcePushAllowlistTeams : string list option
+        [<System.Text.Json.Serialization.JsonPropertyName "force_push_allowlist_usernames">]
+        ForcePushAllowlistUsernames : string list option
+        [<System.Text.Json.Serialization.JsonPropertyName "ignore_stale_approvals">]
+        IgnoreStaleApprovals : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "merge_whitelist_teams">]
         MergeWhitelistTeams : string list option
         [<System.Text.Json.Serialization.JsonPropertyName "merge_whitelist_usernames">]
         MergeWhitelistUsernames : string list option
+        [<System.Text.Json.Serialization.JsonPropertyName "priority">]
+        Priority : int option
         [<System.Text.Json.Serialization.JsonPropertyName "protected_file_patterns">]
         ProtectedFilePatterns : string option
         [<System.Text.Json.Serialization.JsonPropertyName "push_whitelist_deploy_keys">]
@@ -169,6 +263,24 @@ type BranchProtection =
         UnprotectedFilePatterns : string option
         [<System.Text.Json.Serialization.JsonPropertyName "updated_at">]
         UpdatedAt : string option
+    }
+
+/// ChangeFileOperation for creating, updating or deleting a file
+[<JsonParse true ; JsonSerialize true>]
+type ChangeFileOperation =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "content">]
+        Content : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "from_path">]
+        FromPath : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "operation">]
+        Operation : string
+        [<System.Text.Json.Serialization.JsonPropertyName "path">]
+        Path : string
+        [<System.Text.Json.Serialization.JsonPropertyName "sha">]
+        Sha : string option
     }
 
 /// ChangedFile store information about files affected by the pull request
@@ -205,6 +317,8 @@ type CommitAffectedFiles =
         AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
         [<System.Text.Json.Serialization.JsonPropertyName "filename">]
         Filename : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "status">]
+        Status : string option
     }
 
 /// CommitDateOptions store dates for GIT_AUTHOR_DATE and GIT_COMMITTER_DATE
@@ -283,6 +397,8 @@ type CreateBranchProtectionOption =
         ApprovalsWhitelistTeams : string list option
         [<System.Text.Json.Serialization.JsonPropertyName "approvals_whitelist_username">]
         ApprovalsWhitelistUsername : string list option
+        [<System.Text.Json.Serialization.JsonPropertyName "block_admin_merge_override">]
+        BlockAdminMergeOverride : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "block_on_official_review_requests">]
         BlockOnOfficialReviewRequests : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "block_on_outdated_branch">]
@@ -295,6 +411,10 @@ type CreateBranchProtectionOption =
         DismissStaleApprovals : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "enable_approvals_whitelist">]
         EnableApprovalsWhitelist : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "enable_force_push">]
+        EnableForcePush : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "enable_force_push_allowlist">]
+        EnableForcePushAllowlist : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "enable_merge_whitelist">]
         EnableMergeWhitelist : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "enable_push">]
@@ -303,10 +423,20 @@ type CreateBranchProtectionOption =
         EnablePushWhitelist : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "enable_status_check">]
         EnableStatusCheck : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "force_push_allowlist_deploy_keys">]
+        ForcePushAllowlistDeployKeys : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "force_push_allowlist_teams">]
+        ForcePushAllowlistTeams : string list option
+        [<System.Text.Json.Serialization.JsonPropertyName "force_push_allowlist_usernames">]
+        ForcePushAllowlistUsernames : string list option
+        [<System.Text.Json.Serialization.JsonPropertyName "ignore_stale_approvals">]
+        IgnoreStaleApprovals : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "merge_whitelist_teams">]
         MergeWhitelistTeams : string list option
         [<System.Text.Json.Serialization.JsonPropertyName "merge_whitelist_usernames">]
         MergeWhitelistUsernames : string list option
+        [<System.Text.Json.Serialization.JsonPropertyName "priority">]
+        Priority : int option
         [<System.Text.Json.Serialization.JsonPropertyName "protected_file_patterns">]
         ProtectedFilePatterns : string option
         [<System.Text.Json.Serialization.JsonPropertyName "push_whitelist_deploy_keys">]
@@ -337,6 +467,8 @@ type CreateBranchRepoOption =
         NewBranchName : string
         [<System.Text.Json.Serialization.JsonPropertyName "old_branch_name">]
         OldBranchName : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "old_ref_name">]
+        OldRefName : string option
     }
 
 /// CreateEmailOption options when creating email addresses
@@ -444,6 +576,8 @@ type CreateLabelOption =
         Description : string option
         [<System.Text.Json.Serialization.JsonPropertyName "exclusive">]
         Exclusive : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "is_archived">]
+        IsArchived : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "name">]
         Name : string
     }
@@ -476,6 +610,18 @@ type CreateOAuth2ApplicationOptions =
         Name : string option
         [<System.Text.Json.Serialization.JsonPropertyName "redirect_uris">]
         RedirectUris : string list option
+        [<System.Text.Json.Serialization.JsonPropertyName "skip_secondary_authorization">]
+        SkipSecondaryAuthorization : bool option
+    }
+
+/// CreateOrUpdateSecretOption options when creating or updating secret
+[<JsonParse true ; JsonSerialize true>]
+type CreateOrUpdateSecretOption =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "data">]
+        Data : string
     }
 
 /// CreateOrgOption options for creating an organization
@@ -486,6 +632,8 @@ type CreateOrgOption =
         AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
         [<System.Text.Json.Serialization.JsonPropertyName "description">]
         Description : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "email">]
+        Email : string option
         [<System.Text.Json.Serialization.JsonPropertyName "full_name">]
         FullName : string option
         [<System.Text.Json.Serialization.JsonPropertyName "location">]
@@ -522,6 +670,10 @@ type CreatePullRequestOption =
         Labels : int list option
         [<System.Text.Json.Serialization.JsonPropertyName "milestone">]
         Milestone : int option
+        [<System.Text.Json.Serialization.JsonPropertyName "reviewers">]
+        Reviewers : string list option
+        [<System.Text.Json.Serialization.JsonPropertyName "team_reviewers">]
+        TeamReviewers : string list option
         [<System.Text.Json.Serialization.JsonPropertyName "title">]
         Title : string option
     }
@@ -600,6 +752,8 @@ type CreateRepoOption =
         License : string option
         [<System.Text.Json.Serialization.JsonPropertyName "name">]
         Name : string
+        [<System.Text.Json.Serialization.JsonPropertyName "object_format_name">]
+        ObjectFormatName : string option
         [<System.Text.Json.Serialization.JsonPropertyName "private">]
         Private : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "readme">]
@@ -638,6 +792,20 @@ type CreateTagOption =
         TagName : string
         [<System.Text.Json.Serialization.JsonPropertyName "target">]
         Target : string option
+    }
+
+/// CreateTagProtectionOption options for creating a tag protection
+[<JsonParse true ; JsonSerialize true>]
+type CreateTagProtectionOption =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "name_pattern">]
+        NamePattern : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "whitelist_teams">]
+        WhitelistTeams : string list option
+        [<System.Text.Json.Serialization.JsonPropertyName "whitelist_usernames">]
+        WhitelistUsernames : string list option
     }
 
 [<JsonParse true ; JsonSerialize true>]
@@ -686,7 +854,7 @@ type CreateUserOption =
         [<System.Text.Json.Serialization.JsonPropertyName "must_change_password">]
         MustChangePassword : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "password">]
-        Password : string
+        Password : string option
         [<System.Text.Json.Serialization.JsonPropertyName "restricted">]
         Restricted : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "send_notify">]
@@ -697,6 +865,16 @@ type CreateUserOption =
         Username : string
         [<System.Text.Json.Serialization.JsonPropertyName "visibility">]
         Visibility : string option
+    }
+
+/// CreateVariableOption the option when creating variable
+[<JsonParse true ; JsonSerialize true>]
+type CreateVariableOption =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "value">]
+        Value : string
     }
 
 /// CreateWikiPageOptions form for creating wiki
@@ -773,6 +951,8 @@ type EditBranchProtectionOption =
         ApprovalsWhitelistTeams : string list option
         [<System.Text.Json.Serialization.JsonPropertyName "approvals_whitelist_username">]
         ApprovalsWhitelistUsername : string list option
+        [<System.Text.Json.Serialization.JsonPropertyName "block_admin_merge_override">]
+        BlockAdminMergeOverride : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "block_on_official_review_requests">]
         BlockOnOfficialReviewRequests : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "block_on_outdated_branch">]
@@ -783,6 +963,10 @@ type EditBranchProtectionOption =
         DismissStaleApprovals : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "enable_approvals_whitelist">]
         EnableApprovalsWhitelist : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "enable_force_push">]
+        EnableForcePush : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "enable_force_push_allowlist">]
+        EnableForcePushAllowlist : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "enable_merge_whitelist">]
         EnableMergeWhitelist : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "enable_push">]
@@ -791,10 +975,20 @@ type EditBranchProtectionOption =
         EnablePushWhitelist : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "enable_status_check">]
         EnableStatusCheck : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "force_push_allowlist_deploy_keys">]
+        ForcePushAllowlistDeployKeys : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "force_push_allowlist_teams">]
+        ForcePushAllowlistTeams : string list option
+        [<System.Text.Json.Serialization.JsonPropertyName "force_push_allowlist_usernames">]
+        ForcePushAllowlistUsernames : string list option
+        [<System.Text.Json.Serialization.JsonPropertyName "ignore_stale_approvals">]
+        IgnoreStaleApprovals : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "merge_whitelist_teams">]
         MergeWhitelistTeams : string list option
         [<System.Text.Json.Serialization.JsonPropertyName "merge_whitelist_usernames">]
         MergeWhitelistUsernames : string list option
+        [<System.Text.Json.Serialization.JsonPropertyName "priority">]
+        Priority : int option
         [<System.Text.Json.Serialization.JsonPropertyName "protected_file_patterns">]
         ProtectedFilePatterns : string option
         [<System.Text.Json.Serialization.JsonPropertyName "push_whitelist_deploy_keys">]
@@ -906,6 +1100,8 @@ type EditLabelOption =
         Description : string option
         [<System.Text.Json.Serialization.JsonPropertyName "exclusive">]
         Exclusive : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "is_archived">]
+        IsArchived : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "name">]
         Name : string option
     }
@@ -934,6 +1130,8 @@ type EditOrgOption =
         AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
         [<System.Text.Json.Serialization.JsonPropertyName "description">]
         Description : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "email">]
+        Email : string option
         [<System.Text.Json.Serialization.JsonPropertyName "full_name">]
         FullName : string option
         [<System.Text.Json.Serialization.JsonPropertyName "location">]
@@ -1004,6 +1202,20 @@ type EditReleaseOption =
         TagName : string option
         [<System.Text.Json.Serialization.JsonPropertyName "target_commitish">]
         TargetCommitish : string option
+    }
+
+/// EditTagProtectionOption options for editing a tag protection
+[<JsonParse true ; JsonSerialize true>]
+type EditTagProtectionOption =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "name_pattern">]
+        NamePattern : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "whitelist_teams">]
+        WhitelistTeams : string list option
+        [<System.Text.Json.Serialization.JsonPropertyName "whitelist_usernames">]
+        WhitelistUsernames : string list option
     }
 
 [<JsonParse true ; JsonSerialize true>]
@@ -1089,6 +1301,10 @@ type Email =
         Email : string option
         [<System.Text.Json.Serialization.JsonPropertyName "primary">]
         Primary : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "user_id">]
+        UserId : int option
+        [<System.Text.Json.Serialization.JsonPropertyName "username">]
+        Username : string option
         [<System.Text.Json.Serialization.JsonPropertyName "verified">]
         Verified : bool option
     }
@@ -1261,6 +1477,8 @@ type GenerateRepoOption =
         Owner : string
         [<System.Text.Json.Serialization.JsonPropertyName "private">]
         Private : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "protected_branch">]
+        ProtectedBranch : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "topics">]
         Topics : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "webhooks">]
@@ -1353,6 +1571,18 @@ type GitTreeResponse =
         Url : string option
     }
 
+/// GitignoreTemplateInfo name and text of a gitignore template
+[<JsonParse true ; JsonSerialize true>]
+type GitignoreTemplateInfo =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "name">]
+        Name : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "source">]
+        Source : string option
+    }
+
 [<JsonParse true ; JsonSerialize true>]
 type Type4 =
     {
@@ -1370,6 +1600,8 @@ type Hook =
         Active : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "authorization_header">]
         AuthorizationHeader : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "branch_filter">]
+        BranchFilter : string option
         [<System.Text.Json.Serialization.JsonPropertyName "config">]
         Config : Type4 option
         [<System.Text.Json.Serialization.JsonPropertyName "created_at">]
@@ -1410,6 +1642,30 @@ type InternalTracker =
         EnableTimeTracker : bool option
     }
 
+[<JsonParse true ; JsonSerialize true>]
+type IssueConfigContactLink =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "about">]
+        About : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "name">]
+        Name : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "url">]
+        Url : string option
+    }
+
+[<JsonParse true ; JsonSerialize true>]
+type IssueConfigValidation =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "message">]
+        Message : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "valid">]
+        Valid : bool option
+    }
+
 /// IssueDeadline represents an issue deadline
 [<JsonParse true ; JsonSerialize true>]
 type IssueDeadline =
@@ -1441,7 +1697,21 @@ type IssueLabelsOption =
         [<System.Text.Json.Serialization.JsonExtensionData>]
         AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
         [<System.Text.Json.Serialization.JsonPropertyName "labels">]
-        Labels : int list option
+        Labels : unit list option
+    }
+
+/// IssueMeta basic issue information
+[<JsonParse true ; JsonSerialize true>]
+type IssueMeta =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "index">]
+        Index : int option
+        [<System.Text.Json.Serialization.JsonPropertyName "owner">]
+        Owner : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "repo">]
+        Repo : string option
     }
 
 /// Label a label to an issue or a pr
@@ -1458,6 +1728,56 @@ type Label =
         Exclusive : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "id">]
         Id : int option
+        [<System.Text.Json.Serialization.JsonPropertyName "is_archived">]
+        IsArchived : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "name">]
+        Name : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "url">]
+        Url : string option
+    }
+
+/// LabelTemplate info of a Label template
+[<JsonParse true ; JsonSerialize true>]
+type LabelTemplate =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "color">]
+        Color : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "description">]
+        Description : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "exclusive">]
+        Exclusive : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "name">]
+        Name : string option
+    }
+
+/// LicensesInfo contains information about a License
+[<JsonParse true ; JsonSerialize true>]
+type LicenseTemplateInfo =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "body">]
+        Body : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "implementation">]
+        Implementation : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "key">]
+        Key : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "name">]
+        Name : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "url">]
+        Url : string option
+    }
+
+/// LicensesListEntry is used for the API
+[<JsonParse true ; JsonSerialize true>]
+type LicensesTemplateListEntry =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "key">]
+        Key : string option
         [<System.Text.Json.Serialization.JsonPropertyName "name">]
         Name : string option
         [<System.Text.Json.Serialization.JsonPropertyName "url">]
@@ -1472,6 +1792,24 @@ type MarkdownOption =
         AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
         [<System.Text.Json.Serialization.JsonPropertyName "Context">]
         Context : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "Mode">]
+        Mode : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "Text">]
+        Text : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "Wiki">]
+        Wiki : bool option
+    }
+
+/// MarkupOption markup options
+[<JsonParse true ; JsonSerialize true>]
+type MarkupOption =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "Context">]
+        Context : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "FilePath">]
+        FilePath : string option
         [<System.Text.Json.Serialization.JsonPropertyName "Mode">]
         Mode : string option
         [<System.Text.Json.Serialization.JsonPropertyName "Text">]
@@ -1504,6 +1842,24 @@ type MergePullRequestOption =
         MergeWhenChecksSucceed : bool option
     }
 
+[<JsonParse true ; JsonSerialize true>]
+type MergeUpstreamRequest =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "branch">]
+        Branch : string option
+    }
+
+[<JsonParse true ; JsonSerialize true>]
+type MergeUpstreamResponse =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "merge_type">]
+        MergeType : string option
+    }
+
 /// MigrateRepoOptions options for migrating repository's
 /// this is used to interact with api v1
 [<JsonParse true ; JsonSerialize true>]
@@ -1517,6 +1873,10 @@ type MigrateRepoOptions =
         AuthToken : string option
         [<System.Text.Json.Serialization.JsonPropertyName "auth_username">]
         AuthUsername : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "aws_access_key_id">]
+        AwsAccessKeyId : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "aws_secret_access_key">]
+        AwsSecretAccessKey : string option
         [<System.Text.Json.Serialization.JsonPropertyName "clone_addr">]
         CloneAddr : string
         [<System.Text.Json.Serialization.JsonPropertyName "description">]
@@ -1551,6 +1911,18 @@ type MigrateRepoOptions =
         Uid : int option
         [<System.Text.Json.Serialization.JsonPropertyName "wiki">]
         Wiki : bool option
+    }
+
+/// NewIssuePinsAllowed represents an API response that says if new Issue Pins are allowed
+[<JsonParse true ; JsonSerialize true>]
+type NewIssuePinsAllowed =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "issues">]
+        Issues : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "pull_requests">]
+        PullRequests : bool option
     }
 
 [<JsonParse true ; JsonSerialize true>]
@@ -1632,6 +2004,8 @@ type OAuth2Application =
         Name : string option
         [<System.Text.Json.Serialization.JsonPropertyName "redirect_uris">]
         RedirectUris : string list option
+        [<System.Text.Json.Serialization.JsonPropertyName "skip_secondary_authorization">]
+        SkipSecondaryAuthorization : bool option
     }
 
 /// Organization represents an organization
@@ -1644,6 +2018,8 @@ type Organization =
         AvatarUrl : string option
         [<System.Text.Json.Serialization.JsonPropertyName "description">]
         Description : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "email">]
+        Email : string option
         [<System.Text.Json.Serialization.JsonPropertyName "full_name">]
         FullName : string option
         [<System.Text.Json.Serialization.JsonPropertyName "id">]
@@ -1736,6 +2112,10 @@ type PullRequestMeta =
     {
         [<System.Text.Json.Serialization.JsonExtensionData>]
         AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "draft">]
+        Draft : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "html_url">]
+        HtmlUrl : string option
         [<System.Text.Json.Serialization.JsonPropertyName "merged">]
         Merged : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "merged_at">]
@@ -1792,6 +2172,16 @@ type Reference =
         Url : string option
     }
 
+/// RenameUserOption options when renaming a user
+[<JsonParse true ; JsonSerialize true>]
+type RenameUserOption =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "new_username">]
+        NewUsername : string
+    }
+
 /// RepoTopicOptions a collection of repo topic names
 [<JsonParse true ; JsonSerialize true>]
 type RepoTopicOptions =
@@ -1816,6 +2206,18 @@ type RepositoryMeta =
         Name : string option
         [<System.Text.Json.Serialization.JsonPropertyName "owner">]
         Owner : string option
+    }
+
+/// Secret represents a secret
+[<JsonParse true ; JsonSerialize true>]
+type Secret =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "created_at">]
+        CreatedAt : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "name">]
+        Name : string option
     }
 
 /// ServerVersion wraps the version of the server
@@ -1880,6 +2282,26 @@ type Tag =
         TarballUrl : string option
         [<System.Text.Json.Serialization.JsonPropertyName "zipball_url">]
         ZipballUrl : string option
+    }
+
+/// TagProtection represents a tag protection
+[<JsonParse true ; JsonSerialize true>]
+type TagProtection =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "created_at">]
+        CreatedAt : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "id">]
+        Id : int option
+        [<System.Text.Json.Serialization.JsonPropertyName "name_pattern">]
+        NamePattern : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "updated_at">]
+        UpdatedAt : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "whitelist_teams">]
+        WhitelistTeams : string list option
+        [<System.Text.Json.Serialization.JsonPropertyName "whitelist_usernames">]
+        WhitelistUsernames : string list option
     }
 
 [<JsonParse true ; JsonSerialize true>]
@@ -1955,6 +2377,26 @@ type TransferRepoOption =
         TeamIds : int list option
     }
 
+/// UpdateBranchProtectionPriories a list to update the branch protection rule priorities
+[<JsonParse true ; JsonSerialize true>]
+type UpdateBranchProtectionPriories =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "ids">]
+        Ids : int list option
+    }
+
+/// UpdateBranchRepoOption options when updating a branch in a repository
+[<JsonParse true ; JsonSerialize true>]
+type UpdateBranchRepoOption =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "name">]
+        Name : string
+    }
+
 /// UpdateFileOptions options for updating files
 /// Note: `author` and `committer` are optional (if only one is given, it will be used for the other, otherwise the authenticated user will be used)
 [<JsonParse true ; JsonSerialize true>]
@@ -1984,6 +2426,38 @@ type UpdateFileOptions =
         Signoff : bool option
     }
 
+/// UpdateRepoAvatarUserOption options when updating the repo avatar
+[<JsonParse true ; JsonSerialize true>]
+type UpdateRepoAvatarOption =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "image">]
+        Image : string option
+    }
+
+/// UpdateUserAvatarUserOption options when updating the user avatar
+[<JsonParse true ; JsonSerialize true>]
+type UpdateUserAvatarOption =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "image">]
+        Image : string option
+    }
+
+/// UpdateVariableOption the option when updating variable
+[<JsonParse true ; JsonSerialize true>]
+type UpdateVariableOption =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "name">]
+        Name : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "value">]
+        Value : string
+    }
+
 /// User represents a user
 [<JsonParse true ; JsonSerialize true>]
 type User =
@@ -2006,6 +2480,8 @@ type User =
         FollowingCount : int option
         [<System.Text.Json.Serialization.JsonPropertyName "full_name">]
         FullName : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "html_url">]
+        HtmlUrl : string option
         [<System.Text.Json.Serialization.JsonPropertyName "id">]
         Id : int option
         [<System.Text.Json.Serialization.JsonPropertyName "is_admin">]
@@ -2024,12 +2500,24 @@ type User =
         ProhibitLogin : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "restricted">]
         Restricted : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "source_id">]
+        SourceId : int option
         [<System.Text.Json.Serialization.JsonPropertyName "starred_repos_count">]
         StarredReposCount : int option
         [<System.Text.Json.Serialization.JsonPropertyName "visibility">]
         Visibility : string option
         [<System.Text.Json.Serialization.JsonPropertyName "website">]
         Website : string option
+    }
+
+/// UserBadgeOption options for link between users and badges
+[<JsonParse true ; JsonSerialize true>]
+type UserBadgeOption =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "badge_slugs">]
+        BadgeSlugs : string list option
     }
 
 /// UserHeatmapData represents the data needed to create a heatmap
@@ -2182,6 +2670,31 @@ type WikiPageMetaData =
         SubUrl : string option
         [<System.Text.Json.Serialization.JsonPropertyName "title">]
         Title : string option
+    }
+
+/// ChangeFilesOptions options for creating, updating or deleting multiple files
+/// Note: `author` and `committer` are optional (if only one is given, it will be used for the other, otherwise the authenticated user will be used)
+[<JsonParse true ; JsonSerialize true>]
+type ChangeFilesOptions =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "author">]
+        Author : Identity option
+        [<System.Text.Json.Serialization.JsonPropertyName "branch">]
+        Branch : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "committer">]
+        Committer : Identity option
+        [<System.Text.Json.Serialization.JsonPropertyName "dates">]
+        Dates : CommitDateOptions option
+        [<System.Text.Json.Serialization.JsonPropertyName "files">]
+        Files : ChangeFileOperation list
+        [<System.Text.Json.Serialization.JsonPropertyName "message">]
+        Message : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "new_branch">]
+        NewBranch : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "signoff">]
+        Signoff : bool option
     }
 
 /// Comment represents a comment on a commit or issue
@@ -2370,6 +2883,8 @@ type EditRepoOption =
     {
         [<System.Text.Json.Serialization.JsonExtensionData>]
         AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "allow_fast_forward_only_merge">]
+        AllowFastForwardOnlyMerge : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "allow_manual_merge">]
         AllowManualMerge : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "allow_merge_commits">]
@@ -2402,12 +2917,18 @@ type EditRepoOption =
         ExternalTracker : ExternalTracker option
         [<System.Text.Json.Serialization.JsonPropertyName "external_wiki">]
         ExternalWiki : ExternalWiki option
+        [<System.Text.Json.Serialization.JsonPropertyName "has_actions">]
+        HasActions : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "has_issues">]
         HasIssues : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "has_packages">]
+        HasPackages : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "has_projects">]
         HasProjects : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "has_pull_requests">]
         HasPullRequests : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "has_releases">]
+        HasReleases : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "has_wiki">]
         HasWiki : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "ignore_whitespace_conflicts">]
@@ -2420,10 +2941,23 @@ type EditRepoOption =
         Name : string option
         [<System.Text.Json.Serialization.JsonPropertyName "private">]
         Private : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "projects_mode">]
+        ProjectsMode : string option
         [<System.Text.Json.Serialization.JsonPropertyName "template">]
         Template : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "website">]
         Website : string option
+    }
+
+[<JsonParse true ; JsonSerialize true>]
+type IssueConfig =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "blank_issues_enabled">]
+        BlankIssuesEnabled : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "contact_links">]
+        ContactLinks : IssueConfigContactLink list option
     }
 
 /// IssueFormField represents a form field
@@ -2440,6 +2974,8 @@ type IssueFormField =
         Type : string option
         [<System.Text.Json.Serialization.JsonPropertyName "validations">]
         Validations : Type6 option
+        [<System.Text.Json.Serialization.JsonPropertyName "visible">]
+        Visible : string list option
     }
 
 /// IssueTemplate represents an issue template for a repository
@@ -2450,6 +2986,8 @@ type IssueTemplate =
         AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
         [<System.Text.Json.Serialization.JsonPropertyName "about">]
         About : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "assignees">]
+        Assignees : string list option
         [<System.Text.Json.Serialization.JsonPropertyName "body">]
         Body : IssueFormField list option
         [<System.Text.Json.Serialization.JsonPropertyName "content">]
@@ -2694,6 +3232,8 @@ type Release =
         TarballUrl : string option
         [<System.Text.Json.Serialization.JsonPropertyName "target_commitish">]
         TargetCommitish : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "upload_url">]
+        UploadUrl : string option
         [<System.Text.Json.Serialization.JsonPropertyName "url">]
         Url : string option
         [<System.Text.Json.Serialization.JsonPropertyName "zipball_url">]
@@ -2754,6 +3294,8 @@ type Repository =
     {
         [<System.Text.Json.Serialization.JsonExtensionData>]
         AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "allow_fast_forward_only_merge">]
+        AllowFastForwardOnlyMerge : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "allow_merge_commits">]
         AllowMergeCommits : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "allow_rebase">]
@@ -2766,6 +3308,8 @@ type Repository =
         AllowSquashMerge : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "archived">]
         Archived : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "archived_at">]
+        ArchivedAt : string option
         [<System.Text.Json.Serialization.JsonPropertyName "avatar_url">]
         AvatarUrl : string option
         [<System.Text.Json.Serialization.JsonPropertyName "clone_url">]
@@ -2794,12 +3338,18 @@ type Repository =
         ForksCount : int option
         [<System.Text.Json.Serialization.JsonPropertyName "full_name">]
         FullName : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "has_actions">]
+        HasActions : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "has_issues">]
         HasIssues : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "has_packages">]
+        HasPackages : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "has_projects">]
         HasProjects : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "has_pull_requests">]
         HasPullRequests : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "has_releases">]
+        HasReleases : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "has_wiki">]
         HasWiki : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "html_url">]
@@ -2816,6 +3366,8 @@ type Repository =
         Language : string option
         [<System.Text.Json.Serialization.JsonPropertyName "languages_url">]
         LanguagesUrl : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "licenses">]
+        Licenses : string list option
         [<System.Text.Json.Serialization.JsonPropertyName "link">]
         Link : string option
         [<System.Text.Json.Serialization.JsonPropertyName "mirror">]
@@ -2826,6 +3378,8 @@ type Repository =
         MirrorUpdated : string option
         [<System.Text.Json.Serialization.JsonPropertyName "name">]
         Name : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "object_format_name">]
+        ObjectFormatName : string option
         [<System.Text.Json.Serialization.JsonPropertyName "open_issues_count">]
         OpenIssuesCount : int option
         [<System.Text.Json.Serialization.JsonPropertyName "open_pr_counter">]
@@ -2840,6 +3394,8 @@ type Repository =
         Permissions : Permission option
         [<System.Text.Json.Serialization.JsonPropertyName "private">]
         Private : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "projects_mode">]
+        ProjectsMode : string option
         [<System.Text.Json.Serialization.JsonPropertyName "release_counter">]
         ReleaseCounter : int option
         [<System.Text.Json.Serialization.JsonPropertyName "repo_transfer">]
@@ -2852,8 +3408,12 @@ type Repository =
         StarsCount : int option
         [<System.Text.Json.Serialization.JsonPropertyName "template">]
         Template : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "topics">]
+        Topics : string list option
         [<System.Text.Json.Serialization.JsonPropertyName "updated_at">]
         UpdatedAt : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "url">]
+        Url : string option
         [<System.Text.Json.Serialization.JsonPropertyName "watchers_count">]
         WatchersCount : int option
         [<System.Text.Json.Serialization.JsonPropertyName "website">]
@@ -2870,6 +3430,39 @@ type SearchResults =
         Data : Repository list option
         [<System.Text.Json.Serialization.JsonPropertyName "ok">]
         Ok : bool option
+    }
+
+[<JsonParse true ; JsonSerialize true>]
+type Activity =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "act_user">]
+        ActUser : User option
+        [<System.Text.Json.Serialization.JsonPropertyName "act_user_id">]
+        ActUserId : int option
+        [<System.Text.Json.Serialization.JsonPropertyName "comment">]
+        Comment : Comment option
+        [<System.Text.Json.Serialization.JsonPropertyName "comment_id">]
+        CommentId : int option
+        [<System.Text.Json.Serialization.JsonPropertyName "content">]
+        Content : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "created">]
+        Created : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "id">]
+        Id : int option
+        [<System.Text.Json.Serialization.JsonPropertyName "is_private">]
+        IsPrivate : bool option
+        [<System.Text.Json.Serialization.JsonPropertyName "op_type">]
+        OpType : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "ref_name">]
+        RefName : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "repo">]
+        Repo : Repository option
+        [<System.Text.Json.Serialization.JsonPropertyName "repo_id">]
+        RepoId : int option
+        [<System.Text.Json.Serialization.JsonPropertyName "user_id">]
+        UserId : int option
     }
 
 /// AnnotatedTag represents an annotated tag
@@ -2944,6 +3537,18 @@ type Commit =
         Url : string option
     }
 
+/// Compare represents a comparison between two commits.
+[<JsonParse true ; JsonSerialize true>]
+type Compare =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "commits">]
+        Commits : Commit list option
+        [<System.Text.Json.Serialization.JsonPropertyName "total_commits">]
+        TotalCommits : int option
+    }
+
 /// DeployKey a deploy key
 [<JsonParse true ; JsonSerialize true>]
 type DeployKey =
@@ -2998,6 +3603,20 @@ type FileResponse =
         Verification : PayloadCommitVerification option
     }
 
+/// FilesResponse contains information about multiple files from a repo
+[<JsonParse true ; JsonSerialize true>]
+type FilesResponse =
+    {
+        [<System.Text.Json.Serialization.JsonExtensionData>]
+        AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "commit">]
+        Commit : FileCommitResponse option
+        [<System.Text.Json.Serialization.JsonPropertyName "files">]
+        Files : ContentsResponse list option
+        [<System.Text.Json.Serialization.JsonPropertyName "verification">]
+        Verification : PayloadCommitVerification option
+    }
+
 /// Issue represents an issue in a repository
 [<JsonParse true ; JsonSerialize true>]
 type Issue =
@@ -3036,6 +3655,8 @@ type Issue =
         OriginalAuthor : string option
         [<System.Text.Json.Serialization.JsonPropertyName "original_author_id">]
         OriginalAuthorId : int option
+        [<System.Text.Json.Serialization.JsonPropertyName "pin_order">]
+        PinOrder : int option
         [<System.Text.Json.Serialization.JsonPropertyName "pull_request">]
         PullRequest : PullRequestMeta option
         [<System.Text.Json.Serialization.JsonPropertyName "ref">]
@@ -3138,6 +3759,8 @@ type Package =
         CreatedAt : string option
         [<System.Text.Json.Serialization.JsonPropertyName "creator">]
         Creator : User option
+        [<System.Text.Json.Serialization.JsonPropertyName "html_url">]
+        HtmlUrl : string option
         [<System.Text.Json.Serialization.JsonPropertyName "id">]
         Id : int option
         [<System.Text.Json.Serialization.JsonPropertyName "name">]
@@ -3186,6 +3809,8 @@ type PullRequest =
     {
         [<System.Text.Json.Serialization.JsonExtensionData>]
         AdditionalProperties : System.Collections.Generic.Dictionary<string, System.Text.Json.Nodes.JsonNode>
+        [<System.Text.Json.Serialization.JsonPropertyName "additions">]
+        Additions : int option
         [<System.Text.Json.Serialization.JsonPropertyName "allow_maintainer_edit">]
         AllowMaintainerEdit : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "assignee">]
@@ -3196,14 +3821,20 @@ type PullRequest =
         Base : PRBranchInfo option
         [<System.Text.Json.Serialization.JsonPropertyName "body">]
         Body : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "changed_files">]
+        ChangedFiles : int option
         [<System.Text.Json.Serialization.JsonPropertyName "closed_at">]
         ClosedAt : string option
         [<System.Text.Json.Serialization.JsonPropertyName "comments">]
         Comments : int option
         [<System.Text.Json.Serialization.JsonPropertyName "created_at">]
         CreatedAt : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "deletions">]
+        Deletions : int option
         [<System.Text.Json.Serialization.JsonPropertyName "diff_url">]
         DiffUrl : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "draft">]
+        Draft : bool option
         [<System.Text.Json.Serialization.JsonPropertyName "due_date">]
         DueDate : string option
         [<System.Text.Json.Serialization.JsonPropertyName "head">]
@@ -3234,6 +3865,14 @@ type PullRequest =
         Number : int option
         [<System.Text.Json.Serialization.JsonPropertyName "patch_url">]
         PatchUrl : string option
+        [<System.Text.Json.Serialization.JsonPropertyName "pin_order">]
+        PinOrder : int option
+        [<System.Text.Json.Serialization.JsonPropertyName "requested_reviewers">]
+        RequestedReviewers : User list option
+        [<System.Text.Json.Serialization.JsonPropertyName "requested_reviewers_teams">]
+        RequestedReviewersTeams : Team list option
+        [<System.Text.Json.Serialization.JsonPropertyName "review_comments">]
+        ReviewComments : int option
         [<System.Text.Json.Serialization.JsonPropertyName "state">]
         State : string option
         [<System.Text.Json.Serialization.JsonPropertyName "title">]
@@ -3371,17 +4010,17 @@ type LanguageStatistics =
 [<HttpClient false ; RestEase.BasePath "/api/v1" ; GenerateMock false>]
 type IGiteaClient =
     /// Returns the Person actor for a user
-    [<RestEase.Get "activitypub/user/{username}">]
+    [<RestEase.Get "activitypub/user-id/{user-id}">]
     [<RestEase.Header("Content-Type", "json")>]
     abstract ActivitypubPerson :
-        [<RestEase.Path "username">] username : string * ?ct : System.Threading.CancellationToken ->
+        [<RestEase.Path "user-id">] user_id : int * ?ct : System.Threading.CancellationToken ->
             ActivityPub System.Threading.Tasks.Task
 
     /// Send to the inbox
-    [<RestEase.Post "activitypub/user/{username}/inbox">]
+    [<RestEase.Post "activitypub/user-id/{user-id}/inbox">]
     [<RestEase.Header("Content-Type", "json")>]
     abstract ActivitypubPersonInbox :
-        [<RestEase.Path "username">] username : string * ?ct : System.Threading.CancellationToken ->
+        [<RestEase.Path "user-id">] user_id : int * ?ct : System.Threading.CancellationToken ->
             unit System.Threading.Tasks.Task
 
     /// List cron tasks
@@ -3399,6 +4038,25 @@ type IGiteaClient =
     abstract AdminCronRun :
         [<RestEase.Path "task">] task : string * ?ct : System.Threading.CancellationToken ->
             unit System.Threading.Tasks.Task
+
+    /// List all emails
+    [<RestEase.Get "admin/emails">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract AdminGetAllEmails :
+        [<RestEase.Query "page">] page : int *
+        [<RestEase.Query "limit">] limit : int *
+        ?ct : System.Threading.CancellationToken ->
+            Email list System.Threading.Tasks.Task
+
+    /// Search all emails
+    [<RestEase.Get "admin/emails/search">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract AdminSearchEmails :
+        [<RestEase.Query "q">] q : string *
+        [<RestEase.Query "page">] page : int *
+        [<RestEase.Query "limit">] limit : int *
+        ?ct : System.Threading.CancellationToken ->
+            Email list System.Threading.Tasks.Task
 
     /// List system's webhooks
     [<RestEase.Get "admin/hooks">]
@@ -3422,8 +4080,14 @@ type IGiteaClient =
     abstract AdminGetHook :
         [<RestEase.Path "id">] id : int * ?ct : System.Threading.CancellationToken -> Hook System.Threading.Tasks.Task
 
+    /// Delete a hook
+    [<RestEase.Delete "admin/hooks/{id}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract AdminDeleteHook :
+        [<RestEase.Path "id">] id : int * ?ct : System.Threading.CancellationToken -> unit System.Threading.Tasks.Task
+
     /// Update a hook
-    [<RestEase.Post "admin/hooks/{id}">]
+    [<RestEase.Patch "admin/hooks/{id}">]
     [<RestEase.Header("Content-Type", "json")>]
     abstract AdminEditHook :
         [<RestEase.Path "id">] id : int *
@@ -3439,6 +4103,12 @@ type IGiteaClient =
         [<RestEase.Query "limit">] limit : int *
         ?ct : System.Threading.CancellationToken ->
             Organization list System.Threading.Tasks.Task
+
+    /// Get an global actions runner registration token
+    [<RestEase.Get "admin/runners/registration-token">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract AdminGetRunnerRegistrationToken :
+        ?ct : System.Threading.CancellationToken -> unit System.Threading.Tasks.Task
 
     /// List unadopted repositories
     [<RestEase.Get "admin/unadopted">]
@@ -3468,10 +4138,12 @@ type IGiteaClient =
         ?ct : System.Threading.CancellationToken ->
             unit System.Threading.Tasks.Task
 
-    /// List all users
+    /// Search users according filter conditions
     [<RestEase.Get "admin/users">]
     [<RestEase.Header("Content-Type", "json")>]
-    abstract AdminGetAllUsers :
+    abstract AdminSearchUsers :
+        [<RestEase.Query "source_id">] source_id : int *
+        [<RestEase.Query "login_name">] login_name : string *
         [<RestEase.Query "page">] page : int *
         [<RestEase.Query "limit">] limit : int *
         ?ct : System.Threading.CancellationToken ->
@@ -3494,13 +4166,38 @@ type IGiteaClient =
             unit System.Threading.Tasks.Task
 
     /// Edit an existing user
-    [<RestEase.Post "admin/users/{username}">]
+    [<RestEase.Patch "admin/users/{username}">]
     [<RestEase.Header("Content-Type", "json")>]
     abstract AdminEditUser :
         [<RestEase.Path "username">] username : string *
         [<RestEase.Body>] body : EditUserOption *
         ?ct : System.Threading.CancellationToken ->
             User System.Threading.Tasks.Task
+
+    /// List a user's badges
+    [<RestEase.Get "admin/users/{username}/badges">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract AdminListUserBadges :
+        [<RestEase.Path "username">] username : string * ?ct : System.Threading.CancellationToken ->
+            Badge list System.Threading.Tasks.Task
+
+    /// Add a badge to a user
+    [<RestEase.Post "admin/users/{username}/badges">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract AdminAddUserBadges :
+        [<RestEase.Path "username">] username : string *
+        [<RestEase.Body>] body : UserBadgeOption *
+        ?ct : System.Threading.CancellationToken ->
+            unit System.Threading.Tasks.Task
+
+    /// Remove a badge from a user
+    [<RestEase.Delete "admin/users/{username}/badges">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract AdminDeleteUserBadges :
+        [<RestEase.Path "username">] username : string *
+        [<RestEase.Body>] body : UserBadgeOption *
+        ?ct : System.Threading.CancellationToken ->
+            unit System.Threading.Tasks.Task
 
     /// Add a public key on behalf of a user
     [<RestEase.Post "admin/users/{username}/keys">]
@@ -3529,6 +4226,15 @@ type IGiteaClient =
         ?ct : System.Threading.CancellationToken ->
             Organization System.Threading.Tasks.Task
 
+    /// Rename a user
+    [<RestEase.Post "admin/users/{username}/rename">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract AdminRenameUser :
+        [<RestEase.Path "username">] username : string *
+        [<RestEase.Body>] body : RenameUserOption *
+        ?ct : System.Threading.CancellationToken ->
+            unit System.Threading.Tasks.Task
+
     /// Create a repository on behalf of a user
     [<RestEase.Post "admin/users/{username}/repos">]
     [<RestEase.Header("Content-Type", "json")>]
@@ -3538,11 +4244,43 @@ type IGiteaClient =
         ?ct : System.Threading.CancellationToken ->
             Repository System.Threading.Tasks.Task
 
-    /// Delete a hook
-    [<RestEase.Delete "amdin/hooks/{id}">]
+    /// Returns a list of all gitignore templates
+    [<RestEase.Get "gitignore/templates">]
     [<RestEase.Header("Content-Type", "json")>]
-    abstract AdminDeleteHook :
-        [<RestEase.Path "id">] id : int * ?ct : System.Threading.CancellationToken -> unit System.Threading.Tasks.Task
+    abstract ListGitignoresTemplates :
+        ?ct : System.Threading.CancellationToken -> string list System.Threading.Tasks.Task
+
+    /// Returns information about a gitignore template
+    [<RestEase.Get "gitignore/templates/{name}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract GetGitignoreTemplateInfo :
+        [<RestEase.Path "name">] name : string * ?ct : System.Threading.CancellationToken ->
+            GitignoreTemplateInfo System.Threading.Tasks.Task
+
+    /// Returns a list of all label templates
+    [<RestEase.Get "label/templates">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract ListLabelTemplates : ?ct : System.Threading.CancellationToken -> string list System.Threading.Tasks.Task
+
+    /// Returns all labels in a template
+    [<RestEase.Get "label/templates/{name}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract GetLabelTemplateInfo :
+        [<RestEase.Path "name">] name : string * ?ct : System.Threading.CancellationToken ->
+            LabelTemplate list System.Threading.Tasks.Task
+
+    /// Returns a list of all license templates
+    [<RestEase.Get "licenses">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract ListLicenseTemplates :
+        ?ct : System.Threading.CancellationToken -> LicensesTemplateListEntry list System.Threading.Tasks.Task
+
+    /// Returns information about a license template
+    [<RestEase.Get "licenses/{name}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract GetLicenseTemplateInfo :
+        [<RestEase.Path "name">] name : string * ?ct : System.Threading.CancellationToken ->
+            LicenseTemplateInfo System.Threading.Tasks.Task
 
     /// Render a markdown document as HTML
     [<RestEase.Post "markdown">]
@@ -3556,6 +4294,13 @@ type IGiteaClient =
     [<RestEase.Header("Content-Type", "html")>]
     abstract RenderMarkdownRaw :
         [<RestEase.Body>] body : string * ?ct : System.Threading.CancellationToken -> string System.Threading.Tasks.Task
+
+    /// Render a markup document as HTML
+    [<RestEase.Post "markup">]
+    [<RestEase.Header("Content-Type", "html")>]
+    abstract RenderMarkup :
+        [<RestEase.Body>] body : MarkupOption * ?ct : System.Threading.CancellationToken ->
+            string System.Threading.Tasks.Task
 
     /// Returns the nodeinfo of the Gitea application
     [<RestEase.Get "nodeinfo">]
@@ -3601,7 +4346,7 @@ type IGiteaClient =
             NotificationThread System.Threading.Tasks.Task
 
     /// Mark notification thread as read by ID
-    [<RestEase.Post "notifications/threads/{id}">]
+    [<RestEase.Patch "notifications/threads/{id}">]
     [<RestEase.Header("Content-Type", "json")>]
     abstract NotifyReadThread :
         [<RestEase.Path "id">] id : string *
@@ -3649,13 +4394,123 @@ type IGiteaClient =
             unit System.Threading.Tasks.Task
 
     /// Edit an organization
-    [<RestEase.Post "orgs/{org}">]
+    [<RestEase.Patch "orgs/{org}">]
     [<RestEase.Header("Content-Type", "json")>]
     abstract OrgEdit :
         [<RestEase.Path "org">] org : string *
         [<RestEase.Body>] body : EditOrgOption *
         ?ct : System.Threading.CancellationToken ->
             Organization System.Threading.Tasks.Task
+
+    /// Get an organization's actions runner registration token
+    [<RestEase.Get "orgs/{org}/actions/runners/registration-token">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract OrgGetRunnerRegistrationToken :
+        [<RestEase.Path "org">] org : string * ?ct : System.Threading.CancellationToken ->
+            unit System.Threading.Tasks.Task
+
+    /// List an organization's actions secrets
+    [<RestEase.Get "orgs/{org}/actions/secrets">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract OrgListActionsSecrets :
+        [<RestEase.Path "org">] org : string *
+        [<RestEase.Query "page">] page : int *
+        [<RestEase.Query "limit">] limit : int *
+        ?ct : System.Threading.CancellationToken ->
+            Secret list System.Threading.Tasks.Task
+
+    /// Delete a secret in an organization
+    [<RestEase.Delete "orgs/{org}/actions/secrets/{secretname}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract DeleteOrgSecret :
+        [<RestEase.Path "org">] org : string *
+        [<RestEase.Path "secretname">] secretname : string *
+        ?ct : System.Threading.CancellationToken ->
+            unit System.Threading.Tasks.Task
+
+    /// Get an org-level variables list
+    [<RestEase.Get "orgs/{org}/actions/variables">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract GetOrgVariablesList :
+        [<RestEase.Path "org">] org : string *
+        [<RestEase.Query "page">] page : int *
+        [<RestEase.Query "limit">] limit : int *
+        ?ct : System.Threading.CancellationToken ->
+            ActionVariable list System.Threading.Tasks.Task
+
+    /// Get an org-level variable
+    [<RestEase.Get "orgs/{org}/actions/variables/{variablename}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract GetOrgVariable :
+        [<RestEase.Path "org">] org : string *
+        [<RestEase.Path "variablename">] variablename : string *
+        ?ct : System.Threading.CancellationToken ->
+            ActionVariable System.Threading.Tasks.Task
+
+    /// List an organization's activity feeds
+    [<RestEase.Get "orgs/{org}/activities/feeds">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract OrgListActivityFeeds :
+        [<RestEase.Path "org">] org : string *
+        [<RestEase.Query "date">] date : string *
+        [<RestEase.Query "page">] page : int *
+        [<RestEase.Query "limit">] limit : int *
+        ?ct : System.Threading.CancellationToken ->
+            Activity list System.Threading.Tasks.Task
+
+    /// Update Avatar
+    [<RestEase.Post "orgs/{org}/avatar">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract OrgUpdateAvatar :
+        [<RestEase.Path "org">] org : string *
+        [<RestEase.Body>] body : UpdateUserAvatarOption *
+        ?ct : System.Threading.CancellationToken ->
+            unit System.Threading.Tasks.Task
+
+    /// Delete Avatar
+    [<RestEase.Delete "orgs/{org}/avatar">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract OrgDeleteAvatar :
+        [<RestEase.Path "org">] org : string * ?ct : System.Threading.CancellationToken ->
+            unit System.Threading.Tasks.Task
+
+    /// List users blocked by the organization
+    [<RestEase.Get "orgs/{org}/blocks">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract OrganizationListBlocks :
+        [<RestEase.Path "org">] org : string *
+        [<RestEase.Query "page">] page : int *
+        [<RestEase.Query "limit">] limit : int *
+        ?ct : System.Threading.CancellationToken ->
+            User list System.Threading.Tasks.Task
+
+    /// Check if a user is blocked by the organization
+    [<RestEase.Get "orgs/{org}/blocks/{username}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract OrganizationCheckUserBlock :
+        [<RestEase.Path "org">] org : string *
+        [<RestEase.Path "username">] username : string *
+        ?ct : System.Threading.CancellationToken ->
+            unit System.Threading.Tasks.Task
+
+    /// Unblock a user
+    [<RestEase.Delete "orgs/{org}/blocks/{username}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract OrganizationUnblockUser :
+        [<RestEase.Path "org">] org : string *
+        [<RestEase.Path "username">] username : string *
+        ?ct : System.Threading.CancellationToken ->
+            unit System.Threading.Tasks.Task
+
+    /// Block a user
+    [<RestEase.Put "orgs/{org}/blocks/{username}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract OrganizationBlockUser :
+        [<RestEase.Path "org">] org : string *
+        [<RestEase.Path "username">] username : string *
+        [<RestEase.Query "note">] note : string *
+        ?ct : System.Threading.CancellationToken ->
+            unit System.Threading.Tasks.Task
 
     /// List an organization's webhooks
     [<RestEase.Get "orgs/{org}/hooks">]
@@ -3695,7 +4550,7 @@ type IGiteaClient =
             unit System.Threading.Tasks.Task
 
     /// Update a hook
-    [<RestEase.Post "orgs/{org}/hooks/{id}">]
+    [<RestEase.Patch "orgs/{org}/hooks/{id}">]
     [<RestEase.Header("Content-Type", "json")>]
     abstract OrgEditHook :
         [<RestEase.Path "org">] org : string *
@@ -3742,7 +4597,7 @@ type IGiteaClient =
             unit System.Threading.Tasks.Task
 
     /// Update a label
-    [<RestEase.Post "orgs/{org}/labels/{id}">]
+    [<RestEase.Patch "orgs/{org}/labels/{id}">]
     [<RestEase.Header("Content-Type", "json")>]
     abstract OrgEditLabel :
         [<RestEase.Path "org">] org : string *
@@ -3927,6 +4782,7 @@ type IGiteaClient =
         [<RestEase.Query "created">] created : bool *
         [<RestEase.Query "mentioned">] mentioned : bool *
         [<RestEase.Query "review_requested">] review_requested : bool *
+        [<RestEase.Query "reviewed">] reviewed : bool *
         [<RestEase.Query "owner">] owner : string *
         [<RestEase.Query "team">] team : string *
         [<RestEase.Query "page">] page : int *
@@ -3984,7 +4840,7 @@ type IGiteaClient =
             unit System.Threading.Tasks.Task
 
     /// Edit a repository's properties. Only fields that are set will be changed.
-    [<RestEase.Post "repos/{owner}/{repo}">]
+    [<RestEase.Patch "repos/{owner}/{repo}">]
     [<RestEase.Header("Content-Type", "json")>]
     abstract RepoEdit :
         [<RestEase.Path "owner">] owner : string *
@@ -3992,6 +4848,80 @@ type IGiteaClient =
         [<RestEase.Body>] body : EditRepoOption *
         ?ct : System.Threading.CancellationToken ->
             Repository System.Threading.Tasks.Task
+
+    /// Get a repository's actions runner registration token
+    [<RestEase.Get "repos/{owner}/{repo}/actions/runners/registration-token">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract RepoGetRunnerRegistrationToken :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        ?ct : System.Threading.CancellationToken ->
+            unit System.Threading.Tasks.Task
+
+    /// List an repo's actions secrets
+    [<RestEase.Get "repos/{owner}/{repo}/actions/secrets">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract RepoListActionsSecrets :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Query "page">] page : int *
+        [<RestEase.Query "limit">] limit : int *
+        ?ct : System.Threading.CancellationToken ->
+            Secret list System.Threading.Tasks.Task
+
+    /// Delete a secret in a repository
+    [<RestEase.Delete "repos/{owner}/{repo}/actions/secrets/{secretname}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract DeleteRepoSecret :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Path "secretname">] secretname : string *
+        ?ct : System.Threading.CancellationToken ->
+            unit System.Threading.Tasks.Task
+
+    /// List a repository's action tasks
+    [<RestEase.Get "repos/{owner}/{repo}/actions/tasks">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract ListActionTasks :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Query "page">] page : int *
+        [<RestEase.Query "limit">] limit : int *
+        ?ct : System.Threading.CancellationToken ->
+            ActionTaskResponse System.Threading.Tasks.Task
+
+    /// Get repo-level variables list
+    [<RestEase.Get "repos/{owner}/{repo}/actions/variables">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract GetRepoVariablesList :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Query "page">] page : int *
+        [<RestEase.Query "limit">] limit : int *
+        ?ct : System.Threading.CancellationToken ->
+            ActionVariable list System.Threading.Tasks.Task
+
+    /// Get a repo-level variable
+    [<RestEase.Get "repos/{owner}/{repo}/actions/variables/{variablename}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract GetRepoVariable :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Path "variablename">] variablename : string *
+        ?ct : System.Threading.CancellationToken ->
+            ActionVariable System.Threading.Tasks.Task
+
+    /// List a repository's activity feeds
+    [<RestEase.Get "repos/{owner}/{repo}/activities/feeds">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract RepoListActivityFeeds :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Query "date">] date : string *
+        [<RestEase.Query "page">] page : int *
+        [<RestEase.Query "limit">] limit : int *
+        ?ct : System.Threading.CancellationToken ->
+            Activity list System.Threading.Tasks.Task
 
     /// Get an archive of a repository
     [<RestEase.Get "repos/{owner}/{repo}/archive/{archive}">]
@@ -4012,6 +4942,25 @@ type IGiteaClient =
         ?ct : System.Threading.CancellationToken ->
             User list System.Threading.Tasks.Task
 
+    /// Update avatar
+    [<RestEase.Post "repos/{owner}/{repo}/avatar">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract RepoUpdateAvatar :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Body>] body : UpdateRepoAvatarOption *
+        ?ct : System.Threading.CancellationToken ->
+            unit System.Threading.Tasks.Task
+
+    /// Delete avatar
+    [<RestEase.Delete "repos/{owner}/{repo}/avatar">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract RepoDeleteAvatar :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        ?ct : System.Threading.CancellationToken ->
+            unit System.Threading.Tasks.Task
+
     /// List branch protections for a repository
     [<RestEase.Get "repos/{owner}/{repo}/branch_protections">]
     [<RestEase.Header("Content-Type", "json")>]
@@ -4030,6 +4979,16 @@ type IGiteaClient =
         [<RestEase.Body>] body : CreateBranchProtectionOption *
         ?ct : System.Threading.CancellationToken ->
             BranchProtection System.Threading.Tasks.Task
+
+    /// Update the priorities of branch protections for a repository.
+    [<RestEase.Post "repos/{owner}/{repo}/branch_protections/priority">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract RepoUpdateBranchProtectionPriories :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Body>] body : UpdateBranchProtectionPriories *
+        ?ct : System.Threading.CancellationToken ->
+            unit System.Threading.Tasks.Task
 
     /// Get a specific branch protection for the repository
     [<RestEase.Get "repos/{owner}/{repo}/branch_protections/{name}">]
@@ -4052,7 +5011,7 @@ type IGiteaClient =
             unit System.Threading.Tasks.Task
 
     /// Edit a branch protections for a repository. Only fields that are set will be changed
-    [<RestEase.Post "repos/{owner}/{repo}/branch_protections/{name}">]
+    [<RestEase.Patch "repos/{owner}/{repo}/branch_protections/{name}">]
     [<RestEase.Header("Content-Type", "json")>]
     abstract RepoEditBranchProtection :
         [<RestEase.Path "owner">] owner : string *
@@ -4103,6 +5062,17 @@ type IGiteaClient =
         ?ct : System.Threading.CancellationToken ->
             unit System.Threading.Tasks.Task
 
+    /// Update a branch
+    [<RestEase.Patch "repos/{owner}/{repo}/branches/{branch}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract RepoUpdateBranch :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Path "branch">] branch : string *
+        [<RestEase.Body>] body : UpdateBranchRepoOption *
+        ?ct : System.Threading.CancellationToken ->
+            unit System.Threading.Tasks.Task
+
     /// List a repository's collaborators
     [<RestEase.Get "repos/{owner}/{repo}/collaborators">]
     [<RestEase.Header("Content-Type", "json")>]
@@ -4134,7 +5104,7 @@ type IGiteaClient =
         ?ct : System.Threading.CancellationToken ->
             unit System.Threading.Tasks.Task
 
-    /// Add a collaborator to a repository
+    /// Add or Update a collaborator to a repository
     [<RestEase.Put "repos/{owner}/{repo}/collaborators/{collaborator}">]
     [<RestEase.Header("Content-Type", "json")>]
     abstract RepoAddCollaborator :
@@ -4164,8 +5134,11 @@ type IGiteaClient =
         [<RestEase.Query "sha">] sha : string *
         [<RestEase.Query "path">] path : string *
         [<RestEase.Query "stat">] stat : bool *
+        [<RestEase.Query "verification">] verification : bool *
+        [<RestEase.Query "files">] files : bool *
         [<RestEase.Query "page">] page : int *
         [<RestEase.Query "limit">] limit : int *
+        [<RestEase.Query "not">] not : string *
         ?ct : System.Threading.CancellationToken ->
             Commit list System.Threading.Tasks.Task
 
@@ -4195,6 +5168,26 @@ type IGiteaClient =
         ?ct : System.Threading.CancellationToken ->
             CommitStatus list System.Threading.Tasks.Task
 
+    /// Get the merged pull request of the commit
+    [<RestEase.Get "repos/{owner}/{repo}/commits/{sha}/pull">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract RepoGetCommitPullRequest :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Path "sha">] sha : string *
+        ?ct : System.Threading.CancellationToken ->
+            PullRequest System.Threading.Tasks.Task
+
+    /// Get commit comparison information
+    [<RestEase.Get "repos/{owner}/{repo}/compare/{basehead}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract RepoCompareDiff :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Path "basehead">] basehead : string *
+        ?ct : System.Threading.CancellationToken ->
+            Compare System.Threading.Tasks.Task
+
     /// Gets the metadata of all the entries of the root dir
     [<RestEase.Get "repos/{owner}/{repo}/contents">]
     [<RestEase.Header("Content-Type", "json")>]
@@ -4204,6 +5197,16 @@ type IGiteaClient =
         [<RestEase.Query "ref">] ref : string *
         ?ct : System.Threading.CancellationToken ->
             ContentsResponse list System.Threading.Tasks.Task
+
+    /// Modify multiple files in a repository
+    [<RestEase.Post "repos/{owner}/{repo}/contents">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract RepoChangeFiles :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Body>] body : ChangeFilesOptions *
+        ?ct : System.Threading.CancellationToken ->
+            FilesResponse System.Threading.Tasks.Task
 
     /// Gets the metadata and contents (if a file) of an entry in a repository, or a list of entries if a dir
     [<RestEase.Get "repos/{owner}/{repo}/contents/{filepath}">]
@@ -4308,6 +5311,9 @@ type IGiteaClient =
         [<RestEase.Path "owner">] owner : string *
         [<RestEase.Path "repo">] repo : string *
         [<RestEase.Path "sha">] sha : string *
+        [<RestEase.Query "stat">] stat : bool *
+        [<RestEase.Query "verification">] verification : bool *
+        [<RestEase.Query "files">] files : bool *
         ?ct : System.Threading.CancellationToken ->
             Commit System.Threading.Tasks.Task
 
@@ -4329,6 +5335,8 @@ type IGiteaClient =
         [<RestEase.Path "owner">] owner : string *
         [<RestEase.Path "repo">] repo : string *
         [<RestEase.Path "sha">] sha : string *
+        [<RestEase.Query "verification">] verification : bool *
+        [<RestEase.Query "files">] files : bool *
         ?ct : System.Threading.CancellationToken ->
             Note System.Threading.Tasks.Task
 
@@ -4425,7 +5433,7 @@ type IGiteaClient =
             unit System.Threading.Tasks.Task
 
     /// Edit a Git hook in a repository
-    [<RestEase.Post "repos/{owner}/{repo}/hooks/git/{id}">]
+    [<RestEase.Patch "repos/{owner}/{repo}/hooks/git/{id}">]
     [<RestEase.Header("Content-Type", "json")>]
     abstract RepoEditGitHook :
         [<RestEase.Path "owner">] owner : string *
@@ -4456,7 +5464,7 @@ type IGiteaClient =
             unit System.Threading.Tasks.Task
 
     /// Edit a hook in a repository
-    [<RestEase.Post "repos/{owner}/{repo}/hooks/{id}">]
+    [<RestEase.Patch "repos/{owner}/{repo}/hooks/{id}">]
     [<RestEase.Header("Content-Type", "json")>]
     abstract RepoEditHook :
         [<RestEase.Path "owner">] owner : string *
@@ -4476,6 +5484,24 @@ type IGiteaClient =
         [<RestEase.Query "ref">] ref : string *
         ?ct : System.Threading.CancellationToken ->
             unit System.Threading.Tasks.Task
+
+    /// Returns the issue config for a repo
+    [<RestEase.Get "repos/{owner}/{repo}/issue_config">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract RepoGetIssueConfig :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        ?ct : System.Threading.CancellationToken ->
+            IssueConfig System.Threading.Tasks.Task
+
+    /// Returns the validation information for a issue config
+    [<RestEase.Get "repos/{owner}/{repo}/issue_config/validate">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract RepoValidateIssueConfig :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        ?ct : System.Threading.CancellationToken ->
+            IssueConfigValidation System.Threading.Tasks.Task
 
     /// Get available issue templates for a repository
     [<RestEase.Get "repos/{owner}/{repo}/issue_templates">]
@@ -4573,7 +5599,7 @@ type IGiteaClient =
             unit System.Threading.Tasks.Task
 
     /// Edit a comment attachment
-    [<RestEase.Post "repos/{owner}/{repo}/issues/comments/{id}/assets/{attachment_id}">]
+    [<RestEase.Patch "repos/{owner}/{repo}/issues/comments/{id}/assets/{attachment_id}">]
     [<RestEase.Header("Content-Type", "json")>]
     abstract IssueEditIssueCommentAttachment :
         [<RestEase.Path "owner">] owner : string *
@@ -4605,6 +5631,15 @@ type IGiteaClient =
         ?ct : System.Threading.CancellationToken ->
             unit System.Threading.Tasks.Task
 
+    /// List a repo's pinned issues
+    [<RestEase.Get "repos/{owner}/{repo}/issues/pinned">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract RepoListPinnedIssues :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        ?ct : System.Threading.CancellationToken ->
+            Issue list System.Threading.Tasks.Task
+
     /// Get an issue
     [<RestEase.Get "repos/{owner}/{repo}/issues/{index}">]
     [<RestEase.Header("Content-Type", "json")>]
@@ -4626,7 +5661,7 @@ type IGiteaClient =
             unit System.Threading.Tasks.Task
 
     /// Edit an issue. If using deadline only the date will be taken into account, and time of day ignored.
-    [<RestEase.Post "repos/{owner}/{repo}/issues/{index}">]
+    [<RestEase.Patch "repos/{owner}/{repo}/issues/{index}">]
     [<RestEase.Header("Content-Type", "json")>]
     abstract IssueEditIssue :
         [<RestEase.Path "owner">] owner : string *
@@ -4669,7 +5704,7 @@ type IGiteaClient =
             unit System.Threading.Tasks.Task
 
     /// Edit an issue attachment
-    [<RestEase.Post "repos/{owner}/{repo}/issues/{index}/assets/{attachment_id}">]
+    [<RestEase.Patch "repos/{owner}/{repo}/issues/{index}/assets/{attachment_id}">]
     [<RestEase.Header("Content-Type", "json")>]
     abstract IssueEditIssueAttachment :
         [<RestEase.Path "owner">] owner : string *
@@ -4679,6 +5714,40 @@ type IGiteaClient =
         [<RestEase.Body>] body : EditAttachmentOptions *
         ?ct : System.Threading.CancellationToken ->
             Attachment System.Threading.Tasks.Task
+
+    /// List issues that are blocked by this issue
+    [<RestEase.Get "repos/{owner}/{repo}/issues/{index}/blocks">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract IssueListBlocks :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Path "index">] index : string *
+        [<RestEase.Query "page">] page : int *
+        [<RestEase.Query "limit">] limit : int *
+        ?ct : System.Threading.CancellationToken ->
+            Issue list System.Threading.Tasks.Task
+
+    /// Block the issue given in the body by the issue in path
+    [<RestEase.Post "repos/{owner}/{repo}/issues/{index}/blocks">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract IssueCreateIssueBlocking :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Path "index">] index : string *
+        [<RestEase.Body>] body : IssueMeta *
+        ?ct : System.Threading.CancellationToken ->
+            Issue System.Threading.Tasks.Task
+
+    /// Unblock the issue given in the body by the issue in path
+    [<RestEase.Delete "repos/{owner}/{repo}/issues/{index}/blocks">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract IssueRemoveIssueBlocking :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Path "index">] index : string *
+        [<RestEase.Body>] body : IssueMeta *
+        ?ct : System.Threading.CancellationToken ->
+            Issue System.Threading.Tasks.Task
 
     /// List all comments on an issue
     [<RestEase.Get "repos/{owner}/{repo}/issues/{index}/comments">]
@@ -4724,6 +5793,40 @@ type IGiteaClient =
         [<RestEase.Body>] body : EditDeadlineOption *
         ?ct : System.Threading.CancellationToken ->
             IssueDeadline System.Threading.Tasks.Task
+
+    /// List an issue's dependencies, i.e all issues that block this issue.
+    [<RestEase.Get "repos/{owner}/{repo}/issues/{index}/dependencies">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract IssueListIssueDependencies :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Path "index">] index : string *
+        [<RestEase.Query "page">] page : int *
+        [<RestEase.Query "limit">] limit : int *
+        ?ct : System.Threading.CancellationToken ->
+            Issue list System.Threading.Tasks.Task
+
+    /// Make the issue in the url depend on the issue in the form.
+    [<RestEase.Post "repos/{owner}/{repo}/issues/{index}/dependencies">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract IssueCreateIssueDependencies :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Path "index">] index : string *
+        [<RestEase.Body>] body : IssueMeta *
+        ?ct : System.Threading.CancellationToken ->
+            Issue System.Threading.Tasks.Task
+
+    /// Remove an issue dependency
+    [<RestEase.Delete "repos/{owner}/{repo}/issues/{index}/dependencies">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract IssueRemoveIssueDependencies :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Path "index">] index : string *
+        [<RestEase.Body>] body : IssueMeta *
+        ?ct : System.Threading.CancellationToken ->
+            Issue System.Threading.Tasks.Task
 
     /// Get an issue's labels
     [<RestEase.Get "repos/{owner}/{repo}/issues/{index}/labels">]
@@ -4775,6 +5878,37 @@ type IGiteaClient =
         [<RestEase.Path "repo">] repo : string *
         [<RestEase.Path "index">] index : int *
         [<RestEase.Path "id">] id : int *
+        ?ct : System.Threading.CancellationToken ->
+            unit System.Threading.Tasks.Task
+
+    /// Pin an Issue
+    [<RestEase.Post "repos/{owner}/{repo}/issues/{index}/pin">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract PinIssue :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Path "index">] index : int *
+        ?ct : System.Threading.CancellationToken ->
+            unit System.Threading.Tasks.Task
+
+    /// Unpin an Issue
+    [<RestEase.Delete "repos/{owner}/{repo}/issues/{index}/pin">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract UnpinIssue :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Path "index">] index : int *
+        ?ct : System.Threading.CancellationToken ->
+            unit System.Threading.Tasks.Task
+
+    /// Moves the Pin to the given Position
+    [<RestEase.Patch "repos/{owner}/{repo}/issues/{index}/pin/{position}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract MoveIssuePin :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Path "index">] index : int *
+        [<RestEase.Path "position">] position : int *
         ?ct : System.Threading.CancellationToken ->
             unit System.Threading.Tasks.Task
 
@@ -4999,7 +6133,7 @@ type IGiteaClient =
             unit System.Threading.Tasks.Task
 
     /// Update a label
-    [<RestEase.Post "repos/{owner}/{repo}/labels/{id}">]
+    [<RestEase.Patch "repos/{owner}/{repo}/labels/{id}">]
     [<RestEase.Header("Content-Type", "json")>]
     abstract IssueEditLabel :
         [<RestEase.Path "owner">] owner : string *
@@ -5018,9 +6152,18 @@ type IGiteaClient =
         ?ct : System.Threading.CancellationToken ->
             LanguageStatistics System.Threading.Tasks.Task
 
+    /// Get repo licenses
+    [<RestEase.Get "repos/{owner}/{repo}/licenses">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract RepoGetLicenses :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        ?ct : System.Threading.CancellationToken ->
+            string list System.Threading.Tasks.Task
+
     /// Get a file or it's LFS object from a repository
     [<RestEase.Get "repos/{owner}/{repo}/media/{filepath}">]
-    [<RestEase.Header("Content-Type", "json")>]
+    [<RestEase.Header("Content-Type", "application/octet-stream")>]
     abstract RepoGetRawFileOrLFS :
         [<RestEase.Path "owner">] owner : string *
         [<RestEase.Path "repo">] repo : string *
@@ -5028,6 +6171,16 @@ type IGiteaClient =
         [<RestEase.Query "ref">] ref : string *
         ?ct : System.Threading.CancellationToken ->
             unit System.Threading.Tasks.Task
+
+    /// Merge a branch from upstream
+    [<RestEase.Post "repos/{owner}/{repo}/merge-upstream">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract RepoMergeUpstream :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Body>] body : MergeUpstreamRequest *
+        ?ct : System.Threading.CancellationToken ->
+            MergeUpstreamResponse System.Threading.Tasks.Task
 
     /// Get all of a repository's opened milestones
     [<RestEase.Get "repos/{owner}/{repo}/milestones">]
@@ -5073,7 +6226,7 @@ type IGiteaClient =
             unit System.Threading.Tasks.Task
 
     /// Update a milestone
-    [<RestEase.Post "repos/{owner}/{repo}/milestones/{id}">]
+    [<RestEase.Patch "repos/{owner}/{repo}/milestones/{id}">]
     [<RestEase.Header("Content-Type", "json")>]
     abstract IssueEditMilestone :
         [<RestEase.Path "owner">] owner : string *
@@ -5091,6 +6244,15 @@ type IGiteaClient =
         [<RestEase.Path "repo">] repo : string *
         ?ct : System.Threading.CancellationToken ->
             unit System.Threading.Tasks.Task
+
+    /// Returns if new Issue Pins are allowed
+    [<RestEase.Get "repos/{owner}/{repo}/new_pin_allowed">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract RepoNewPinAllowed :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        ?ct : System.Threading.CancellationToken ->
+            NewIssuePinsAllowed System.Threading.Tasks.Task
 
     /// List users's notification threads on a specific repo
     [<RestEase.Get "repos/{owner}/{repo}/notifications">]
@@ -5131,6 +6293,7 @@ type IGiteaClient =
         [<RestEase.Query "sort">] sort : string *
         [<RestEase.Query "milestone">] milestone : int *
         [<RestEase.Query "labels">] labels : int list *
+        [<RestEase.Query "poster">] poster : string *
         [<RestEase.Query "page">] page : int *
         [<RestEase.Query "limit">] limit : int *
         ?ct : System.Threading.CancellationToken ->
@@ -5146,6 +6309,26 @@ type IGiteaClient =
         ?ct : System.Threading.CancellationToken ->
             PullRequest System.Threading.Tasks.Task
 
+    /// List a repo's pinned pull requests
+    [<RestEase.Get "repos/{owner}/{repo}/pulls/pinned">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract RepoListPinnedPullRequests :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        ?ct : System.Threading.CancellationToken ->
+            PullRequest list System.Threading.Tasks.Task
+
+    /// Get a pull request by base and head
+    [<RestEase.Get "repos/{owner}/{repo}/pulls/{base}/{head}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract RepoGetPullRequestByBaseHead :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Path "base">] base' : string *
+        [<RestEase.Path "head">] head : string *
+        ?ct : System.Threading.CancellationToken ->
+            PullRequest System.Threading.Tasks.Task
+
     /// Get a pull request
     [<RestEase.Get "repos/{owner}/{repo}/pulls/{index}">]
     [<RestEase.Header("Content-Type", "json")>]
@@ -5157,7 +6340,7 @@ type IGiteaClient =
             PullRequest System.Threading.Tasks.Task
 
     /// Update a pull request. If using deadline only the date will be taken into account, and time of day ignored.
-    [<RestEase.Post "repos/{owner}/{repo}/pulls/{index}">]
+    [<RestEase.Patch "repos/{owner}/{repo}/pulls/{index}">]
     [<RestEase.Header("Content-Type", "json")>]
     abstract RepoEditPullRequest :
         [<RestEase.Path "owner">] owner : string *
@@ -5188,6 +6371,8 @@ type IGiteaClient =
         [<RestEase.Path "index">] index : int *
         [<RestEase.Query "page">] page : int *
         [<RestEase.Query "limit">] limit : int *
+        [<RestEase.Query "verification">] verification : bool *
+        [<RestEase.Query "files">] files : bool *
         ?ct : System.Threading.CancellationToken ->
             Commit list System.Threading.Tasks.Task
 
@@ -5412,7 +6597,7 @@ type IGiteaClient =
 
     /// Get a file from a repository
     [<RestEase.Get "repos/{owner}/{repo}/raw/{filepath}">]
-    [<RestEase.Header("Content-Type", "json")>]
+    [<RestEase.Header("Content-Type", "application/octet-stream")>]
     abstract RepoGetRawFile :
         [<RestEase.Path "owner">] owner : string *
         [<RestEase.Path "repo">] repo : string *
@@ -5429,7 +6614,6 @@ type IGiteaClient =
         [<RestEase.Path "repo">] repo : string *
         [<RestEase.Query "draft">] draft : bool *
         [<RestEase.Query "pre-release">] pre_release : bool *
-        [<RestEase.Query "per_page">] per_page : int *
         [<RestEase.Query "page">] page : int *
         [<RestEase.Query "limit">] limit : int *
         ?ct : System.Threading.CancellationToken ->
@@ -5495,7 +6679,7 @@ type IGiteaClient =
             unit System.Threading.Tasks.Task
 
     /// Update a release
-    [<RestEase.Post "repos/{owner}/{repo}/releases/{id}">]
+    [<RestEase.Patch "repos/{owner}/{repo}/releases/{id}">]
     [<RestEase.Header("Content-Type", "json")>]
     abstract RepoEditRelease :
         [<RestEase.Path "owner">] owner : string *
@@ -5538,7 +6722,7 @@ type IGiteaClient =
             unit System.Threading.Tasks.Task
 
     /// Edit a release attachment
-    [<RestEase.Post "repos/{owner}/{repo}/releases/{id}/assets/{attachment_id}">]
+    [<RestEase.Patch "repos/{owner}/{repo}/releases/{id}/assets/{attachment_id}">]
     [<RestEase.Header("Content-Type", "json")>]
     abstract RepoEditReleaseAttachment :
         [<RestEase.Path "owner">] owner : string *
@@ -5640,6 +6824,56 @@ type IGiteaClient =
         [<RestEase.Path "repo">] repo : string *
         ?ct : System.Threading.CancellationToken ->
             WatchInfo System.Threading.Tasks.Task
+
+    /// List tag protections for a repository
+    [<RestEase.Get "repos/{owner}/{repo}/tag_protections">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract RepoListTagProtection :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        ?ct : System.Threading.CancellationToken ->
+            TagProtection list System.Threading.Tasks.Task
+
+    /// Create a tag protections for a repository
+    [<RestEase.Post "repos/{owner}/{repo}/tag_protections">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract RepoCreateTagProtection :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Body>] body : CreateTagProtectionOption *
+        ?ct : System.Threading.CancellationToken ->
+            TagProtection System.Threading.Tasks.Task
+
+    /// Get a specific tag protection for the repository
+    [<RestEase.Get "repos/{owner}/{repo}/tag_protections/{id}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract RepoGetTagProtection :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Path "id">] id : int *
+        ?ct : System.Threading.CancellationToken ->
+            TagProtection System.Threading.Tasks.Task
+
+    /// Delete a specific tag protection for the repository
+    [<RestEase.Delete "repos/{owner}/{repo}/tag_protections/{id}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract RepoDeleteTagProtection :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Path "id">] id : int *
+        ?ct : System.Threading.CancellationToken ->
+            unit System.Threading.Tasks.Task
+
+    /// Edit a tag protections for a repository. Only fields that are set will be changed
+    [<RestEase.Patch "repos/{owner}/{repo}/tag_protections/{id}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract RepoEditTagProtection :
+        [<RestEase.Path "owner">] owner : string *
+        [<RestEase.Path "repo">] repo : string *
+        [<RestEase.Path "id">] id : int *
+        [<RestEase.Body>] body : EditTagProtectionOption *
+        ?ct : System.Threading.CancellationToken ->
+            TagProtection System.Threading.Tasks.Task
 
     /// List a repository's tags
     [<RestEase.Get "repos/{owner}/{repo}/tags">]
@@ -5845,7 +7079,7 @@ type IGiteaClient =
             unit System.Threading.Tasks.Task
 
     /// Edit a wiki page
-    [<RestEase.Post "repos/{owner}/{repo}/wiki/page/{pageName}">]
+    [<RestEase.Patch "repos/{owner}/{repo}/wiki/page/{pageName}">]
     [<RestEase.Header("Content-Type", "json")>]
     abstract RepoEditWikiPage :
         [<RestEase.Path "owner">] owner : string *
@@ -5936,13 +7170,24 @@ type IGiteaClient =
         [<RestEase.Path "id">] id : int * ?ct : System.Threading.CancellationToken -> unit System.Threading.Tasks.Task
 
     /// Edit a team
-    [<RestEase.Post "teams/{id}">]
+    [<RestEase.Patch "teams/{id}">]
     [<RestEase.Header("Content-Type", "json")>]
     abstract OrgEditTeam :
         [<RestEase.Path "id">] id : int *
         [<RestEase.Body>] body : EditTeamOption *
         ?ct : System.Threading.CancellationToken ->
             Team System.Threading.Tasks.Task
+
+    /// List a team's activity feeds
+    [<RestEase.Get "teams/{id}/activities/feeds">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract OrgListTeamActivityFeeds :
+        [<RestEase.Path "id">] id : int *
+        [<RestEase.Query "date">] date : string *
+        [<RestEase.Query "page">] page : int *
+        [<RestEase.Query "limit">] limit : int *
+        ?ct : System.Threading.CancellationToken ->
+            Activity list System.Threading.Tasks.Task
 
     /// List a team's members
     [<RestEase.Get "teams/{id}/members">]
@@ -6036,6 +7281,35 @@ type IGiteaClient =
     [<RestEase.Header("Content-Type", "json")>]
     abstract UserGetCurrent : ?ct : System.Threading.CancellationToken -> User System.Threading.Tasks.Task
 
+    /// Get an user's actions runner registration token
+    [<RestEase.Get "user/actions/runners/registration-token">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract UserGetRunnerRegistrationToken :
+        ?ct : System.Threading.CancellationToken -> unit System.Threading.Tasks.Task
+
+    /// Delete a secret in a user scope
+    [<RestEase.Delete "user/actions/secrets/{secretname}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract DeleteUserSecret :
+        [<RestEase.Path "secretname">] secretname : string * ?ct : System.Threading.CancellationToken ->
+            unit System.Threading.Tasks.Task
+
+    /// Get the user-level list of variables which is created by current doer
+    [<RestEase.Get "user/actions/variables">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract GetUserVariablesList :
+        [<RestEase.Query "page">] page : int *
+        [<RestEase.Query "limit">] limit : int *
+        ?ct : System.Threading.CancellationToken ->
+            ActionVariable list System.Threading.Tasks.Task
+
+    /// Get a user-level variable which is created by current doer
+    [<RestEase.Get "user/actions/variables/{variablename}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract GetUserVariable :
+        [<RestEase.Path "variablename">] variablename : string * ?ct : System.Threading.CancellationToken ->
+            ActionVariable System.Threading.Tasks.Task
+
     /// List the authenticated user's oauth2 applications
     [<RestEase.Get "user/applications/oauth2">]
     [<RestEase.Header("Content-Type", "json")>]
@@ -6066,13 +7340,57 @@ type IGiteaClient =
         [<RestEase.Path "id">] id : int * ?ct : System.Threading.CancellationToken -> unit System.Threading.Tasks.Task
 
     /// update an OAuth2 Application, this includes regenerating the client secret
-    [<RestEase.Post "user/applications/oauth2/{id}">]
+    [<RestEase.Patch "user/applications/oauth2/{id}">]
     [<RestEase.Header("Content-Type", "json")>]
     abstract UserUpdateOAuth2Application :
         [<RestEase.Path "id">] id : int *
         [<RestEase.Body>] body : CreateOAuth2ApplicationOptions *
         ?ct : System.Threading.CancellationToken ->
             OAuth2Application System.Threading.Tasks.Task
+
+    /// Update Avatar
+    [<RestEase.Post "user/avatar">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract UserUpdateAvatar :
+        [<RestEase.Body>] body : UpdateUserAvatarOption * ?ct : System.Threading.CancellationToken ->
+            unit System.Threading.Tasks.Task
+
+    /// Delete Avatar
+    [<RestEase.Delete "user/avatar">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract UserDeleteAvatar : ?ct : System.Threading.CancellationToken -> unit System.Threading.Tasks.Task
+
+    /// List users blocked by the authenticated user
+    [<RestEase.Get "user/blocks">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract UserListBlocks :
+        [<RestEase.Query "page">] page : int *
+        [<RestEase.Query "limit">] limit : int *
+        ?ct : System.Threading.CancellationToken ->
+            User list System.Threading.Tasks.Task
+
+    /// Check if a user is blocked by the authenticated user
+    [<RestEase.Get "user/blocks/{username}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract UserCheckUserBlock :
+        [<RestEase.Path "username">] username : string * ?ct : System.Threading.CancellationToken ->
+            unit System.Threading.Tasks.Task
+
+    /// Unblock a user
+    [<RestEase.Delete "user/blocks/{username}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract UserUnblockUser :
+        [<RestEase.Path "username">] username : string * ?ct : System.Threading.CancellationToken ->
+            unit System.Threading.Tasks.Task
+
+    /// Block a user
+    [<RestEase.Put "user/blocks/{username}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract UserBlockUser :
+        [<RestEase.Path "username">] username : string *
+        [<RestEase.Query "note">] note : string *
+        ?ct : System.Threading.CancellationToken ->
+            unit System.Threading.Tasks.Task
 
     /// List the authenticated user's email addresses
     [<RestEase.Get "user/emails">]
@@ -6143,6 +7461,43 @@ type IGiteaClient =
     abstract UserCurrentDeleteGPGKey :
         [<RestEase.Path "id">] id : int * ?ct : System.Threading.CancellationToken -> unit System.Threading.Tasks.Task
 
+    /// List the authenticated user's webhooks
+    [<RestEase.Get "user/hooks">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract UserListHooks :
+        [<RestEase.Query "page">] page : int *
+        [<RestEase.Query "limit">] limit : int *
+        ?ct : System.Threading.CancellationToken ->
+            Hook list System.Threading.Tasks.Task
+
+    /// Create a hook
+    [<RestEase.Post "user/hooks">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract UserCreateHook :
+        [<RestEase.Body>] body : CreateHookOption * ?ct : System.Threading.CancellationToken ->
+            Hook System.Threading.Tasks.Task
+
+    /// Get a hook
+    [<RestEase.Get "user/hooks/{id}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract UserGetHook :
+        [<RestEase.Path "id">] id : int * ?ct : System.Threading.CancellationToken -> Hook System.Threading.Tasks.Task
+
+    /// Delete a hook
+    [<RestEase.Delete "user/hooks/{id}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract UserDeleteHook :
+        [<RestEase.Path "id">] id : int * ?ct : System.Threading.CancellationToken -> unit System.Threading.Tasks.Task
+
+    /// Update a hook
+    [<RestEase.Patch "user/hooks/{id}">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract UserEditHook :
+        [<RestEase.Path "id">] id : int *
+        [<RestEase.Body>] body : EditHookOption *
+        ?ct : System.Threading.CancellationToken ->
+            Hook System.Threading.Tasks.Task
+
     /// List the authenticated user's public keys
     [<RestEase.Get "user/keys">]
     [<RestEase.Header("Content-Type", "json")>]
@@ -6204,7 +7559,7 @@ type IGiteaClient =
     abstract GetUserSettings : ?ct : System.Threading.CancellationToken -> UserSettings list System.Threading.Tasks.Task
 
     /// Update user settings
-    [<RestEase.Post "user/settings">]
+    [<RestEase.Patch "user/settings">]
     [<RestEase.Header("Content-Type", "json")>]
     abstract UpdateUserSettings :
         [<RestEase.Body>] body : UserSettingsOptions * ?ct : System.Threading.CancellationToken ->
@@ -6301,6 +7656,18 @@ type IGiteaClient =
     abstract UserGet :
         [<RestEase.Path "username">] username : string * ?ct : System.Threading.CancellationToken ->
             User System.Threading.Tasks.Task
+
+    /// List a user's activity feeds
+    [<RestEase.Get "users/{username}/activities/feeds">]
+    [<RestEase.Header("Content-Type", "json")>]
+    abstract UserListActivityFeeds :
+        [<RestEase.Path "username">] username : string *
+        [<RestEase.Query "only-performed-by">] only_performed_by : bool *
+        [<RestEase.Query "date">] date : string *
+        [<RestEase.Query "page">] page : int *
+        [<RestEase.Query "limit">] limit : int *
+        ?ct : System.Threading.CancellationToken ->
+            Activity list System.Threading.Tasks.Task
 
     /// List the given user's followers
     [<RestEase.Get "users/{username}/followers">]

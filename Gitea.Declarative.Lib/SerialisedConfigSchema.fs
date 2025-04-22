@@ -30,6 +30,10 @@ type SerialisedProtectedBranch =
         [<JsonProperty(Required = Required.Default)>]
         [<Description "A list of status check patterns; merge into this branch will be blocked unless all these checks have run and passed. (Probably go with alphanumeric strings, I can't find any docs.)">]
         RequiredStatusChecks : string array
+        [<JsonProperty(Required = Required.DisallowNull)>]
+        IgnoreStaleApprovals : Nullable<bool>
+        [<JsonProperty(Required = Required.DisallowNull)>]
+        EnableForcePush : Nullable<bool>
     }
 
 [<RequireQualifiedAccess>]

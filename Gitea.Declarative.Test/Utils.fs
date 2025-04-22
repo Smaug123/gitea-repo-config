@@ -32,6 +32,8 @@ module Types =
             FollowingCount = None
             StarredReposCount = None
             LastLogin = None
+            HtmlUrl = None
+            SourceId = None
         }
 
     let emptyRepo (fullName : string) (defaultBranch : string) : GiteaClient.Repository =
@@ -89,6 +91,16 @@ module Types =
             Template = None
             UpdatedAt = None
             WatchersCount = None
+            AllowFastForwardOnlyMerge = None
+            ArchivedAt = None
+            HasActions = None
+            HasPackages = None
+            HasReleases = None
+            Licenses = None
+            ObjectFormatName = None
+            ProjectsMode = None
+            Topics = None
+            Url = None
         }
 
 type CustomArb () =

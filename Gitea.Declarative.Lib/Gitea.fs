@@ -30,7 +30,9 @@ module Gitea =
                 List.getPaginated (fun page limit ->
                     async {
                         let! ct = Async.CancellationToken
-                        return! client.AdminGetAllUsers (page, limit, ct) |> Async.AwaitTask
+                        // This is a very Golang-brained API! I think these semantics are roughly correct,
+                        // although there seems to be no way to enumerate source IDs.
+                        return! client.AdminSearchUsers (0, "", page, limit, ct) |> Async.AwaitTask
                     }
                 )
 
@@ -269,6 +271,11 @@ module Gitea =
                                 hasChanged <- true
 
                             Some desired.Description
+                        AllowFastForwardOnlyMerge = None
+                        HasActions = None
+                        HasPackages = None
+                        HasReleases = None
+                        ProjectsMode = None
                     }
 
                 if hasChanged then
@@ -382,6 +389,11 @@ module Gitea =
 
                     Template = None
                     Website = None
+                    AllowFastForwardOnlyMerge = None
+                    HasActions = None
+                    HasPackages = None
+                    HasReleases = None
+                    ProjectsMode = None
 
                 }
 
@@ -651,6 +663,14 @@ module Gitea =
                                     RuleName = Some y.BranchName
                                     StatusCheckContexts = None
                                     UnprotectedFilePatterns = None
+                                    BlockAdminMergeOverride = None
+                                    EnableForcePush = None
+                                    EnableForcePushAllowlist = None
+                                    ForcePushAllowlistDeployKeys = None
+                                    ForcePushAllowlistTeams = None
+                                    ForcePushAllowlistUsernames = None
+                                    IgnoreStaleApprovals = y.IgnoreStaleApprovals
+                                    Priority = None
                                 }
 
                             let! ct = Async.CancellationToken
@@ -697,6 +717,14 @@ module Gitea =
                                     RequiredApprovals = None
                                     StatusCheckContexts = contents
                                     UnprotectedFilePatterns = None
+                                    BlockAdminMergeOverride = None
+                                    EnableForcePush = y.EnableForcePush
+                                    EnableForcePushAllowlist = None
+                                    ForcePushAllowlistDeployKeys = None
+                                    ForcePushAllowlistTeams = None
+                                    ForcePushAllowlistUsernames = None
+                                    IgnoreStaleApprovals = y.IgnoreStaleApprovals
+                                    Priority = None
                                 }
 
                             let! ct = Async.CancellationToken
@@ -752,6 +780,7 @@ module Gitea =
                                     Readme = None
                                     Template = None
                                     TrustModel = None
+                                    ObjectFormatName = None
                                 }
 
                             let! ct = Async.CancellationToken
@@ -834,6 +863,8 @@ module Gitea =
                                     Uid = None
                                     Wiki = Some true
                                     Description = Some desired.Description
+                                    AwsAccessKeyId = None
+                                    AwsSecretAccessKey = None
                                 }
 
                             let! result = client.RepoMigrate options |> Async.AwaitTask |> Async.Catch
@@ -947,7 +978,7 @@ module Gitea =
                             FullName = Some user
                             LoginName = Some user
                             MustChangePassword = Some true
-                            Password = pwd
+                            Password = Some pwd
                             Restricted = None
                             SendNotify = None
                             SourceId = None
@@ -1036,7 +1067,9 @@ module Gitea =
             let! ct = Async.CancellationToken
 
             let! users =
-                List.getPaginated (fun page limit -> client.AdminGetAllUsers (page, limit, ct) |> Async.AwaitTask)
+                List.getPaginated (fun page limit ->
+                    client.AdminSearchUsers (0, "", page, limit, ct) |> Async.AwaitTask
+                )
 
             let! results =
                 users

@@ -61,6 +61,8 @@ type ProtectedBranch =
         BranchName : string
         BlockOnOutdatedBranch : bool option
         RequiredStatusChecks : string list option
+        IgnoreStaleApprovals : bool option
+        EnableForcePush : bool option
     }
 
     static member OfSerialised (s : SerialisedProtectedBranch) : ProtectedBranch =
@@ -68,6 +70,8 @@ type ProtectedBranch =
             BranchName = s.BranchName
             BlockOnOutdatedBranch = Option.ofNullable s.BlockOnOutdatedBranch
             RequiredStatusChecks = Option.ofObj s.RequiredStatusChecks |> Option.map List.ofArray
+            IgnoreStaleApprovals = Option.ofNullable s.IgnoreStaleApprovals
+            EnableForcePush = Option.ofNullable s.EnableForcePush
         }
 
     member this.ToSerialised () : SerialisedProtectedBranch =
@@ -78,6 +82,8 @@ type ProtectedBranch =
                 match this.RequiredStatusChecks with
                 | None -> null
                 | Some l -> List.toArray l
+            IgnoreStaleApprovals = Option.toNullable this.IgnoreStaleApprovals
+            EnableForcePush = Option.toNullable this.EnableForcePush
         }
 
 type NativeRepo =
@@ -375,6 +381,8 @@ type Repo =
                                                     bp.StatusCheckContexts
                                                 else
                                                     None
+                                            IgnoreStaleApprovals = bp.IgnoreStaleApprovals
+                                            EnableForcePush = bp.EnableForcePush
                                         }
                                     )
                                     |> Set.ofSeq

@@ -253,6 +253,12 @@
           "items": {
             "type": "string"
           }
+        },
+        "ignoreStaleApprovals": {
+          "type": "boolean"
+        },
+        "enableForcePush": {
+          "type": "boolean"
         }
       }
     }
