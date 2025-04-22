@@ -876,13 +876,13 @@
   },
   {
     "pname": "WoofWare.Myriad.Plugins",
-    "version": "7.0.5",
-    "hash": "sha256-UTbLDVJhQg1UASOSlQaz5NgG5maBOOtenZrny689v1o="
+    "version": "7.0.7",
+    "hash": "sha256-89jJuslFlqng6VNMpM73VAB23mZ3+ST1Z9tMDxWViWM="
   },
   {
     "pname": "WoofWare.Myriad.Plugins.Attributes",
-    "version": "3.6.9",
-    "hash": "sha256-8+bOWoTG/OeEU3I/BrA9E3fznKB5evTHUByPf1UtGSQ="
+    "version": "3.6.10",
+    "hash": "sha256-oupju6kC6EhuZgWaX5C9nKJr3t5+QDqMEtHzUmKIA3c="
   },
   {
     "pname": "WoofWare.Whippet.Fantomas",
