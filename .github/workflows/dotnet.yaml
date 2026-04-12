@@ -105,7 +105,9 @@ jobs:
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
       - name: Run link checker
         # Sadly we're in Bash
-        run: 'nix develop --command markdown-link-check {,**/}*.md'
+        run: |
+          shopt -s globstar nullglob
+          nix develop --command lychee **/*.md
 
   all-required-checks-complete:
     needs: [check-dotnet-format, check-nix-format, build, build-nix, linkcheck, check-flake]

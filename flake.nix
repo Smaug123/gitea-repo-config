@@ -67,7 +67,7 @@
           ];
           packages = [
             pkgs.alejandra
-            pkgs.nodePackages.markdown-link-check
+            pkgs.lychee
             pkgs.shellcheck
           ];
         };
