@@ -1,4 +1,4 @@
-Demos taken with [asciinema](https://asciinema.org/).
+Demos taken with Asciinema. <!-- Link to asciinema.org times out when hit from GH Actions. -->
 (Yes, I have revoked the access token I used when recording these.)
 
 # No-op
